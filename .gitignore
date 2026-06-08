@@ -1,0 +1,57 @@
+# Repository-level ignores for the Flutter frontend + FastAPI backend monorepo
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Flutter / Dart
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.fvm/
+**/.pub-cache/
+**/.pub/
+**/build/
+**/coverage/
+**/doc/api/
+**/ios/Flutter/.last_build_id
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+**/*.symbols
+**/*.map.json
+
+# Flutter lockfile is kept for the app itself, but ignore generated package caches
+
+# Python / FastAPI backend
+/.venv/
+/venv/
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.tox/
+**/.venv/
+**/venv/
+**/.env
+**/.env.*
+**/btn_factory.db
+**/*.sqlite
+**/*.sqlite3
+**/htmlcov/
+**/.coverage
+**/.coverage.*
+
+# Packaging / build outputs
+**/dist/
+**/dist-*/
+**/node_modules/
+
