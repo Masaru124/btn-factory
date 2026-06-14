@@ -62,6 +62,7 @@ class OrderService:
         for field, value in payload.model_dump(exclude_unset=True).items():
             setattr(order, field, value)
 
+        order.status = recompute_order_status(order)
         self.session.flush()
         self.session.commit()
         self.session.refresh(order)

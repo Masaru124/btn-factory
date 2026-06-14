@@ -56,6 +56,16 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
     }
   }
 
+  String _formatDateTime(String? dateTimeStr) {
+    if (dateTimeStr == null || dateTimeStr.isEmpty) return 'N/A';
+    try {
+      final dt = DateTime.parse(dateTimeStr).toLocal();
+      return DateFormat('dd MMM yyyy, hh:mm a').format(dt);
+    } catch (_) {
+      return dateTimeStr;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -84,6 +94,11 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
     }
 
     final order = _order!;
+    final rawMaterials = order['raw_materials'] as List<dynamic>? ?? [];
+    final casting = order['casting_process'] as Map<String, dynamic>?;
+    final turning = order['turning_process'] as Map<String, dynamic>?;
+    final polish = order['polishing_process'] as Map<String, dynamic>?;
+    final packing = order['packing_process'] as Map<String, dynamic>?;
 
     return AppScaffold(
       selectedIndex: 1,
@@ -111,7 +126,6 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
               ],
             ),
             child: Wrap(
-
               spacing: 16,
               runSpacing: 16,
               children: <Widget>[
@@ -164,6 +178,126 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                 _PreviewCard(title: 'Button Image', fileName: order['button_image'] as String?),
               ],
             ),
+          ),
+          const SizedBox(height: 16),
+          SectionCard(
+            title: 'Raw Materials',
+            child: rawMaterials.isEmpty
+                ? const Text('No raw materials recorded.', style: TextStyle(fontStyle: FontStyle.italic))
+                : ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: rawMaterials.length,
+                    separatorBuilder: (context, index) => const Divider(),
+                    itemBuilder: (context, idx) {
+                      final m = rawMaterials[idx] as Map<String, dynamic>;
+                      return ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: CircleAvatar(
+                          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                          child: const Icon(Icons.layers_outlined),
+                        ),
+                        title: Text(m['material_name'] as String? ?? 'N/A', style: const TextStyle(fontWeight: FontWeight.bold)),
+                        subtitle: Text('Recorded on ${_formatDate(m['created_at'] as String?)}'),
+                        trailing: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('${m['quantity'] ?? 'N/A'} ${m['unit'] ?? ''}', style: Theme.of(context).textTheme.titleMedium),
+                            Text('₹${m['price'] ?? 'N/A'}', style: Theme.of(context).textTheme.bodySmall),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+          ),
+          const SizedBox(height: 16),
+          SectionCard(
+            title: 'Casting Data',
+            child: casting == null
+                ? const Text('Casting details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic))
+                : Wrap(
+                    spacing: 16,
+                    runSpacing: 16,
+                    children: <Widget>[
+                      _DetailChip(label: 'Sheet Type', value: casting['sheet_type'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Weight', value: '${casting['weight'] ?? 'N/A'} kg'),
+                      _DetailChip(label: 'Thickness', value: casting['thickness'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Gross Quantity', value: '${casting['gross_quantity'] ?? 'N/A'}'),
+                      _DetailChip(label: 'Machine No', value: casting['machine_no'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Start Time', value: _formatDateTime(casting['start_time'] as String?)),
+                      _DetailChip(label: 'End Time', value: _formatDateTime(casting['end_time'] as String?)),
+                      _DetailChip(label: 'Remarks', value: casting['remarks'] as String? ?? 'None'),
+                    ],
+                  ),
+          ),
+          const SizedBox(height: 16),
+          SectionCard(
+            title: 'Turning Data',
+            child: turning == null
+                ? const Text('Turning details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic))
+                : Wrap(
+                    spacing: 16,
+                    runSpacing: 16,
+                    children: <Widget>[
+                      _DetailChip(label: 'Receiving Date', value: _formatDateTime(turning['receiving_date'] as String?)),
+                      _DetailChip(label: 'Date of Turning', value: _formatDateTime(turning['date_of_turning'] as String?)),
+                      _DetailChip(label: 'Art No.', value: turning['art_no'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Machine No', value: turning['machine_no'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Hole Size', value: turning['hole_size'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Weight', value: '${turning['weight'] ?? 'N/A'} kg'),
+                      _DetailChip(label: 'Turned in Kgs', value: '${turning['turned_in_kgs'] ?? 'N/A'} kg'),
+                      _DetailChip(label: 'Gross Quantity', value: '${turning['gross_quantity'] ?? 'N/A'}'),
+                      _DetailChip(label: 'Semi Finish Thickness', value: turning['semi_finish_thickness'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Finish Thickness', value: turning['finish_thickness'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Operator', value: turning['operator'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Remarks', value: turning['remarks'] as String? ?? 'None'),
+                    ],
+                  ),
+          ),
+          const SizedBox(height: 16),
+          SectionCard(
+            title: 'Polish Data',
+            child: polish == null
+                ? const Text('Polishing details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic))
+                : Wrap(
+                    spacing: 16,
+                    runSpacing: 16,
+                    children: <Widget>[
+                      _DetailChip(label: 'Art No.', value: polish['art_no'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Receiving Date', value: _formatDateTime(polish['receiving_date'] as String?)),
+                      _DetailChip(label: 'Weight', value: '${polish['weight'] ?? 'N/A'} kg'),
+                      _DetailChip(label: 'In Gross', value: '${polish['gross_quantity'] ?? 'N/A'}'),
+                      _DetailChip(label: 'Polish Type', value: polish['polish_type'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Feeding Time', value: _formatDateTime(polish['feeding_time'] as String?)),
+                      _DetailChip(label: 'Out Time', value: _formatDateTime(polish['out_time'] as String?)),
+                      _DetailChip(label: 'Operator', value: polish['operator'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Remarks', value: polish['remarks'] as String? ?? 'None'),
+                    ],
+                  ),
+          ),
+          const SizedBox(height: 16),
+          SectionCard(
+            title: 'Packing Data',
+            child: packing == null
+                ? const Text('Packing details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic))
+                : Wrap(
+                    spacing: 16,
+                    runSpacing: 16,
+                    children: <Widget>[
+                      _DetailChip(label: 'Receiving Date', value: _formatDateTime(packing['receiving_date'] as String?)),
+                      _DetailChip(label: 'Art No.', value: packing['art_no'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Weight', value: '${packing['weight'] ?? 'N/A'} kg'),
+                      _DetailChip(label: 'In Gross', value: '${packing['in_gross'] ?? 'N/A'}'),
+                      _DetailChip(label: 'Finishing', value: packing['finishing'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Packed Qty (Gross)', value: '${packing['packed_qty'] ?? 'N/A'}'),
+                      _DetailChip(label: 'Rejected Qty', value: '${packing['rejected_qty'] ?? 'N/A'}'),
+                      _DetailChip(label: 'Short Qty', value: '${packing['short_qty'] ?? 'N/A'}'),
+                      _DetailChip(label: 'Excess Qty', value: '${packing['excess_qty'] ?? 'N/A'}'),
+                      _DetailChip(label: 'Operator', value: packing['operator'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Remarks (Rejection Reason)', value: packing['remarks'] as String? ?? 'None'),
+                    ],
+                  ),
           ),
         ],
       ),

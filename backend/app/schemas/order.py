@@ -110,6 +110,81 @@ class PackingUpdate(BaseModel):
     remarks: str | None = None
 
 
+class RawMaterialRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    material_name: str
+    quantity: float
+    unit: str
+    price: float
+    created_at: datetime
+
+
+class CastingRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    sheet_type: str | None = None
+    weight: float | None = None
+    thickness: str | None = None
+    gross_quantity: int | None = None
+    machine_no: str | None = None
+    start_time: datetime | None = None
+    end_time: datetime | None = None
+    remarks: str | None = None
+
+
+class TurningRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    receiving_date: datetime | None = None
+    date_of_turning: datetime | None = None
+    art_no: str | None = None
+    machine_no: str | None = None
+    hole_size: str | None = None
+    weight: float | None = None
+    turned_in_kgs: float | None = None
+    gross_quantity: int | None = None
+    semi_finish_thickness: str | None = None
+    finish_thickness: str | None = None
+    operator: str | None = None
+    remarks: str | None = None
+
+
+class PolishingRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    art_no: str | None = None
+    receiving_date: datetime | None = None
+    weight: float | None = None
+    polish_type: str | None = None
+    feeding_time: datetime | None = None
+    out_time: datetime | None = None
+    operator: str | None = None
+    gross_quantity: int | None = None
+    remarks: str | None = None
+
+
+class PackingRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    receiving_date: datetime | None = None
+    art_no: str | None = None
+    weight: float | None = None
+    in_gross: int | None = None
+    finishing: str | None = None
+    packed_qty: int | None = None
+    rejected_qty: int | None = None
+    short_qty: int | None = None
+    excess_qty: int | None = None
+    operator: str | None = None
+    remarks: str | None = None
+
+
 class OrderRead(OrderBase):
     model_config = ConfigDict(from_attributes=True)
 
@@ -119,6 +194,12 @@ class OrderRead(OrderBase):
     created_by_id: int | None = None
     created_at: datetime
     updated_at: datetime
+
+    raw_materials: list[RawMaterialRead] = []
+    casting_process: CastingRead | None = None
+    turning_process: TurningRead | None = None
+    polishing_process: PolishingRead | None = None
+    packing_process: PackingRead | None = None
 
 
 class OrderListItem(BaseModel):
