@@ -22,21 +22,19 @@ def add_raw_material(payload: RawMaterialCreate, db: Session = Depends(get_db), 
 @router.post('/casting/update', dependencies=[Depends(require_roles('super_admin', 'casting'))])
 def update_casting(payload: CastingUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> dict:
     service = OrderService(db)
-    order = service.get_by_token(payload.order_token)
-    if order is None:
+    created = service.update_casting(payload)
+    if created is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Order not found')
-    created = service.update_casting(order, payload)
-    return {'id': created.id, 'order_token': order.token, 'message': 'Casting updated'}
+    return {'id': created.id, 'order_token': payload.order_token, 'message': 'Casting updated'}
 
 
 @router.post('/turning/update', dependencies=[Depends(require_roles('super_admin', 'turning'))])
 def update_turning(payload: TurningUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> dict:
     service = OrderService(db)
-    order = service.get_by_token(payload.order_token)
-    if order is None:
+    created = service.update_turning(payload)
+    if created is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Order not found')
-    created = service.update_turning(order, payload)
-    return {'id': created.id, 'order_token': order.token, 'message': 'Turning updated'}
+    return {'id': created.id, 'order_token': payload.order_token, 'message': 'Turning updated'}
 
 
 @router.post('/polish/update', dependencies=[Depends(require_roles('super_admin', 'polish'))])
@@ -51,8 +49,7 @@ def update_polish(payload: PolishingUpdate, db: Session = Depends(get_db), curre
 @router.post('/packing/update', dependencies=[Depends(require_roles('super_admin', 'packing'))])
 def update_packing(payload: PackingUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> dict:
     service = OrderService(db)
-    order = service.get_by_token(payload.order_token)
-    if order is None:
+    created = service.update_packing(payload)
+    if created is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Order not found')
-    created = service.update_packing(order, payload)
-    return {'id': created.id, 'order_token': order.token, 'message': 'Packing updated'}
+    return {'id': created.id, 'order_token': payload.order_token, 'message': 'Packing updated'}

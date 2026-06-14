@@ -6,6 +6,7 @@ import 'package:btn_factory/features/orders/presentation/order_details_page.dart
 import 'package:btn_factory/features/orders/presentation/order_form_page.dart';
 import 'package:btn_factory/features/orders/presentation/order_list_page.dart';
 import 'package:btn_factory/features/reports/presentation/reports_page.dart';
+import 'package:btn_factory/features/staff/presentation/staff_page.dart';
 import 'package:btn_factory/shared/widgets/feature_placeholder_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,7 +42,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: <RouteBase>[
               GoRoute(
                 path: 'edit',
-                builder: (context, state) => const OrderFormPage(mode: OrderFormMode.edit),
+                builder: (context, state) => OrderFormPage(
+                  mode: OrderFormMode.edit,
+                  orderToken: state.pathParameters['token'],
+                ),
               ),
             ],
           ),
@@ -112,13 +116,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/staff',
-        builder: (context, state) => const FeaturePlaceholderPage(
-          title: 'Manage Staff',
-          subtitle: 'Create staff accounts, assign departments, and manage role-based access from this screen.',
-          icon: Icons.group_outlined,
-          selectedIndex: 0,
-        ),
+        builder: (context, state) => const StaffPage(),
       ),
     ],
   );
-});
+});

@@ -8,9 +8,10 @@ import 'package:flutter/material.dart';
 enum OrderFormMode { create, edit }
 
 class OrderFormPage extends ConsumerStatefulWidget {
-  const OrderFormPage({super.key, required this.mode});
+  const OrderFormPage({super.key, required this.mode, this.orderToken});
 
   final OrderFormMode mode;
+  final String? orderToken;
 
   @override
   ConsumerState<OrderFormPage> createState() => _OrderFormPageState();
@@ -18,22 +19,93 @@ class OrderFormPage extends ConsumerStatefulWidget {
 
 class _OrderFormPageState extends ConsumerState<OrderFormPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _companyController = TextEditingController(text: 'Alpha Metal Works');
-  final TextEditingController _poNumberController = TextEditingController(text: 'PO-1044');
-  final TextEditingController _holesController = TextEditingController(text: '4');
-  final TextEditingController _rateController = TextEditingController(text: '42.50');
-  final TextEditingController _quantityController = TextEditingController(text: '12000');
-  String? _castingType = 'Pressed';
-  String? _thickness = '1.2 mm';
-  String? _boxType = 'Export';
-  String? _linings = 'No';
-  String? _laser = 'Yes';
-  String? _polishType = 'Mirror';
-  String? _packingOption = 'Carton';
-  DateTime? _poDate = DateTime.now();
-  DateTime? _dispatchDate = DateTime.now().add(const Duration(days: 14));
+  final TextEditingController _companyController = TextEditingController();
+  final TextEditingController _poNumberController = TextEditingController();
+  final TextEditingController _holesController = TextEditingController();
+  final TextEditingController _rateController = TextEditingController();
+  final TextEditingController _quantityController = TextEditingController();
+  String? _castingType;
+  String? _thickness;
+  String? _boxType;
+  String? _linings;
+  String? _laser;
+  String? _polishType;
+  String? _packingOption;
+  DateTime? _poDate;
+  DateTime? _dispatchDate;
   String? _poImageName;
   String? _buttonImageName;
+  
+  bool _isSubmitting = false;
+  bool _isLoadingOrder = false;
+  String? _loadError;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.mode == OrderFormMode.edit && widget.orderToken != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _fetchOrderDetails());
+    } else {
+      // Set default values for Create Mode
+      _companyController.text = 'Alpha Metal Works';
+      _poNumberController.text = 'PO-1044';
+      _holesController.text = '4';
+      _rateController.text = '42.50';
+      _quantityController.text = '12000';
+      _castingType = 'Pressed';
+      _thickness = '1.2 mm';
+      _boxType = 'Export';
+      _linings = 'No';
+      _laser = 'Yes';
+      _polishType = 'Mirror';
+      _packingOption = 'Carton';
+      _poDate = DateTime.now();
+      _dispatchDate = DateTime.now().add(const Duration(days: 14));
+    }
+  }
+
+  Future<void> _fetchOrderDetails() async {
+    setState(() {
+      _isLoadingOrder = true;
+      _loadError = null;
+    });
+
+    try {
+      final dio = ref.read(dioProvider);
+      final response = await dio.get('/orders/${widget.orderToken}');
+      final order = response.data as Map<String, dynamic>;
+
+      setState(() {
+        _companyController.text = order['company_name'] as String? ?? '';
+        _poNumberController.text = order['po_number'] as String? ?? '';
+        _holesController.text = order['holes'] as String? ?? '';
+        _rateController.text = order['rate']?.toString() ?? '';
+        _quantityController.text = order['quantity']?.toString() ?? '';
+        _castingType = order['casting_type'] as String?;
+        _thickness = order['thickness'] as String?;
+        _boxType = order['box_type'] as String?;
+        _linings = order['linings'] as String?;
+        _laser = order['laser'] as String?;
+        _polishType = order['polish_type'] as String?;
+        _packingOption = order['packing_option'] as String?;
+
+        if (order['po_date'] != null) {
+          _poDate = DateTime.tryParse(order['po_date'] as String);
+        }
+        if (order['dispatch_date'] != null) {
+          _dispatchDate = DateTime.tryParse(order['dispatch_date'] as String);
+        }
+        _poImageName = order['po_image'] as String?;
+        _buttonImageName = order['button_image'] as String?;
+        _isLoadingOrder = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingOrder = false;
+        _loadError = 'Failed to load order details: $e';
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -84,7 +156,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
 
   Widget _buildDropdown(String label, String? value, List<String> options, ValueChanged<String?> onChanged) {
     return DropdownButtonFormField<String>(
-      initialValue: value,
+      value: value,
       decoration: InputDecoration(labelText: label),
       items: options.map((option) => DropdownMenuItem<String>(value: option, child: Text(option))).toList(growable: false),
       onChanged: onChanged,
@@ -93,7 +165,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
   }
 
   Widget _buildDateField(String label, DateTime? selectedDate, VoidCallback onTap) {
-    final String value = _selectedDateLabel(selectedDate, label);
+    final String displayValue = _selectedDateLabel(selectedDate, label);
 
     return InkWell(
       onTap: onTap,
@@ -103,7 +175,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
           children: <Widget>[
             const Icon(Icons.date_range_outlined),
             const SizedBox(width: 10),
-            Text(value),
+            Text(displayValue),
           ],
         ),
       ),
@@ -132,10 +204,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
       return;
     }
 
-    if (_poImageName == null || _buttonImageName == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Upload both PO image and button image before submitting.')));
-      return;
-    }
+    setState(() => _isSubmitting = true);
 
     try {
       final Dio dio = ref.read(dioProvider);
@@ -158,19 +227,64 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
         'button_image': _buttonImageName,
       };
 
-      final Response response = await dio.post('/orders/create', data: payload);
+      final Response response;
+      if (widget.mode == OrderFormMode.edit && widget.orderToken != null) {
+        response = await dio.put('/orders/update/${widget.orderToken}', data: payload);
+      } else {
+        response = await dio.post('/orders/create', data: payload);
+      }
+
       final data = response.data as Map<String, dynamic>;
       final token = data['token'] as String?;
+      
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(token != null ? 'Order created. Token: $token' : 'Order created')));
+      
+      if (widget.mode == OrderFormMode.edit) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Order updated successfully')));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(token != null ? 'Order created. Token: $token' : 'Order created')));
+      }
+      
+      Navigator.of(context).pop(true); // Return true to signal success/refresh
+    } on DioException catch (e) {
+      if (!mounted) return;
+      final detail = e.response?.data is Map ? (e.response!.data as Map)['detail'] ?? e.message : e.message;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed: $detail')));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to create order: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to save order: $e')));
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoadingOrder) {
+      return AppScaffold(
+        selectedIndex: 1,
+        title: widget.mode == OrderFormMode.create ? 'Create Order' : 'Edit Order',
+        child: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_loadError != null) {
+      return AppScaffold(
+        selectedIndex: 1,
+        title: widget.mode == OrderFormMode.create ? 'Create Order' : 'Edit Order',
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(_loadError!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              const SizedBox(height: 12),
+              OutlinedButton(onPressed: _fetchOrderDetails, child: const Text('Retry')),
+            ],
+          ),
+        ),
+      );
+    }
+
     return AppScaffold(
       selectedIndex: 1,
       title: widget.mode == OrderFormMode.create ? 'Create Order' : 'Edit Order',
@@ -178,7 +292,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
         padding: const EdgeInsets.all(20),
         children: <Widget>[
           Text(
-            widget.mode == OrderFormMode.create ? 'Create a new job card' : 'Reuse the same widgets to edit an existing order',
+            widget.mode == OrderFormMode.create ? 'Create a new job card' : 'Edit the details of this manufacturing order.',
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 20),
@@ -255,8 +369,10 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                 _buildUploadTile(label: 'Button Image', fileName: _buttonImageName, onPressed: () => _pickImage(false)),
                 const SizedBox(height: 24),
                 FilledButton(
-                  onPressed: _submit,
-                  child: Text(widget.mode == OrderFormMode.create ? 'Create Order' : 'Save Changes'),
+                  onPressed: _isSubmitting ? null : _submit,
+                  child: _isSubmitting
+                      ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                      : Text(widget.mode == OrderFormMode.create ? 'Create Order' : 'Save Changes'),
                 ),
               ],
             ),
@@ -266,3 +382,4 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
     );
   }
 }
+

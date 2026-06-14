@@ -1,33 +1,124 @@
 import 'package:btn_factory/shared/widgets/app_scaffold.dart';
 import 'package:btn_factory/shared/widgets/section_card.dart';
+import 'package:btn_factory/core/network/api_client.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
 
-class OrderDetailsPage extends StatelessWidget {
+class OrderDetailsPage extends ConsumerStatefulWidget {
   const OrderDetailsPage({super.key, required this.orderToken});
 
   final String orderToken;
 
   @override
+  ConsumerState<OrderDetailsPage> createState() => _OrderDetailsPageState();
+}
+
+class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
+  Map<String, dynamic>? _order;
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _fetchOrder());
+  }
+
+  Future<void> _fetchOrder() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+    try {
+      final dio = ref.read(dioProvider);
+      final response = await dio.get('/orders/${widget.orderToken}');
+      setState(() {
+        _order = response.data as Map<String, dynamic>;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _error = 'Failed to load order: $e';
+      });
+    }
+  }
+
+  String _formatDate(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return 'N/A';
+    try {
+      final dt = DateTime.parse(dateStr);
+      return DateFormat('dd MMM yyyy').format(dt);
+    } catch (_) {
+      return dateStr;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final formatter = DateFormat('dd MMM yyyy');
+    if (_isLoading) {
+      return AppScaffold(
+        selectedIndex: 1,
+        title: 'Order ${widget.orderToken}',
+        child: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_error != null) {
+      return AppScaffold(
+        selectedIndex: 1,
+        title: 'Order ${widget.orderToken}',
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              const SizedBox(height: 12),
+              OutlinedButton(onPressed: _fetchOrder, child: const Text('Retry')),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final order = _order!;
 
     return AppScaffold(
       selectedIndex: 1,
-      title: 'Order $orderToken',
+      title: 'Order ${widget.orderToken}',
       child: ListView(
         padding: const EdgeInsets.all(20),
         children: <Widget>[
           SectionCard(
             title: 'Company Details',
-            trailing: const Chip(label: Text('Processing')),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Chip(label: Text(order['status'] as String? ?? 'Created')),
+                const SizedBox(width: 8),
+                IconButton(
+                  icon: const Icon(Icons.edit_outlined),
+                  tooltip: 'Edit Order',
+                  onPressed: () async {
+                    final result = await context.push('/orders/${widget.orderToken}/edit');
+                    if (result == true) {
+                      _fetchOrder();
+                    }
+                  },
+                ),
+              ],
+            ),
             child: Wrap(
+
               spacing: 16,
               runSpacing: 16,
               children: <Widget>[
-                _DetailChip(label: 'Company Name', value: 'Alpha Metal Works'),
-                _DetailChip(label: 'PO Number', value: 'PO-1044'),
-                _DetailChip(label: 'PO Date', value: formatter.format(DateTime(2025, 5, 10))),
+                _DetailChip(label: 'Company Name', value: order['company_name'] as String? ?? 'N/A'),
+                _DetailChip(label: 'PO Number', value: order['po_number'] as String? ?? 'N/A'),
+                _DetailChip(label: 'PO Date', value: _formatDate(order['po_date'] as String?)),
+                _DetailChip(label: 'Token', value: order['token'] as String? ?? 'N/A'),
               ],
             ),
           ),
@@ -37,74 +128,28 @@ class OrderDetailsPage extends StatelessWidget {
             child: Wrap(
               spacing: 16,
               runSpacing: 16,
-              children: const <Widget>[
-                _DetailChip(label: 'Casting', value: 'Pressed'),
-                _DetailChip(label: 'Thickness', value: '1.2 mm'),
-                _DetailChip(label: 'Quantity', value: '12,000'),
-                _DetailChip(label: 'Rate', value: '₹42.50'),
+              children: <Widget>[
+                _DetailChip(label: 'Casting', value: order['casting_type'] as String? ?? 'N/A'),
+                _DetailChip(label: 'Thickness', value: order['thickness'] as String? ?? 'N/A'),
+                _DetailChip(label: 'Holes', value: order['holes'] as String? ?? 'N/A'),
+                _DetailChip(label: 'Box Type', value: order['box_type'] as String? ?? 'N/A'),
+                _DetailChip(label: 'Quantity', value: '${order['quantity'] ?? 'N/A'}'),
+                _DetailChip(label: 'Rate', value: '₹${order['rate'] ?? 'N/A'}'),
+                _DetailChip(label: 'Linings', value: order['linings'] as String? ?? 'N/A'),
+                _DetailChip(label: 'Laser', value: order['laser'] as String? ?? 'N/A'),
+                _DetailChip(label: 'Polish Type', value: order['polish_type'] as String? ?? 'N/A'),
+                _DetailChip(label: 'Packing Option', value: order['packing_option'] as String? ?? 'N/A'),
               ],
             ),
           ),
           const SizedBox(height: 16),
           SectionCard(
-            title: 'Raw Materials',
+            title: 'Dispatch',
             child: Wrap(
               spacing: 16,
               runSpacing: 16,
-              children: const <Widget>[
-                _DetailChip(label: 'Material Name', value: 'Brass Coil'),
-                _DetailChip(label: 'Quantity', value: '540 kg'),
-                _DetailChip(label: 'Price', value: '₹96,000'),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          SectionCard(
-            title: 'Casting Data',
-            child: Wrap(
-              spacing: 16,
-              runSpacing: 16,
-              children: const <Widget>[
-                _DetailChip(label: 'Weight', value: '2.4 kg'),
-                _DetailChip(label: 'Gross Quantity', value: '12,000'),
-                _DetailChip(label: 'Machine', value: 'CAST-04'),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          SectionCard(
-            title: 'Turning Data',
-            child: Wrap(
-              spacing: 16,
-              runSpacing: 16,
-              children: const <Widget>[
-                _DetailChip(label: 'Machine', value: 'TURN-08'),
-                _DetailChip(label: 'Thickness', value: '1.15 mm'),
-                _DetailChip(label: 'Quantity', value: '11,850'),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          SectionCard(
-            title: 'Polish Data',
-            child: Wrap(
-              spacing: 16,
-              runSpacing: 16,
-              children: const <Widget>[
-                _DetailChip(label: 'Polish Type', value: 'Mirror'),
-                _DetailChip(label: 'Quantity', value: '11,700'),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          SectionCard(
-            title: 'Packing Data',
-            child: Wrap(
-              spacing: 16,
-              runSpacing: 16,
-              children: const <Widget>[
-                _DetailChip(label: 'Packed Qty', value: '11,600'),
-                _DetailChip(label: 'Rejected Qty', value: '100'),
+              children: <Widget>[
+                _DetailChip(label: 'Dispatch Date', value: _formatDate(order['dispatch_date'] as String?)),
               ],
             ),
           ),
@@ -114,9 +159,9 @@ class OrderDetailsPage extends StatelessWidget {
             child: Wrap(
               spacing: 16,
               runSpacing: 16,
-              children: const <Widget>[
-                _PreviewCard(title: 'PO Image'),
-                _PreviewCard(title: 'Button Image'),
+              children: <Widget>[
+                _PreviewCard(title: 'PO Image', fileName: order['po_image'] as String?),
+                _PreviewCard(title: 'Button Image', fileName: order['button_image'] as String?),
               ],
             ),
           ),
@@ -156,9 +201,10 @@ class _DetailChip extends StatelessWidget {
 }
 
 class _PreviewCard extends StatelessWidget {
-  const _PreviewCard({required this.title});
+  const _PreviewCard({required this.title, this.fileName});
 
   final String title;
+  final String? fileName;
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +215,19 @@ class _PreviewCard extends StatelessWidget {
         color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(18),
       ),
-      child: Center(child: Text(title)),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(title),
+            if (fileName != null) ...[
+              const SizedBox(height: 4),
+              Text(fileName!, style: Theme.of(context).textTheme.bodySmall),
+            ] else
+              Text('No file', style: Theme.of(context).textTheme.bodySmall),
+          ],
+        ),
+      ),
     );
   }
 }

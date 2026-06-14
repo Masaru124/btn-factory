@@ -1,8 +1,8 @@
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict
 
 
 class LoginRequest(BaseModel):
-    email: EmailStr
+    email: str
     password: str
 
 
@@ -15,9 +15,10 @@ class UserAuthResponse(BaseModel):
 
     id: int
     name: str
-    email: EmailStr
+    email: str
     role: str
     department: str | None = None
+
 
 
 class TokenResponse(BaseModel):
@@ -25,3 +26,22 @@ class TokenResponse(BaseModel):
     refresh_token: str
     token_type: str = 'bearer'
     user: UserAuthResponse
+
+
+class UserCreate(BaseModel):
+    name: str
+    email: str
+    password: str
+    role: str
+    department: str | None = None
+
+
+class UserUpdate(BaseModel):
+    name: str | None = None
+    email: str | None = None
+    password: str | None = None
+    role: str | None = None
+    department: str | None = None
+    is_active: bool | None = None
+
+

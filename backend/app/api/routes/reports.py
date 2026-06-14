@@ -21,3 +21,10 @@ def production_report(payload: DateRangeRequest, db: Session = Depends(get_db)) 
 def revenue_report(db: Session = Depends(get_db)) -> dict:
     service = ReportService(db)
     return service.revenue_summary()
+
+
+@router.get('/summary', dependencies=[Depends(require_roles('super_admin'))])
+def reports_summary(db: Session = Depends(get_db)) -> dict:
+    service = ReportService(db)
+    return service.reports_summary()
+
