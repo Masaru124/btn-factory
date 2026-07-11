@@ -31,12 +31,12 @@ def run_seed() -> None:
             print('Admin user already exists')
 
         # create a sample order
-        existing = db.query(Order).filter(Order.po_number == 'PO-0001').first()
+        existing = db.query(Order).filter(Order.company_name == 'Seed Co').first()
         if existing is None:
             order = Order(
                 token=uuid4().hex[:20],
                 company_name='Seed Co',
-                po_number='PO-0001',
+                po_number=None,
                 po_date=date.today(),
                 casting_type='Pressed',
                 thickness='1.2 mm',
@@ -55,7 +55,7 @@ def run_seed() -> None:
             )
             db.add(order)
             db.commit()
-            print('Created sample order PO-0001')
+            print('Created sample order for Seed Co')
         else:
             print('Sample order already exists')
 

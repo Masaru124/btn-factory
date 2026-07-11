@@ -59,10 +59,12 @@ class OrderService:
         if order is None:
             return None
 
-        for field, value in payload.model_dump(exclude_unset=True).items():
+        payload_data = payload.model_dump(exclude_unset=True)
+        for field, value in payload_data.items():
             setattr(order, field, value)
 
-        order.status = recompute_order_status(order)
+        if 'status' not in payload_data:
+            order.status = recompute_order_status(order)
         self.session.flush()
         self.session.commit()
         self.session.refresh(order)

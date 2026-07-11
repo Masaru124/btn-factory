@@ -10,6 +10,24 @@ from app.services.order_service import OrderService
 router = APIRouter()
 
 
+def scrub_order_by_role(order_read: OrderRead, role: str) -> OrderRead:
+    if role == 'super_admin':
+        return order_read
+
+    if role != 'raw_material':
+        order_read.raw_materials = []
+    if role != 'casting':
+        order_read.casting_process = None
+    if role != 'turning':
+        order_read.turning_process = None
+    if role != 'polish':
+        order_read.polishing_process = None
+    if role != 'packing':
+        order_read.packing_process = None
+
+    return order_read
+
+
 @router.post('/create', response_model=OrderRead)
 def create_order(payload: OrderCreate, db: Session = Depends(get_db)) -> OrderRead:
     service = OrderService(db)
@@ -20,7 +38,7 @@ def create_order(payload: OrderCreate, db: Session = Depends(get_db)) -> OrderRe
 @router.get('/list', response_model=list[OrderRead])
 def list_orders(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> list[OrderRead]:
     service = OrderService(db)
-    return [OrderRead.model_validate(order) for order in service.list_orders()]
+    return [scrub_order_by_role(OrderRead.model_validate(order), current_user.role) for order in service.list_orders()]
 
 
 @router.get('/{token}', response_model=OrderRead)
@@ -29,7 +47,7 @@ def get_order(token: str, db: Session = Depends(get_db), current_user: User = De
     order = service.get_order(token)
     if order is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Order not found')
-    return OrderRead.model_validate(order)
+    return scrub_order_by_role(OrderRead.model_validate(order), current_user.role)
 
 
 @router.put('/update/{token}', response_model=OrderRead, dependencies=[Depends(require_roles('super_admin'))])

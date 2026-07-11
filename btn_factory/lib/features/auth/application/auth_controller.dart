@@ -10,20 +10,25 @@ final authControllerProvider = AsyncNotifierProvider<AuthController, AuthState>(
 class AuthController extends AsyncNotifier<AuthState> {
   @override
   Future<AuthState> build() async {
-    final storage = ref.read(secureStorageProvider);
-    final token = await storage.read(AppStorageKeys.accessToken);
+    try {
+      final storage = ref.read(secureStorageProvider);
+      final token = await storage.read(AppStorageKeys.accessToken);
 
-    if (token == null || token.isEmpty) {
-      return AuthState.unauthenticated();
+      if (token == null || token.isEmpty) {
+        return AuthState.unauthenticated();
+      }
+
+      return AuthState.authenticated(
+        accessToken: token,
+        userName: await storage.read(AppStorageKeys.userName) ?? 'Super Admin',
+        userEmail: await storage.read(AppStorageKeys.userEmail) ?? 'admin@factory.local',
+        userRole: await storage.read(AppStorageKeys.userRole) ?? 'super_admin',
+        userDepartment: await storage.read(AppStorageKeys.userDepartment) ?? 'admin',
+      );
+    } catch (e, stackTrace) {
+      print('Error during auth initialization: $e');
+      return AuthState.unauthenticated(errorMessage: e.toString());
     }
-
-    return AuthState.authenticated(
-      accessToken: token,
-      userName: await storage.read(AppStorageKeys.userName) ?? 'Super Admin',
-      userEmail: await storage.read(AppStorageKeys.userEmail) ?? 'admin@factory.local',
-      userRole: await storage.read(AppStorageKeys.userRole) ?? 'super_admin',
-      userDepartment: await storage.read(AppStorageKeys.userDepartment) ?? 'admin',
-    );
   }
 
   Future<bool> login({required String email, required String password}) async {

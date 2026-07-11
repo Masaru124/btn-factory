@@ -3,6 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+class NavItem {
+  final IconData icon;
+  final String label;
+  final String route;
+
+  const NavItem(this.icon, this.label, this.route);
+}
+
 class AppScaffold extends ConsumerWidget {
   const AppScaffold({
     super.key,
@@ -15,70 +23,95 @@ class AppScaffold extends ConsumerWidget {
   final String title;
   final Widget child;
 
-  void _navigate(BuildContext context, int index) {
+  List<NavItem> _getNavItems(String role) {
+    final base = [
+      const NavItem(Icons.dashboard_outlined, 'Dashboard', '/dashboard'),
+      const NavItem(Icons.list_alt_outlined, 'Orders', '/orders'),
+    ];
+    switch (role) {
+      case 'super_admin':
+        return [
+          ...base,
+          const NavItem(Icons.grain_outlined, 'Raw', '/raw-material'),
+          const NavItem(Icons.local_fire_department_outlined, 'Casting', '/casting'),
+          const NavItem(Icons.precision_manufacturing_outlined, 'Turning', '/turning'),
+          const NavItem(Icons.auto_fix_high_outlined, 'Polish', '/polish'),
+          const NavItem(Icons.inventory_2_outlined, 'Packing', '/packing'),
+          const NavItem(Icons.assessment_outlined, 'Reports', '/reports'),
+        ];
+      case 'raw_material':
+        return [...base, const NavItem(Icons.grain_outlined, 'Raw', '/raw-material')];
+      case 'casting':
+        return [...base, const NavItem(Icons.local_fire_department_outlined, 'Casting', '/casting')];
+      case 'turning':
+        return [...base, const NavItem(Icons.precision_manufacturing_outlined, 'Turning', '/turning')];
+      case 'polish':
+        return [...base, const NavItem(Icons.auto_fix_high_outlined, 'Polish', '/polish')];
+      case 'packing':
+        return [...base, const NavItem(Icons.inventory_2_outlined, 'Packing', '/packing')];
+      default:
+        return base;
+    }
+  }
+
+  String _getRouteForStaticIndex(int index) {
     switch (index) {
       case 0:
-        context.go('/dashboard');
-        return;
+        return '/dashboard';
       case 1:
-        context.go('/orders');
-        return;
+        return '/orders';
       case 2:
-        context.go('/raw-material');
-        return;
+        return '/raw-material';
       case 3:
-        context.go('/casting');
-        return;
+        return '/casting';
       case 4:
-        context.go('/turning');
-        return;
+        return '/turning';
       case 5:
-        context.go('/polish');
-        return;
+        return '/polish';
       case 6:
-        context.go('/packing');
-        return;
+        return '/packing';
       case 7:
-        context.go('/reports');
-        return;
+        return '/reports';
+      default:
+        return '/dashboard';
     }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authControllerProvider).value;
+    final userRole = authState?.userRole ?? 'super_admin';
+    final navItems = _getNavItems(userRole);
+
+    final currentRoute = _getRouteForStaticIndex(selectedIndex);
+    int activeNavIndex = navItems.indexWhere((item) => item.route == currentRoute);
+    if (activeNavIndex == -1) {
+      activeNavIndex = 0;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
         actions: <Widget>[
           Padding(
             padding: const EdgeInsets.only(right: 8),
-            child: TextButton.icon(
-              onPressed: () async {
-                await ref.read(authControllerProvider.notifier).logout();
-                if (context.mounted) {
-                  context.go('/login');
-                }
-              },
-              icon: const Icon(Icons.logout),
-              label: const Text('Sign out'),
+            child: IconButton(
+              icon: const Icon(Icons.account_circle_outlined),
+              tooltip: 'User Profile',
+              onPressed: () => context.go('/profile'),
             ),
           ),
         ],
       ),
       body: SafeArea(child: child),
       bottomNavigationBar: NavigationBar(
-        selectedIndex: selectedIndex,
-        onDestinationSelected: (int index) => _navigate(context, index),
-        destinations: const <NavigationDestination>[
-          NavigationDestination(icon: Icon(Icons.dashboard_outlined), label: 'Dashboard'),
-          NavigationDestination(icon: Icon(Icons.list_alt_outlined), label: 'Orders'),
-          NavigationDestination(icon: Icon(Icons.grain_outlined), label: 'Raw'),
-          NavigationDestination(icon: Icon(Icons.local_fire_department_outlined), label: 'Casting'),
-          NavigationDestination(icon: Icon(Icons.precision_manufacturing_outlined), label: 'Turning'),
-          NavigationDestination(icon: Icon(Icons.auto_fix_high_outlined), label: 'Polish'),
-          NavigationDestination(icon: Icon(Icons.inventory_2_outlined), label: 'Packing'),
-          NavigationDestination(icon: Icon(Icons.assessment_outlined), label: 'Reports'),
-        ],
+        selectedIndex: activeNavIndex,
+        onDestinationSelected: (int index) {
+          context.go(navItems[index].route);
+        },
+        destinations: navItems
+            .map((item) => NavigationDestination(icon: Icon(item.icon), label: item.label))
+            .toList(),
       ),
     );
   }

@@ -1,4 +1,6 @@
+import 'package:btn_factory/features/auth/application/auth_controller.dart';
 import 'package:btn_factory/features/auth/presentation/login_page.dart';
+import 'package:btn_factory/features/auth/presentation/profile_page.dart';
 import 'package:btn_factory/features/auth/presentation/splash_page.dart';
 import 'package:btn_factory/features/dashboard/presentation/dashboard_page.dart';
 import 'package:btn_factory/features/departments/presentation/department_update_page.dart';
@@ -13,8 +15,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
+  final authStateVal = ref.watch(authControllerProvider);
+  final authState = authStateVal.value;
+
   return GoRouter(
     initialLocation: '/',
+    redirect: (context, state) {
+      if (authState == null) {
+        return null;
+      }
+      final isAuthenticated = authState.isAuthenticated;
+      final isLoggingIn = state.matchedLocation == '/login';
+      final isSplash = state.matchedLocation == '/';
+
+      if (!isAuthenticated) {
+        if (!isLoggingIn) {
+          return '/login';
+        }
+      } else {
+        if (isLoggingIn || isSplash) {
+          return '/dashboard';
+        }
+      }
+      return null;
+    },
     routes: <RouteBase>[
       GoRoute(
         path: '/',
@@ -68,7 +92,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           selectedIndex: 3,
           description: 'Update casting metrics after the order reaches the casting line.',
           currentStatusLabel: 'Raw Material Updated',
-          fieldLabels: <String>['Sheet Type', 'Weight', 'Thickness', 'Gross Quantity', 'Machine No', 'Start Time', 'End Time', 'Remarks'],
+          fieldLabels: <String>['Casting Type', 'Weight', 'Thickness', 'Gross Quantity', 'Machine No', 'Start Time', 'End Time', 'Remarks'],
         ),
       ),
       GoRoute(
@@ -117,6 +141,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/staff',
         builder: (context, state) => const StaffPage(),
+      ),
+      GoRoute(
+        path: '/profile',
+        builder: (context, state) => const ProfilePage(),
       ),
     ],
   );

@@ -20,21 +20,21 @@ class OrderFormPage extends ConsumerStatefulWidget {
 class _OrderFormPageState extends ConsumerState<OrderFormPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _companyController = TextEditingController();
-  final TextEditingController _poNumberController = TextEditingController();
   final TextEditingController _holesController = TextEditingController();
   final TextEditingController _rateController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
+  final TextEditingController _laserController = TextEditingController();
   String? _castingType;
   String? _thickness;
   String? _boxType;
   String? _linings;
-  String? _laser;
   String? _polishType;
   String? _packingOption;
   DateTime? _poDate;
   DateTime? _dispatchDate;
   String? _poImageName;
   String? _buttonImageName;
+  String? _status;
   
   bool _isSubmitting = false;
   bool _isLoadingOrder = false;
@@ -48,15 +48,14 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
     } else {
       // Set default values for Create Mode
       _companyController.text = 'Alpha Metal Works';
-      _poNumberController.text = 'PO-1044';
       _holesController.text = '4';
       _rateController.text = '42.50';
       _quantityController.text = '12000';
       _castingType = 'Pressed';
       _thickness = '1.2 mm';
-      _boxType = 'Export';
+      _boxType = 'DD';
       _linings = 'No';
-      _laser = 'Yes';
+      _laserController.text = 'Logo';
       _polishType = 'Mirror';
       _packingOption = 'Carton';
       _poDate = DateTime.now();
@@ -77,7 +76,6 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
 
       setState(() {
         _companyController.text = order['company_name'] as String? ?? '';
-        _poNumberController.text = order['po_number'] as String? ?? '';
         _holesController.text = order['holes'] as String? ?? '';
         _rateController.text = order['rate']?.toString() ?? '';
         _quantityController.text = order['quantity']?.toString() ?? '';
@@ -85,9 +83,10 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
         _thickness = order['thickness'] as String?;
         _boxType = order['box_type'] as String?;
         _linings = order['linings'] as String?;
-        _laser = order['laser'] as String?;
+        _laserController.text = order['laser'] as String? ?? '';
         _polishType = order['polish_type'] as String?;
         _packingOption = order['packing_option'] as String?;
+        _status = order['status'] as String?;
 
         if (order['po_date'] != null) {
           _poDate = DateTime.tryParse(order['po_date'] as String);
@@ -110,10 +109,10 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
   @override
   void dispose() {
     _companyController.dispose();
-    _poNumberController.dispose();
     _holesController.dispose();
     _rateController.dispose();
     _quantityController.dispose();
+    _laserController.dispose();
     super.dispose();
   }
 
@@ -210,7 +209,6 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
       final Dio dio = ref.read(dioProvider);
       final Map<String, dynamic> payload = {
         'company_name': _companyController.text.trim(),
-        'po_number': _poNumberController.text.trim(),
         'po_date': _poDate?.toIso8601String().split('T').first,
         'casting_type': _castingType,
         'thickness': _thickness,
@@ -219,12 +217,13 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
         'rate': double.tryParse(_rateController.text) ?? 0.0,
         'quantity': int.tryParse(_quantityController.text) ?? 0,
         'linings': _linings,
-        'laser': _laser,
+        'laser': _laserController.text.trim(),
         'polish_type': _polishType,
         'packing_option': _packingOption,
         'dispatch_date': _dispatchDate?.toIso8601String().split('T').first,
         'po_image': _poImageName,
         'button_image': _buttonImageName,
+        if (widget.mode == OrderFormMode.edit && _status != null) 'status': _status,
       };
 
       final Response response;
@@ -309,12 +308,6 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                   validator: (value) => value == null || value.trim().isEmpty ? 'Company name is required' : null,
                 ),
                 const SizedBox(height: 16),
-                TextFormField(
-                  controller: _poNumberController,
-                  decoration: const InputDecoration(labelText: 'PO Number'),
-                  validator: (value) => value == null || value.trim().isEmpty ? 'PO number is required' : null,
-                ),
-                const SizedBox(height: 16),
                 _buildDateField('PO Date', _poDate, () => _pickDate(true)),
                 const SizedBox(height: 16),
                 _buildUploadTile(label: 'PO Image', fileName: _poImageName, onPressed: () => _pickImage(true)),
@@ -342,7 +335,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                           keyboardType: TextInputType.number,
                           validator: (value) => value == null || value.trim().isEmpty ? 'Holes are required' : null,
                         ),
-                        _buildDropdown('Box Type', _boxType, const <String>['Export', 'Retail', 'Bulk'], (value) => setState(() => _boxType = value)),
+                        _buildDropdown('Box Type', _boxType, const <String>['DD', 'SD'], (value) => setState(() => _boxType = value)),
                         TextFormField(
                           controller: _rateController,
                           decoration: const InputDecoration(labelText: 'Rate'),
@@ -356,7 +349,10 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                           validator: (value) => value == null || value.trim().isEmpty ? 'Quantity is required' : null,
                         ),
                         _buildDropdown('Linings', _linings, const <String>['Yes', 'No'], (value) => setState(() => _linings = value)),
-                        _buildDropdown('Laser', _laser, const <String>['Yes', 'No'], (value) => setState(() => _laser = value)),
+                        TextFormField(
+                          controller: _laserController,
+                          decoration: const InputDecoration(labelText: 'Laser'),
+                        ),
                         _buildDropdown('Polish Type', _polishType, const <String>['Mirror', 'Matt', 'Antique'], (value) => setState(() => _polishType = value)),
                         _buildDropdown('Packing Option', _packingOption, const <String>['Carton', 'Bag', 'Pallet'], (value) => setState(() => _packingOption = value)),
                       ],
@@ -367,6 +363,26 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                 _buildDateField('Dispatch Date', _dispatchDate, () => _pickDate(false)),
                 const SizedBox(height: 16),
                 _buildUploadTile(label: 'Button Image', fileName: _buttonImageName, onPressed: () => _pickImage(false)),
+                if (widget.mode == OrderFormMode.edit && _status != null) ...[
+                  const SizedBox(height: 24),
+                  Text('Order Status', style: Theme.of(context).textTheme.titleLarge),
+                  const SizedBox(height: 12),
+                  _buildDropdown(
+                    'Current Status',
+                    _status,
+                    const <String>[
+                      'Created',
+                      'Raw Material Updated',
+                      'Casting Completed',
+                      'Turning Completed',
+                      'Polishing Completed',
+                      'Packing Completed',
+                      'Ready To Dispatch',
+                      'Dispatched',
+                    ],
+                    (value) => setState(() => _status = value),
+                  ),
+                ],
                 const SizedBox(height: 24),
                 FilledButton(
                   onPressed: _isSubmitting ? null : _submit,

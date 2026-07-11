@@ -111,11 +111,14 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             else
               LayoutBuilder(
                 builder: (context, constraints) {
-                  final crossAxisCount = constraints.maxWidth >= 1100
-                      ? 5
-                      : constraints.maxWidth >= 700
-                          ? 3
-                          : 2;
+                  final is_admin = authState?.userRole == 'super_admin';
+                  final crossAxisCount = is_admin
+                      ? (constraints.maxWidth >= 1100
+                          ? 5
+                          : (constraints.maxWidth >= 700 ? 3 : 2))
+                      : (constraints.maxWidth >= 900
+                          ? 4
+                          : (constraints.maxWidth >= 600 ? 2 : 1));
 
                   return GridView.count(
                     shrinkWrap: true,
@@ -149,12 +152,13 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                         icon: Icons.verified_outlined,
                         tint: Colors.green,
                       ),
-                      MetricCard(
-                        title: 'Revenue',
-                        value: _formatCurrency(_revenue),
-                        icon: Icons.currency_rupee_outlined,
-                        tint: Colors.purple,
-                      ),
+                      if (is_admin)
+                        MetricCard(
+                          title: 'Revenue',
+                          value: _formatCurrency(_revenue),
+                          icon: Icons.currency_rupee_outlined,
+                          tint: Colors.purple,
+                        ),
                     ],
                   );
                 },
@@ -166,11 +170,69 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               spacing: 12,
               runSpacing: 12,
               children: <Widget>[
-                FilledButton.icon(onPressed: () => context.go('/orders/create'), icon: const Icon(Icons.add), label: const Text('Create Order')),
-                FilledButton.tonalIcon(onPressed: () => context.go('/orders'), icon: const Icon(Icons.list_alt_outlined), label: const Text('View Orders')),
-                FilledButton.tonalIcon(onPressed: () => context.go('/staff'), icon: const Icon(Icons.group_outlined), label: const Text('Manage Staff')),
-                FilledButton.tonalIcon(onPressed: () => context.go('/reports'), icon: const Icon(Icons.description_outlined), label: const Text('Reports')),
-                FilledButton.tonalIcon(onPressed: () => context.go('/analytics'), icon: const Icon(Icons.insights_outlined), label: const Text('Analytics')),
+                if (authState?.userRole == 'super_admin') ...[
+                  FilledButton.icon(
+                    onPressed: () => context.go('/orders/create'),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Create Order'),
+                  ),
+                  FilledButton.tonalIcon(
+                    onPressed: () => context.go('/orders'),
+                    icon: const Icon(Icons.list_alt_outlined),
+                    label: const Text('View Orders'),
+                  ),
+                  FilledButton.tonalIcon(
+                    onPressed: () => context.go('/staff'),
+                    icon: const Icon(Icons.group_outlined),
+                    label: const Text('Manage Staff'),
+                  ),
+                  FilledButton.tonalIcon(
+                    onPressed: () => context.go('/reports'),
+                    icon: const Icon(Icons.description_outlined),
+                    label: const Text('Reports'),
+                  ),
+                  FilledButton.tonalIcon(
+                    onPressed: () => context.go('/analytics'),
+                    icon: const Icon(Icons.insights_outlined),
+                    label: const Text('Analytics'),
+                  ),
+                ] else ...[
+                  FilledButton.tonalIcon(
+                    onPressed: () => context.go('/orders'),
+                    icon: const Icon(Icons.list_alt_outlined),
+                    label: const Text('View Orders'),
+                  ),
+                  if (authState?.userRole == 'raw_material')
+                    FilledButton.icon(
+                      onPressed: () => context.go('/raw-material'),
+                      icon: const Icon(Icons.grain_outlined),
+                      label: const Text('Update Raw Material'),
+                    ),
+                  if (authState?.userRole == 'casting')
+                    FilledButton.icon(
+                      onPressed: () => context.go('/casting'),
+                      icon: const Icon(Icons.local_fire_department_outlined),
+                      label: const Text('Update Casting'),
+                    ),
+                  if (authState?.userRole == 'turning')
+                    FilledButton.icon(
+                      onPressed: () => context.go('/turning'),
+                      icon: const Icon(Icons.precision_manufacturing_outlined),
+                      label: const Text('Update Turning'),
+                    ),
+                  if (authState?.userRole == 'polish')
+                    FilledButton.icon(
+                      onPressed: () => context.go('/polish'),
+                      icon: const Icon(Icons.auto_fix_high_outlined),
+                      label: const Text('Update Polish'),
+                    ),
+                  if (authState?.userRole == 'packing')
+                    FilledButton.icon(
+                      onPressed: () => context.go('/packing'),
+                      icon: const Icon(Icons.inventory_2_outlined),
+                      label: const Text('Update Packing'),
+                    ),
+                ],
               ],
             ),
           ],

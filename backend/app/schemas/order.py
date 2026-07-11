@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class OrderBase(BaseModel):
     company_name: str
-    po_number: str
+    po_number: str | None = None
     po_date: date
     casting_type: str | None = None
     thickness: str | None = None
@@ -43,6 +43,7 @@ class OrderUpdate(BaseModel):
     dispatch_date: date | None = None
     po_image: str | None = None
     button_image: str | None = None
+    status: str | None = None
 
 
 class RawMaterialCreate(BaseModel):
@@ -54,9 +55,21 @@ class RawMaterialCreate(BaseModel):
     created_by_id: int | None = None
 
 
+class RawMaterialItem(BaseModel):
+    material_name: str
+    quantity: float
+    unit: str
+    price: float
+
+
+class RawMaterialBatchCreate(BaseModel):
+    order_token: str
+    materials: list[RawMaterialItem]
+
+
 class CastingUpdate(BaseModel):
     order_token: str
-    sheet_type: str | None = None
+    casting_type: str | None = None
     weight: float | None = None
     thickness: str | None = None
     gross_quantity: int | None = None
@@ -125,7 +138,7 @@ class CastingRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    sheet_type: str | None = None
+    casting_type: str | None = None
     weight: float | None = None
     thickness: str | None = None
     gross_quantity: int | None = None
@@ -207,7 +220,7 @@ class OrderListItem(BaseModel):
 
     token: str
     company_name: str
-    po_number: str
+    po_number: str | None = None
     status: str
     created_at: datetime
 

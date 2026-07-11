@@ -1,5 +1,6 @@
 import 'package:btn_factory/shared/widgets/app_scaffold.dart';
 import 'package:btn_factory/core/network/api_client.dart';
+import 'package:btn_factory/features/auth/application/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -88,6 +89,9 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authControllerProvider).value;
+    final is_admin = authState?.userRole == 'super_admin';
+
     final search = _searchController.text.trim().toLowerCase();
     final filteredOrders = _orders.where((order) {
       final matchesSearch = search.isEmpty ||
@@ -118,17 +122,19 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
-                FilledButton.icon(
-                  onPressed: () async {
-                    final result = await context.push('/orders/create');
-                    if (result == true) {
-                      _fetchOrders();
-                    }
-                  },
-                  icon: const Icon(Icons.add),
-                  label: const Text('Create Order'),
-                ),
+                if (is_admin) ...[
+                  const SizedBox(width: 12),
+                  FilledButton.icon(
+                    onPressed: () async {
+                      final result = await context.push('/orders/create');
+                      if (result == true) {
+                        _fetchOrders();
+                      }
+                    },
+                    icon: const Icon(Icons.add),
+                    label: const Text('Create Order'),
+                  ),
+                ],
               ],
             ),
           ),
