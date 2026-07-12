@@ -2,12 +2,40 @@ name: Publish Release
 
 on:
   push:
-    tags:
-      - 'v*' # Trigger on tags starting with v (e.g., v1.0.0)
+    branches:
+      - main
 
 jobs:
+  check-commit:
+    name: Check Commit Message
+    runs-on: ubuntu-latest
+    outputs:
+      should_release: ${{ steps.check.outputs.should_release }}
+      tag_name: ${{ steps.check.outputs.tag_name }}
+    steps:
+      - name: Check message
+        id: check
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          echo "Commit message: $COMMIT_MSG"
+          if echo "$COMMIT_MSG" | grep -qi "\[release\]" || echo "$COMMIT_MSG" | grep -Eiq "release:[[:space:]]*v[0-9]+\.[0-9]+(\.[0-9]+)?"; then
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            TAG=$(echo "$COMMIT_MSG" | grep -Eio "release:[[:space:]]*v[0-9]+\.[0-9]+(\.[0-9]+)?" | grep -Eio "v[0-9]+\.[0-9]+(\.[0-9]+)?" || echo "")
+            if [ -z "$TAG" ]; then
+              TAG="v0.0.${{ github.run_number }}"
+            fi
+            echo "tag_name=$TAG" >> $GITHUB_OUTPUT
+            echo "Release version: $TAG"
+          else
+            echo "should_release=false" >> $GITHUB_OUTPUT
+            echo "No release trigger found."
+          fi
+
   build-android:
     name: Build Android
+    needs: check-commit
+    if: needs.check-commit.outputs.should_release == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -47,6 +75,8 @@ jobs:
 
   build-windows:
     name: Build Windows
+    needs: check-commit
+    if: needs.check-commit.outputs.should_release == 'true'
     runs-on: windows-latest
     defaults:
       run:
@@ -79,6 +109,8 @@ jobs:
 
   build-linux:
     name: Build Linux
+    needs: check-commit
+    if: needs.check-commit.outputs.should_release == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -116,6 +148,8 @@ jobs:
 
   build-macos:
     name: Build macOS
+    needs: check-commit
+    if: needs.check-commit.outputs.should_release == 'true'
     runs-on: macos-latest
     defaults:
       run:
@@ -149,6 +183,8 @@ jobs:
 
   build-ios:
     name: Build iOS
+    needs: check-commit
+    if: needs.check-commit.outputs.should_release == 'true'
     runs-on: macos-latest
     defaults:
       run:
@@ -182,7 +218,8 @@ jobs:
 
   create-release:
     name: Create Release
-    needs: [build-android, build-windows, build-linux, build-macos, build-ios]
+    needs: [check-commit, build-android, build-windows, build-linux, build-macos, build-ios]
+    if: needs.check-commit.outputs.should_release == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -195,6 +232,8 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ needs.check-commit.outputs.tag_name }}
+          name: Release ${{ needs.check-commit.outputs.tag_name }}
           files: |
             artifacts/android-release/app-release.apk
             artifacts/android-release/app-release.aab
