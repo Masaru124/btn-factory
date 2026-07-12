@@ -202,19 +202,20 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Build iOS (IPA)
-        run: flutter build ipa --release --no-codesign
+      - name: Build iOS
+        run: flutter build ios --release --no-codesign
 
-      - name: Package iOS Build
+      - name: Package iOS Build (Unsigned IPA)
         run: |
-          cd build/ios/archive
-          zip -r ../../../btn_factory_ios.zip Runner.xcarchive
+          mkdir Payload
+          cp -r build/ios/iphoneos/Runner.app Payload/
+          zip -r btn_factory_ios.ipa Payload
 
       - name: Upload iOS Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ios-release
-          path: btn_factory/btn_factory_ios.zip
+          path: btn_factory/btn_factory_ios.ipa
 
   create-release:
     name: Create Release
@@ -240,7 +241,7 @@ jobs:
             artifacts/windows-release/btn_factory_windows.zip
             artifacts/linux-release/btn_factory_linux.tar.gz
             artifacts/macos-release/btn_factory_macos.zip
-            artifacts/ios-release/btn_factory_ios.zip
+            artifacts/ios-release/btn_factory_ios.ipa
           draft: false
           prerelease: false
         env:
