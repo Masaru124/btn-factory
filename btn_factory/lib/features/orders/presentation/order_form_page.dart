@@ -1,4 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:btn_factory/shared/widgets/app_scaffold.dart';
+import 'package:btn_factory/shared/widgets/app_image_preview.dart';
 import 'package:btn_factory/core/network/api_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
@@ -33,9 +38,11 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
   DateTime? _poDate;
   DateTime? _dispatchDate;
   String? _poImageName;
+  Uint8List? _poImageBytes;
   String? _buttonImageName;
+  Uint8List? _buttonImageBytes;
   String? _status;
-  
+
   bool _isSubmitting = false;
   bool _isLoadingOrder = false;
   String? _loadError;
@@ -51,10 +58,10 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
       _holesController.text = '4';
       _rateController.text = '42.50';
       _quantityController.text = '12000';
-      _castingType = 'Pressed';
+      _castingType = 'Sheet';
       _thickness = '1.2 mm';
       _boxType = 'DD';
-      _linings = 'No';
+      _linings = '14';
       _laserController.text = 'Logo';
       _polishType = 'Mirror';
       _packingOption = 'Carton';
@@ -139,23 +146,52 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
   }
 
   Future<void> _pickImage(bool isPoImage) async {
-    final FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image, allowMultiple: false);
+    final FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: false,
+      withData: true,
+    );
     if (result == null || result.files.isEmpty) {
       return;
     }
 
+    final platformFile = result.files.single;
+    Uint8List? bytes = platformFile.bytes;
+
+    if (bytes == null && platformFile.path != null && !kIsWeb) {
+      try {
+        final file = File(platformFile.path!);
+        if (await file.exists()) {
+          bytes = await file.readAsBytes();
+        }
+      } catch (_) {}
+    }
+
+    String imageValue;
+    if (bytes != null && bytes.isNotEmpty) {
+      final ext = platformFile.name.contains('.') ? platformFile.name.split('.').last.toLowerCase() : 'png';
+      final mime = (ext == 'jpg' || ext == 'jpeg') ? 'image/jpeg' : (ext == 'webp' ? 'image/webp' : 'image/png');
+      imageValue = 'data:$mime;base64,${base64Encode(bytes)}';
+    } else {
+      imageValue = platformFile.path ?? platformFile.name;
+    }
+
     setState(() {
       if (isPoImage) {
-        _poImageName = result.files.single.name;
+        _poImageName = imageValue;
+        _poImageBytes = bytes;
       } else {
-        _buttonImageName = result.files.single.name;
+        _buttonImageName = imageValue;
+        _buttonImageBytes = bytes;
       }
     });
   }
 
   Widget _buildDropdown(String label, String? value, List<String> options, ValueChanged<String?> onChanged) {
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
+      dropdownColor: const Color(0xFF111827),
+      style: const TextStyle(color: Color(0xFFF8FAFC)),
       decoration: InputDecoration(labelText: label),
       items: options.map((option) => DropdownMenuItem<String>(value: option, child: Text(option))).toList(growable: false),
       onChanged: onChanged,
@@ -172,9 +208,9 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
         decoration: InputDecoration(labelText: label),
         child: Row(
           children: <Widget>[
-            const Icon(Icons.date_range_outlined),
+            const Icon(Icons.date_range_outlined, color: Color(0xFF64748B)),
             const SizedBox(width: 10),
-            Text(displayValue),
+            Text(displayValue, style: const TextStyle(color: Color(0xFFF8FAFC))),
           ],
         ),
       ),
@@ -189,11 +225,60 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
   }
 
   Widget _buildUploadTile({required String label, required String? fileName, required VoidCallback onPressed}) {
-    return Card(
-      child: ListTile(
-        title: Text(label),
-        subtitle: Text(fileName ?? 'No file selected'),
-        trailing: OutlinedButton(onPressed: onPressed, child: const Text('Choose')),
+    final bool hasFile = fileName != null && fileName.isNotEmpty;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF111827),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: hasFile ? const Color(0xFF14B8A6).withValues(alpha: 0.3) : const Color(0xFF1F2937),
+          width: 1.5,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: hasFile ? const Color(0xFF14B8A6).withValues(alpha: 0.1) : const Color(0xFF1F2937),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              hasFile ? Icons.file_present_outlined : Icons.upload_file_outlined,
+              color: hasFile ? const Color(0xFF14B8A6) : const Color(0xFF64748B),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  fileName ?? 'No file selected',
+                  style: const TextStyle(color: Color(0xFF64748B), fontSize: 12),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          OutlinedButton(
+            onPressed: onPressed,
+            style: OutlinedButton.styleFrom(
+              side: BorderSide(color: hasFile ? const Color(0xFF14B8A6) : const Color(0xFF374151)),
+              foregroundColor: hasFile ? const Color(0xFF14B8A6) : const Color(0xFFE2E8F0),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            child: const Text('Choose'),
+          ),
+        ],
       ),
     );
   }
@@ -263,7 +348,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
       return AppScaffold(
         selectedIndex: 1,
         title: widget.mode == OrderFormMode.create ? 'Create Order' : 'Edit Order',
-        child: const Center(child: CircularProgressIndicator()),
+        child: const Center(child: CircularProgressIndicator(color: Color(0xFF14B8A6))),
       );
     }
 
@@ -275,7 +360,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(_loadError!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              Text(_loadError!, style: const TextStyle(color: Color(0xFFFCA5A5))),
               const SizedBox(height: 12),
               OutlinedButton(onPressed: _fetchOrderDetails, child: const Text('Retry')),
             ],
@@ -288,35 +373,89 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
       selectedIndex: 1,
       title: widget.mode == OrderFormMode.create ? 'Create Order' : 'Edit Order',
       child: ListView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         children: <Widget>[
           Text(
-            widget.mode == OrderFormMode.create ? 'Create a new job card' : 'Edit the details of this manufacturing order.',
-            style: Theme.of(context).textTheme.titleMedium,
+            widget.mode == OrderFormMode.create ? 'Create a new production job card' : 'Edit the specifications of manufacturing order.',
+            style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 14),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
           Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                Text('Company Information', style: Theme.of(context).textTheme.titleLarge),
-                const SizedBox(height: 12),
+                // Company section header
+                Row(
+                  children: [
+                    Container(
+                      width: 4,
+                      height: 16,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF14B8A6),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Company Information',
+                      style: TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _companyController,
+                  style: const TextStyle(color: Color(0xFFF8FAFC)),
                   decoration: const InputDecoration(labelText: 'Company Name'),
                   validator: (value) => value == null || value.trim().isEmpty ? 'Company name is required' : null,
                 ),
                 const SizedBox(height: 16),
                 _buildDateField('PO Date', _poDate, () => _pickDate(true)),
                 const SizedBox(height: 16),
-                _buildUploadTile(label: 'PO Image', fileName: _poImageName, onPressed: () => _pickImage(true)),
-                const SizedBox(height: 24),
-                Text('Product Information', style: Theme.of(context).textTheme.titleLarge),
-                const SizedBox(height: 12),
+                AppImageUploadCard(
+                  label: 'PO Image Upload',
+                  imageSource: _poImageName,
+                  imageBytes: _poImageBytes,
+                  onPickImage: () => _pickImage(true),
+                  onClearImage: () => setState(() {
+                    _poImageName = null;
+                    _poImageBytes = null;
+                  }),
+                ),
+                
+                const SizedBox(height: 32),
+                
+                // Product section header
+                Row(
+                  children: [
+                    Container(
+                      width: 4,
+                      height: 16,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF14B8A6),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Product Information',
+                      style: TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final columns = constraints.maxWidth >= 900 ? 2 : 1;
+                    final castingOptions = <String>['Sheet', 'Rod'];
+                    if (_castingType != null && !castingOptions.contains(_castingType)) {
+                      castingOptions.add(_castingType!);
+                    }
+                    final liningOptions = List<String>.generate(15, (i) => (14 + i * 2).toString());
+                    if (_linings != null && !liningOptions.contains(_linings)) {
+                      liningOptions.add(_linings!);
+                    }
                     return GridView(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -324,13 +463,14 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                         crossAxisCount: columns,
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
-                        childAspectRatio: 4.8,
+                        childAspectRatio: constraints.maxWidth >= 900 ? 4.8 : 3.8,
                       ),
                       children: <Widget>[
-                        _buildDropdown('Casting Type', _castingType, const <String>['Pressed', 'Moulded', 'Die Cast'], (value) => setState(() => _castingType = value)),
+                        _buildDropdown('Casting Type', _castingType, castingOptions, (value) => setState(() => _castingType = value)),
                         _buildDropdown('Thickness', _thickness, const <String>['0.8 mm', '1.0 mm', '1.2 mm', '1.5 mm'], (value) => setState(() => _thickness = value)),
                         TextFormField(
                           controller: _holesController,
+                          style: const TextStyle(color: Color(0xFFF8FAFC)),
                           decoration: const InputDecoration(labelText: 'Holes'),
                           keyboardType: TextInputType.number,
                           validator: (value) => value == null || value.trim().isEmpty ? 'Holes are required' : null,
@@ -338,20 +478,23 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                         _buildDropdown('Box Type', _boxType, const <String>['DD', 'SD'], (value) => setState(() => _boxType = value)),
                         TextFormField(
                           controller: _rateController,
-                          decoration: const InputDecoration(labelText: 'Rate'),
+                          style: const TextStyle(color: Color(0xFFF8FAFC)),
+                          decoration: const InputDecoration(labelText: 'Rate (₹)'),
                           keyboardType: const TextInputType.numberWithOptions(decimal: true),
                           validator: (value) => value == null || value.trim().isEmpty ? 'Rate is required' : null,
                         ),
                         TextFormField(
                           controller: _quantityController,
+                          style: const TextStyle(color: Color(0xFFF8FAFC)),
                           decoration: const InputDecoration(labelText: 'Quantity'),
                           keyboardType: TextInputType.number,
                           validator: (value) => value == null || value.trim().isEmpty ? 'Quantity is required' : null,
                         ),
-                        _buildDropdown('Linings', _linings, const <String>['Yes', 'No'], (value) => setState(() => _linings = value)),
+                        _buildDropdown('Linings', _linings, liningOptions, (value) => setState(() => _linings = value)),
                         TextFormField(
                           controller: _laserController,
-                          decoration: const InputDecoration(labelText: 'Laser'),
+                          style: const TextStyle(color: Color(0xFFF8FAFC)),
+                          decoration: const InputDecoration(labelText: 'Laser Logo/Text'),
                         ),
                         _buildDropdown('Polish Type', _polishType, const <String>['Mirror', 'Matt', 'Antique'], (value) => setState(() => _polishType = value)),
                         _buildDropdown('Packing Option', _packingOption, const <String>['Carton', 'Bag', 'Pallet'], (value) => setState(() => _packingOption = value)),
@@ -362,11 +505,38 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                 const SizedBox(height: 16),
                 _buildDateField('Dispatch Date', _dispatchDate, () => _pickDate(false)),
                 const SizedBox(height: 16),
-                _buildUploadTile(label: 'Button Image', fileName: _buttonImageName, onPressed: () => _pickImage(false)),
+                AppImageUploadCard(
+                  label: 'Button Sample Image',
+                  imageSource: _buttonImageName,
+                  imageBytes: _buttonImageBytes,
+                  onPickImage: () => _pickImage(false),
+                  onClearImage: () => setState(() {
+                    _buttonImageName = null;
+                    _buttonImageBytes = null;
+                  }),
+                ),
+                
                 if (widget.mode == OrderFormMode.edit && _status != null) ...[
-                  const SizedBox(height: 24),
-                  Text('Order Status', style: Theme.of(context).textTheme.titleLarge),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 32),
+                  // Status section header
+                  Row(
+                    children: [
+                      Container(
+                        width: 4,
+                        height: 16,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF14B8A6),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Order Lifecycle Status',
+                        style: TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
                   _buildDropdown(
                     'Current Status',
                     _status,
@@ -383,12 +553,21 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                     (value) => setState(() => _status = value),
                   ),
                 ],
-                const SizedBox(height: 24),
+                const SizedBox(height: 36),
                 FilledButton(
                   onPressed: _isSubmitting ? null : _submit,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFF14B8A6),
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
                   child: _isSubmitting
-                      ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                      : Text(widget.mode == OrderFormMode.create ? 'Create Order' : 'Save Changes'),
+                      ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black))
+                      : Text(
+                          widget.mode == OrderFormMode.create ? 'Create Order Job Card' : 'Save Specs Changes',
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
                 ),
               ],
             ),
@@ -398,4 +577,5 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
     );
   }
 }
+
 

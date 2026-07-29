@@ -1,4 +1,5 @@
 import 'package:btn_factory/shared/widgets/app_scaffold.dart';
+import 'package:btn_factory/shared/widgets/app_image_preview.dart';
 import 'package:btn_factory/shared/widgets/section_card.dart';
 import 'package:btn_factory/core/network/api_client.dart';
 import 'package:btn_factory/features/auth/application/auth_controller.dart';
@@ -73,7 +74,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
       return AppScaffold(
         selectedIndex: 1,
         title: 'Order ${widget.orderToken}',
-        child: const Center(child: CircularProgressIndicator()),
+        child: const Center(child: CircularProgressIndicator(color: Color(0xFF14B8A6))),
       );
     }
 
@@ -85,7 +86,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              Text(_error!, style: const TextStyle(color: Color(0xFFFCA5A5))),
               const SizedBox(height: 12),
               OutlinedButton(onPressed: _fetchOrder, child: const Text('Retry')),
             ],
@@ -103,24 +104,35 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
 
     final authState = ref.watch(authControllerProvider).value;
     final userRole = authState?.userRole ?? '';
-    final is_admin = userRole == 'super_admin';
+    final isAdmin = userRole == 'super_admin';
 
     return AppScaffold(
       selectedIndex: 1,
-      title: 'Order ${widget.orderToken}',
+      title: 'Order Details',
       child: ListView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         children: <Widget>[
+          // Header Company Details Card
           SectionCard(
             title: 'Company Details',
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Chip(label: Text(order['status'] as String? ?? 'Created')),
-                if (is_admin) ...[
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF14B8A6).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    order['status'] as String? ?? 'Created',
+                    style: const TextStyle(color: Color(0xFF14B8A6), fontWeight: FontWeight.bold, fontSize: 12),
+                  ),
+                ),
+                if (isAdmin) ...[
                   const SizedBox(width: 8),
                   IconButton(
-                    icon: const Icon(Icons.edit_outlined),
+                    icon: const Icon(Icons.edit_outlined, color: Color(0xFF14B8A6)),
                     tooltip: 'Edit Order',
                     onPressed: () async {
                       final result = await context.push('/orders/${widget.orderToken}/edit');
@@ -133,8 +145,8 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
               ],
             ),
             child: Wrap(
-              spacing: 16,
-              runSpacing: 16,
+              spacing: 12,
+              runSpacing: 12,
               children: <Widget>[
                 _DetailChip(label: 'Company Name', value: order['company_name'] as String? ?? 'N/A'),
                 _DetailChip(label: 'PO Date', value: _formatDate(order['po_date'] as String?)),
@@ -142,12 +154,13 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 18),
+          // Product Details Card
           SectionCard(
             title: 'Product Details',
             child: Wrap(
-              spacing: 16,
-              runSpacing: 16,
+              spacing: 12,
+              runSpacing: 12,
               children: <Widget>[
                 _DetailChip(label: 'Casting', value: order['casting_type'] as String? ?? 'N/A'),
                 _DetailChip(label: 'Thickness', value: order['thickness'] as String? ?? 'N/A'),
@@ -162,56 +175,67 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 18),
+          // Dispatch details Card
           SectionCard(
-            title: 'Dispatch',
+            title: 'Dispatch Information',
             child: Wrap(
-              spacing: 16,
-              runSpacing: 16,
+              spacing: 12,
+              runSpacing: 12,
               children: <Widget>[
                 _DetailChip(label: 'Dispatch Date', value: _formatDate(order['dispatch_date'] as String?)),
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 18),
+          // Uploaded Files / Images
           SectionCard(
-            title: 'Images',
+            title: 'Attachments',
             child: Wrap(
               spacing: 16,
               runSpacing: 16,
               children: <Widget>[
-                _PreviewCard(title: 'PO Image', fileName: order['po_image'] as String?),
-                _PreviewCard(title: 'Button Image', fileName: order['button_image'] as String?),
+                AppImagePreviewCard(title: 'PO Image', imageSource: order['po_image'] as String?),
+                AppImagePreviewCard(title: 'Button Sample Image', imageSource: order['button_image'] as String?),
               ],
             ),
           ),
-          if (is_admin || userRole == 'raw_material') ...[
-            const SizedBox(height: 16),
+          // Department Statuses & Submissions
+          if (isAdmin || userRole == 'raw_material') ...[
+            const SizedBox(height: 18),
             SectionCard(
-              title: 'Raw Materials',
+              title: 'Raw Materials Logs',
               child: rawMaterials.isEmpty
-                  ? const Text('No raw materials recorded.', style: TextStyle(fontStyle: FontStyle.italic))
+                  ? const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Text('No raw materials recorded.', style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B))),
+                    )
                   : ListView.separated(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: rawMaterials.length,
-                      separatorBuilder: (context, index) => const Divider(),
+                      separatorBuilder: (context, index) => const Divider(color: Color(0xFF1F2937), height: 24),
                       itemBuilder: (context, idx) {
                         final m = rawMaterials[idx] as Map<String, dynamic>;
                         return ListTile(
                           contentPadding: EdgeInsets.zero,
-                          leading: CircleAvatar(
-                            backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                            child: const Icon(Icons.layers_outlined),
+                          leading: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0D9488).withValues(alpha: 0.15),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.layers_outlined, color: Color(0xFF0D9488)),
                           ),
-                          title: Text(m['material_name'] as String? ?? 'N/A', style: const TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: Text('Recorded on ${_formatDate(m['created_at'] as String?)}'),
+                          title: Text(m['material_name'] as String? ?? 'N/A', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFF8FAFC))),
+                          subtitle: Text('Recorded on ${_formatDate(m['created_at'] as String?)}', style: const TextStyle(color: Color(0xFF64748B), fontSize: 12)),
                           trailing: Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('${m['quantity'] ?? 'N/A'} ${m['unit'] ?? ''}', style: Theme.of(context).textTheme.titleMedium),
-                              Text('₹${m['price'] ?? 'N/A'}', style: Theme.of(context).textTheme.bodySmall),
+                              Text('${m['quantity'] ?? 'N/A'} ${m['unit'] ?? ''}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFF8FAFC), fontSize: 16)),
+                              const SizedBox(height: 4),
+                              Text('₹${m['price'] ?? 'N/A'}', style: const TextStyle(color: Color(0xFF64748B), fontSize: 12)),
                             ],
                           ),
                         );
@@ -219,15 +243,18 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                     ),
             ),
           ],
-          if (is_admin || userRole == 'casting') ...[
-            const SizedBox(height: 16),
+          if (isAdmin || userRole == 'casting') ...[
+            const SizedBox(height: 18),
             SectionCard(
-              title: 'Casting Data',
+              title: 'Casting Process Logs',
               child: casting == null
-                  ? const Text('Casting details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic))
+                  ? const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Text('Casting details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B))),
+                    )
                   : Wrap(
-                      spacing: 16,
-                      runSpacing: 16,
+                      spacing: 12,
+                      runSpacing: 12,
                       children: <Widget>[
                         _DetailChip(label: 'Casting Type', value: casting['casting_type'] as String? ?? 'N/A'),
                         _DetailChip(label: 'Weight', value: '${casting['weight'] ?? 'N/A'} kg'),
@@ -241,15 +268,18 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                     ),
             ),
           ],
-          if (is_admin || userRole == 'turning') ...[
-            const SizedBox(height: 16),
+          if (isAdmin || userRole == 'turning') ...[
+            const SizedBox(height: 18),
             SectionCard(
-              title: 'Turning Data',
+              title: 'Turning Process Logs',
               child: turning == null
-                  ? const Text('Turning details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic))
+                  ? const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Text('Turning details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B))),
+                    )
                   : Wrap(
-                      spacing: 16,
-                      runSpacing: 16,
+                      spacing: 12,
+                      runSpacing: 12,
                       children: <Widget>[
                         _DetailChip(label: 'Receiving Date', value: _formatDateTime(turning['receiving_date'] as String?)),
                         _DetailChip(label: 'Date of Turning', value: _formatDateTime(turning['date_of_turning'] as String?)),
@@ -267,15 +297,18 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                     ),
             ),
           ],
-          if (is_admin || userRole == 'polish') ...[
-            const SizedBox(height: 16),
+          if (isAdmin || userRole == 'polish') ...[
+            const SizedBox(height: 18),
             SectionCard(
-              title: 'Polish Data',
+              title: 'Polishing Process Logs',
               child: polish == null
-                  ? const Text('Polishing details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic))
+                  ? const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Text('Polishing details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B))),
+                    )
                   : Wrap(
-                      spacing: 16,
-                      runSpacing: 16,
+                      spacing: 12,
+                      runSpacing: 12,
                       children: <Widget>[
                         _DetailChip(label: 'Art No.', value: polish['art_no'] as String? ?? 'N/A'),
                         _DetailChip(label: 'Receiving Date', value: _formatDateTime(polish['receiving_date'] as String?)),
@@ -290,15 +323,18 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                     ),
             ),
           ],
-          if (is_admin || userRole == 'packing') ...[
-            const SizedBox(height: 16),
+          if (isAdmin || userRole == 'packing') ...[
+            const SizedBox(height: 18),
             SectionCard(
-              title: 'Packing Data',
+              title: 'Packing Process Logs',
               child: packing == null
-                  ? const Text('Packing details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic))
+                  ? const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Text('Packing details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B))),
+                    )
                   : Wrap(
-                      spacing: 16,
-                      runSpacing: 16,
+                      spacing: 12,
+                      runSpacing: 12,
                       children: <Widget>[
                         _DetailChip(label: 'Receiving Date', value: _formatDateTime(packing['receiving_date'] as String?)),
                         _DetailChip(label: 'Art No.', value: packing['art_no'] as String? ?? 'N/A'),
@@ -329,22 +365,36 @@ class _DetailChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(14),
+        color: const Color(0xFF1F2937),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF374151), width: 1),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(label, style: Theme.of(context).textTheme.labelMedium),
-            const SizedBox(height: 4),
-            Text(value, style: Theme.of(context).textTheme.titleMedium),
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(
+            label,
+            style: const TextStyle(
+              color: Color(0xFF64748B),
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Color(0xFFF8FAFC),
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -358,26 +408,12 @@ class _PreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 180,
-      height: 120,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(title),
-            if (fileName != null) ...[
-              const SizedBox(height: 4),
-              Text(fileName!, style: Theme.of(context).textTheme.bodySmall),
-            ] else
-              Text('No file', style: Theme.of(context).textTheme.bodySmall),
-          ],
-        ),
-      ),
+    return AppImagePreviewCard(
+      title: title,
+      imageSource: fileName,
+      width: 200,
+      height: 170,
     );
   }
 }
+

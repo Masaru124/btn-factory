@@ -33,8 +33,38 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           return '/login';
         }
       } else {
-        if (isLoggingIn || isSplash) {
-          return '/dashboard';
+        final role = authState.userRole;
+        final isStaff = role != 'super_admin';
+        final matchedLoc = state.matchedLocation;
+
+        if (isStaff) {
+          final isRestricted = matchedLoc == '/' ||
+              matchedLoc == '/login' ||
+              matchedLoc == '/dashboard' ||
+              matchedLoc.startsWith('/orders') ||
+              matchedLoc == '/reports' ||
+              matchedLoc == '/analytics' ||
+              matchedLoc == '/staff';
+          if (isRestricted) {
+            switch (role) {
+              case 'raw_material':
+                return '/raw-material';
+              case 'casting':
+                return '/casting';
+              case 'turning':
+                return '/turning';
+              case 'polish':
+                return '/polish';
+              case 'packing':
+                return '/packing';
+              default:
+                return '/profile';
+            }
+          }
+        } else {
+          if (isLoggingIn || isSplash) {
+            return '/dashboard';
+          }
         }
       }
       return null;

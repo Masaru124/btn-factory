@@ -25,8 +25,7 @@ class AuthController extends AsyncNotifier<AuthState> {
         userRole: await storage.read(AppStorageKeys.userRole) ?? 'super_admin',
         userDepartment: await storage.read(AppStorageKeys.userDepartment) ?? 'admin',
       );
-    } catch (e, stackTrace) {
-      print('Error during auth initialization: $e');
+    } catch (e) {
       return AuthState.unauthenticated(errorMessage: e.toString());
     }
   }

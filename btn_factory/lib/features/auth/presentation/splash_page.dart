@@ -45,28 +45,64 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     }
 
     return Scaffold(
+      backgroundColor: const Color(0xFF090D16), // Dark slate
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Icon(Icons.precision_manufacturing_outlined, size: 72, color: Theme.of(context).colorScheme.primary),
-              const SizedBox(height: 16),
-              Text('Button Factory MES', style: Theme.of(context).textTheme.headlineMedium),
-              const SizedBox(height: 8),
-              Text(
-                authState.isLoading ? 'Checking secure session' : 'Preparing your workspace',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 20),
-              if (authState.hasError) ...[
-                Text(
-                  'Initialization Error:\n${authState.error}',
-                  style: TextStyle(color: Theme.of(context).colorScheme.error, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
+              // Animated or decorated circular loading area
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF14B8A6).withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: const Color(0xFF14B8A6).withValues(alpha: 0.15),
+                    width: 2,
+                  ),
                 ),
-                const SizedBox(height: 16),
+                child: const Icon(
+                  Icons.precision_manufacturing_outlined,
+                  size: 64,
+                  color: Color(0xFF14B8A6),
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Button Factory MES',
+                style: TextStyle(
+                  color: Color(0xFFF8FAFC),
+                  fontSize: 26,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.5,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                authState.isLoading ? 'Checking secure session...' : 'Preparing your workspace...',
+                style: const TextStyle(
+                  color: Color(0xFF64748B),
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 32),
+              if (authState.hasError) ...[
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEF4444).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.2)),
+                  ),
+                  child: Text(
+                    'Initialization Error:\n${authState.error}',
+                    style: const TextStyle(color: Color(0xFFFCA5A5), fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 24),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -86,7 +122,14 @@ class _SplashPageState extends ConsumerState<SplashPage> {
                   ],
                 ),
               ] else
-                const CircularProgressIndicator(),
+                const SizedBox(
+                  width: 28,
+                  height: 28,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3,
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF14B8A6)),
+                  ),
+                ),
             ],
           ),
         ),
@@ -94,3 +137,4 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     );
   }
 }
+

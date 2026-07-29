@@ -32,6 +32,7 @@ class _StaffPageState extends ConsumerState<StaffPage> {
     try {
       final dio = ref.read(dioProvider);
       final response = await dio.get('/auth/users');
+      if (!mounted) return;
       setState(() {
         _staffList = response.data as List<dynamic>;
         _isLoading = false;
@@ -45,6 +46,7 @@ class _StaffPageState extends ConsumerState<StaffPage> {
           errorMessage = 'Unauthorized: Please log in again.';
         }
       }
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
         _error = errorMessage;
@@ -66,8 +68,8 @@ class _StaffPageState extends ConsumerState<StaffPage> {
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
             style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-              foregroundColor: Theme.of(context).colorScheme.onError,
+              backgroundColor: const Color(0xFFEF4444),
+              foregroundColor: Colors.white,
             ),
             child: const Text('Deactivate'),
           ),
@@ -112,15 +114,15 @@ class _StaffPageState extends ConsumerState<StaffPage> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const AppScaffold(
-        selectedIndex: 0,
+        selectedIndex: 8,
         title: 'Manage Staff',
-        child: Center(child: CircularProgressIndicator()),
+        child: Center(child: CircularProgressIndicator(color: Color(0xFF14B8A6))),
       );
     }
 
     if (_error != null) {
       return AppScaffold(
-        selectedIndex: 0,
+        selectedIndex: 8,
         title: 'Manage Staff',
         child: Center(
           child: Padding(
@@ -128,11 +130,11 @@ class _StaffPageState extends ConsumerState<StaffPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Icon(Icons.error_outline, size: 56, color: Theme.of(context).colorScheme.error),
+                const Icon(Icons.error_outline, size: 56, color: Color(0xFFEF4444)),
                 const SizedBox(height: 16),
                 Text(
                   _error!,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error, fontWeight: FontWeight.bold),
+                  style: const TextStyle(color: Color(0xFFFCA5A5), fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
@@ -149,37 +151,56 @@ class _StaffPageState extends ConsumerState<StaffPage> {
     }
 
     return AppScaffold(
-      selectedIndex: 0,
+      selectedIndex: 8,
       title: 'Manage Staff',
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Staff Members', style: Theme.of(context).textTheme.headlineSmall),
-                    const SizedBox(height: 4),
-                    const Text('Manage login accounts and system permissions for factory personnel.'),
-                  ],
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Staff Directory',
+                        style: TextStyle(
+                          color: Color(0xFFF8FAFC),
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Manage active roles and security credentials.',
+                        style: TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
+                      ),
+                    ],
+                  ),
                 ),
                 FilledButton.icon(
                   onPressed: () => _showStaffDialog(),
-                  icon: const Icon(Icons.person_add),
-                  label: const Text('Add Staff'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFF14B8A6),
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  icon: const Icon(Icons.person_add, size: 18),
+                  label: const Text('Add Staff', style: TextStyle(fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             Expanded(
               child: RefreshIndicator(
                 onRefresh: _fetchStaff,
+                color: const Color(0xFF14B8A6),
+                backgroundColor: const Color(0xFF111827),
                 child: _staffList.isEmpty
-                    ? const Center(child: Text('No staff members registered yet.'))
+                    ? const Center(child: Text('No staff members registered yet.', style: TextStyle(color: Color(0xFF64748B))))
                     : LayoutBuilder(
                         builder: (context, constraints) {
                           if (constraints.maxWidth > 800) {
@@ -199,44 +220,46 @@ class _StaffPageState extends ConsumerState<StaffPage> {
                                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                                   children: [
                                     TableRow(
-                                      decoration: BoxDecoration(
-                                        border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor, width: 2)),
+                                      decoration: const BoxDecoration(
+                                        border: Border(bottom: BorderSide(color: Color(0xFF1F2937), width: 2)),
                                       ),
                                       children: const [
-                                        Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Text('Name', style: TextStyle(fontWeight: FontWeight.bold))),
-                                        Text('Email', style: TextStyle(fontWeight: FontWeight.bold)),
-                                        Text('Role', style: TextStyle(fontWeight: FontWeight.bold)),
-                                        Text('Department', style: TextStyle(fontWeight: FontWeight.bold)),
-                                        Text('Status', style: TextStyle(fontWeight: FontWeight.bold)),
-                                        Text('Actions', style: TextStyle(fontWeight: FontWeight.bold)),
+                                        Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Text('Name', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF94A3B8)))),
+                                        Text('Email', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF94A3B8))),
+                                        Text('Role', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF94A3B8))),
+                                        Text('Department', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF94A3B8))),
+                                        Text('Status', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF94A3B8))),
+                                        Text('Actions', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF94A3B8))),
                                       ],
                                     ),
                                     ..._staffList.map((user) {
                                       final isActive = user['is_active'] as bool? ?? true;
                                       return TableRow(
-                                        decoration: BoxDecoration(
-                                          border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
+                                        decoration: const BoxDecoration(
+                                          border: Border(bottom: BorderSide(color: Color(0xFF1E293B))),
                                         ),
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.symmetric(vertical: 12),
-                                            child: Text(user['name'] as String? ?? ''),
+                                            child: Text(user['name'] as String? ?? '', style: const TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.w600)),
                                           ),
-                                          Text(user['email'] as String? ?? ''),
-                                          Text(_formatRole(user['role'] as String? ?? '')),
-                                          Text(user['department'] as String? ?? 'N/A'),
-                                          WidgetBorderStatus(isActive: isActive),
+                                          Text(user['email'] as String? ?? '', style: const TextStyle(color: Color(0xFFE2E8F0))),
+                                          Text(_formatRole(user['role'] as String? ?? ''), style: const TextStyle(color: Color(0xFFF8FAFC))),
+                                          Text(user['department'] as String? ?? 'N/A', style: const TextStyle(color: Color(0xFF94A3B8))),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                            child: WidgetBorderStatus(isActive: isActive),
+                                          ),
                                           Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               IconButton(
-                                                icon: const Icon(Icons.edit_outlined),
+                                                icon: const Icon(Icons.edit_outlined, color: Color(0xFF14B8A6)),
                                                 tooltip: 'Edit Staff',
                                                 onPressed: () => _showStaffDialog(user as Map<String, dynamic>),
                                               ),
                                               IconButton(
-                                                icon: const Icon(Icons.delete_outline),
-                                                color: Theme.of(context).colorScheme.error,
+                                                icon: const Icon(Icons.delete_outline, color: Color(0xFFEF4444)),
                                                 tooltip: 'Deactivate Staff',
                                                 onPressed: isActive ? () => _deleteStaff(user['id'] as int) : null,
                                               ),
@@ -256,48 +279,83 @@ class _StaffPageState extends ConsumerState<StaffPage> {
                               itemBuilder: (context, index) {
                                 final user = _staffList[index];
                                 final isActive = user['is_active'] as bool? ?? true;
-                                return Card(
+                                return Container(
                                   margin: const EdgeInsets.only(bottom: 12),
-                                  child: ListTile(
-                                    title: Text(user['name'] as String? ?? ''),
-                                    subtitle: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        const SizedBox(height: 4),
-                                        Text(user['email'] as String? ?? ''),
-                                        const SizedBox(height: 4),
-                                        Row(
-                                          children: [
-                                            Chip(
-                                              label: Text(_formatRole(user['role'] as String? ?? '')),
-                                              visualDensity: VisualDensity.compact,
-                                            ),
-                                            const SizedBox(width: 8),
-                                            if (user['department'] != null)
-                                              Chip(
-                                                label: Text(user['department'] as String),
-                                                visualDensity: VisualDensity.compact,
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF111827),
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(color: const Color(0xFF1E293B), width: 1.5),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              user['name'] as String? ?? '',
+                                              style: const TextStyle(
+                                                color: Color(0xFFF8FAFC),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
                                               ),
+                                            ),
+                                          ),
+                                          WidgetBorderStatus(isActive: isActive),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        user['email'] as String? ?? '',
+                                        style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFF1E293B),
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            child: Text(
+                                              _formatRole(user['role'] as String? ?? ''),
+                                              style: const TextStyle(color: Color(0xFFE2E8F0), fontSize: 11, fontWeight: FontWeight.w600),
+                                            ),
+                                          ),
+                                          if (user['department'] != null) ...[
+                                            const SizedBox(width: 6),
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFF1E293B),
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                              child: Text(
+                                                (user['department'] as String).toUpperCase(),
+                                                style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 11, fontWeight: FontWeight.w600),
+                                              ),
+                                            ),
                                           ],
-                                        ),
-                                      ],
-                                    ),
-                                    trailing: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        WidgetBorderStatus(isActive: isActive),
-                                        const SizedBox(width: 8),
-                                        IconButton(
-                                          icon: const Icon(Icons.edit_outlined),
-                                          onPressed: () => _showStaffDialog(user as Map<String, dynamic>),
-                                        ),
-                                        IconButton(
-                                          icon: const Icon(Icons.delete_outline),
-                                          color: Theme.of(context).colorScheme.error,
-                                          onPressed: isActive ? () => _deleteStaff(user['id'] as int) : null,
-                                        ),
-                                      ],
-                                    ),
+                                          const Spacer(),
+                                          IconButton(
+                                            icon: const Icon(Icons.edit_outlined, color: Color(0xFF14B8A6), size: 20),
+                                            constraints: const BoxConstraints(),
+                                            padding: EdgeInsets.zero,
+                                            onPressed: () => _showStaffDialog(user as Map<String, dynamic>),
+                                          ),
+                                          const SizedBox(width: 16),
+                                          IconButton(
+                                            icon: const Icon(Icons.delete_outline, color: Color(0xFFEF4444), size: 20),
+                                            constraints: const BoxConstraints(),
+                                            padding: EdgeInsets.zero,
+                                            onPressed: isActive ? () => _deleteStaff(user['id'] as int) : null,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 );
                               },
@@ -340,16 +398,24 @@ class WidgetBorderStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Chip(
-      label: Text(isActive ? 'Active' : 'Disabled'),
-      backgroundColor: isActive ? Colors.green.shade50 : Colors.red.shade50,
-      side: BorderSide(color: isActive ? Colors.green.shade300 : Colors.red.shade300),
-      labelStyle: TextStyle(
-        color: isActive ? Colors.green.shade800 : Colors.red.shade800,
-        fontWeight: FontWeight.bold,
-        fontSize: 12,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: isActive ? const Color(0xFF10B981).withValues(alpha: 0.15) : const Color(0xFFEF4444).withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isActive ? const Color(0xFF10B981).withValues(alpha: 0.3) : const Color(0xFFEF4444).withValues(alpha: 0.3),
+          width: 1,
+        ),
       ),
-      visualDensity: VisualDensity.compact,
+      child: Text(
+        isActive ? 'Active' : 'Disabled',
+        style: TextStyle(
+          color: isActive ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+          fontWeight: FontWeight.bold,
+          fontSize: 11,
+        ),
+      ),
     );
   }
 }
@@ -449,19 +515,23 @@ class _StaffFormDialogState extends ConsumerState<_StaffFormDialog> {
         await dio.post('/auth/register', data: payload);
       }
 
-      widget.onSave();
-    } catch (e) {
-      setState(() => _isSaving = false);
-      String details = e.toString();
-      if (e is DioException && e.response?.data != null) {
-        final data = e.response?.data;
-        if (data is Map && data.containsKey('detail')) {
-          details = data['detail'].toString();
-        }
+      if (mounted) {
+        widget.onSave();
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save staff details: $details')),
-      );
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isSaving = false);
+        String details = e.toString();
+        if (e is DioException && e.response?.data != null) {
+          final data = e.response?.data;
+          if (data is Map && data.containsKey('detail')) {
+            details = data['detail'].toString();
+          }
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save staff details: $details')),
+        );
+      }
     }
   }
 
@@ -470,7 +540,9 @@ class _StaffFormDialogState extends ConsumerState<_StaffFormDialog> {
     final isEdit = widget.staff != null;
 
     return AlertDialog(
-      title: Text(isEdit ? 'Edit Staff Account' : 'Register New Staff'),
+      backgroundColor: const Color(0xFF111827),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      title: Text(isEdit ? 'Edit Staff Account' : 'Register New Staff', style: const TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold)),
       content: SizedBox(
         width: 450,
         child: SingleChildScrollView(
@@ -480,21 +552,22 @@ class _StaffFormDialogState extends ConsumerState<_StaffFormDialog> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                const SizedBox(height: 8),
                 TextFormField(
                   controller: _nameController,
+                  style: const TextStyle(color: Color(0xFFF8FAFC)),
                   decoration: const InputDecoration(
                     labelText: 'Full Name',
-                    border: OutlineInputBorder(),
                   ),
                   validator: (value) => value == null || value.trim().isEmpty ? 'Name is required' : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _emailController,
+                  style: const TextStyle(color: Color(0xFFF8FAFC)),
                   keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
                     labelText: 'Email Address',
-                    border: OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) return 'Email is required';
@@ -506,9 +579,9 @@ class _StaffFormDialogState extends ConsumerState<_StaffFormDialog> {
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
+                  style: const TextStyle(color: Color(0xFFF8FAFC)),
                   decoration: InputDecoration(
                     labelText: isEdit ? 'New Password (leave blank to keep current)' : 'Password',
-                    border: const OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (!isEdit && (value == null || value.isEmpty)) return 'Password is required';
@@ -518,10 +591,11 @@ class _StaffFormDialogState extends ConsumerState<_StaffFormDialog> {
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
-                  value: _role,
+                  initialValue: _role,
+                  dropdownColor: const Color(0xFF111827),
+                  style: const TextStyle(color: Color(0xFFF8FAFC)),
                   decoration: const InputDecoration(
                     labelText: 'Role',
-                    border: OutlineInputBorder(),
                   ),
                   items: _roles
                       .map((r) => DropdownMenuItem(value: r, child: Text(r.toUpperCase().replaceAll('_', ' '))))
@@ -530,7 +604,6 @@ class _StaffFormDialogState extends ConsumerState<_StaffFormDialog> {
                     if (val != null) {
                       setState(() {
                         _role = val;
-                        // Auto-assign corresponding department
                         if (val == 'super_admin') {
                           _department = 'admin';
                         } else {
@@ -542,10 +615,11 @@ class _StaffFormDialogState extends ConsumerState<_StaffFormDialog> {
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
-                  value: _department,
+                  initialValue: _department,
+                  dropdownColor: const Color(0xFF111827),
+                  style: const TextStyle(color: Color(0xFFF8FAFC)),
                   decoration: const InputDecoration(
                     labelText: 'Department',
-                    border: OutlineInputBorder(),
                   ),
                   items: _departments
                       .map((d) => DropdownMenuItem(value: d, child: Text(d.toUpperCase().replaceAll('_', ' '))))
@@ -559,9 +633,10 @@ class _StaffFormDialogState extends ConsumerState<_StaffFormDialog> {
                 if (isEdit) ...[
                   const SizedBox(height: 16),
                   SwitchListTile(
-                    title: const Text('Account Active'),
-                    subtitle: const Text('Toggle to disable logins for this account.'),
+                    title: const Text('Account Active', style: TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold)),
+                    subtitle: const Text('Toggle to disable logins for this account.', style: TextStyle(color: Color(0xFF64748B))),
                     value: _isActive,
+                    activeThumbColor: const Color(0xFF14B8A6),
                     onChanged: (val) => setState(() => _isActive = val),
                   ),
                 ],
@@ -581,7 +656,7 @@ class _StaffFormDialogState extends ConsumerState<_StaffFormDialog> {
               ? const SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
                 )
               : const Text('Save Details'),
         ),
@@ -589,3 +664,4 @@ class _StaffFormDialogState extends ConsumerState<_StaffFormDialog> {
     );
   }
 }
+

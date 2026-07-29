@@ -1,4 +1,5 @@
 import 'package:btn_factory/shared/widgets/app_scaffold.dart';
+import 'package:btn_factory/shared/widgets/app_image_preview.dart';
 import 'package:btn_factory/shared/widgets/section_card.dart';
 import 'package:btn_factory/core/network/api_client.dart';
 import 'package:flutter/material.dart';
@@ -476,25 +477,27 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                           _SnapshotChip(label: 'Expected Status', value: widget.currentStatusLabel),
                         ],
                       ),
-                      if ((widget.title == 'Raw Material' || widget.title == 'Casting') && _order!['button_image'] != null) ...[
-                        const SizedBox(height: 12),
-                        Container(
-                          width: 180,
-                          height: 120,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          child: Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                const Text('Button Image', style: TextStyle(fontWeight: FontWeight.bold)),
-                                const SizedBox(height: 4),
-                                Text(_order!['button_image'] as String, style: Theme.of(context).textTheme.bodySmall),
-                              ],
-                            ),
-                          ),
+                      if (_order!['button_image'] != null || _order!['po_image'] != null) ...[
+                        const SizedBox(height: 16),
+                        Wrap(
+                          spacing: 12,
+                          runSpacing: 12,
+                          children: <Widget>[
+                            if (_order!['button_image'] != null)
+                              AppImagePreviewCard(
+                                title: 'Button Sample Image',
+                                imageSource: _order!['button_image'] as String?,
+                                width: 190,
+                                height: 150,
+                              ),
+                            if (_order!['po_image'] != null)
+                              AppImagePreviewCard(
+                                title: 'PO Image',
+                                imageSource: _order!['po_image'] as String?,
+                                width: 190,
+                                height: 150,
+                              ),
+                          ],
                         ),
                       ],
                       if (widget.title == 'Casting') ...[
@@ -700,7 +703,7 @@ class _SnapshotChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Chip(
       label: Text('$label: $value'),
-      backgroundColor: color != null ? color!.withValues(alpha: 0.15) : null,
+      backgroundColor: color?.withValues(alpha: 0.15),
       side: color != null ? BorderSide(color: color!) : null,
       labelStyle: color != null ? TextStyle(color: color, fontWeight: FontWeight.bold) : null,
     );

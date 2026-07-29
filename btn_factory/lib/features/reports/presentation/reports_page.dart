@@ -33,6 +33,7 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
     try {
       final dio = ref.read(dioProvider);
       final response = await dio.get('/reports/summary');
+      if (!mounted) return;
       setState(() {
         _reportData = response.data as Map<String, dynamic>;
         _isLoading = false;
@@ -46,6 +47,7 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
           errorMessage = 'Unauthorized: Please log in again.';
         }
       }
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
         _error = errorMessage;
@@ -79,7 +81,7 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
       return const AppScaffold(
         selectedIndex: 7,
         title: 'Reports',
-        child: Center(child: CircularProgressIndicator()),
+        child: Center(child: CircularProgressIndicator(color: Color(0xFF14B8A6))),
       );
     }
 
@@ -93,11 +95,11 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Icon(Icons.error_outline, size: 56, color: Theme.of(context).colorScheme.error),
+                const Icon(Icons.error_outline, size: 56, color: Color(0xFFEF4444)),
                 const SizedBox(height: 16),
                 Text(
                   _error!,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error, fontWeight: FontWeight.bold),
+                  style: const TextStyle(color: Color(0xFFFCA5A5), fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
@@ -121,19 +123,38 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
 
     return AppScaffold(
       selectedIndex: 7,
-      title: 'Reports',
+      title: 'Reports & Analytics',
       child: RefreshIndicator(
         onRefresh: _fetchReport,
+        color: const Color(0xFF14B8A6),
+        backgroundColor: const Color(0xFF111827),
         child: ListView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           children: <Widget>[
-            Text('Admin-only reporting center', style: Theme.of(context).textTheme.headlineSmall),
-            const SizedBox(height: 8),
-            const Text('Generate production, material, rejection, and revenue reports from the backend.'),
-            const SizedBox(height: 20),
+            const Text(
+              'Reporting Console',
+              style: TextStyle(
+                color: Color(0xFFF8FAFC),
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 6),
+            const Text(
+              'Generate details on production output, raw materials consumed, rejections, and revenue.',
+              style: TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
+            ),
+            const SizedBox(height: 24),
             SectionCard(
               title: 'Production Report',
-              trailing: TextButton(onPressed: () {}, child: const Text('Export PDF')),
+              trailing: TextButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
+                label: const Text('Export PDF'),
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xFF14B8A6),
+                ),
+              ),
               child: _ReportSummary(
                 rows: <_ReportRow>[
                   _ReportRow(label: 'Orders completed', value: _formatCount(production['completed_orders'] ?? 0)),
@@ -143,13 +164,13 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
             SectionCard(
               title: 'Material Consumption',
               child: materials.isEmpty
                   ? const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.0),
-                      child: Text('No material consumption recorded yet.', style: TextStyle(fontStyle: FontStyle.italic)),
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Text('No material consumption recorded yet.', style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B))),
                     )
                   : Wrap(
                       spacing: 12,
@@ -161,11 +182,12 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
                         return _SummaryTile(
                           label: name,
                           value: '$qty $unit',
+                          tint: const Color(0xFF0D9488),
                         );
                       }).toList(),
                     ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
             SectionCard(
               title: 'Rejection Report',
               child: Wrap(
@@ -174,20 +196,23 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
                 children: <Widget>[
                   _SummaryTile(
                     label: 'Rejection Rate',
-                    value: '${rejection['rejection_rate'] ?? 0.0}% average',
+                    value: '${rejection['rejection_rate'] ?? 0.0}% avg',
+                    tint: const Color(0xFFEF4444),
                   ),
                   _SummaryTile(
                     label: 'Total Produced',
                     value: _formatCount((rejection['total_packed'] ?? 0) + (rejection['total_rejected'] ?? 0)),
+                    tint: const Color(0xFF14B8A6),
                   ),
                   _SummaryTile(
                     label: 'Total Rejected',
                     value: _formatCount(rejection['total_rejected'] ?? 0),
+                    tint: const Color(0xFFF59E0B),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
             SectionCard(
               title: 'Revenue Report',
               child: Wrap(
@@ -197,14 +222,17 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
                   _SummaryTile(
                     label: 'Total Order Value',
                     value: _formatCurrency(revenue['total_revenue'] ?? 0.0),
+                    tint: const Color(0xFF8B5CF6),
                   ),
                   _SummaryTile(
                     label: 'Completed Orders',
                     value: _formatCount(revenue['completed_count'] ?? 0),
+                    tint: const Color(0xFF10B981),
                   ),
                   _SummaryTile(
                     label: 'Pending Value',
                     value: _formatCurrency(revenue['pending_revenue'] ?? 0.0),
+                    tint: const Color(0xFFF59E0B),
                   ),
                 ],
               ),
@@ -226,12 +254,30 @@ class _ReportSummary extends StatelessWidget {
     return Column(
       children: rows
           .map(
-            (row) => Padding(
-              padding: const EdgeInsets.only(bottom: 10),
+            (row) => Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1F2937),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFF374151), width: 1),
+              ),
               child: Row(
                 children: <Widget>[
-                  Expanded(child: Text(row.label)),
-                  Text(row.value, style: Theme.of(context).textTheme.titleMedium),
+                  Expanded(
+                    child: Text(
+                      row.label,
+                      style: const TextStyle(color: Color(0xFF94A3B8), fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  Text(
+                    row.value,
+                    style: const TextStyle(
+                      color: Color(0xFFF8FAFC),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -249,30 +295,50 @@ class _ReportRow {
 }
 
 class _SummaryTile extends StatelessWidget {
-  const _SummaryTile({required this.label, required this.value});
+  const _SummaryTile({required this.label, required this.value, required this.tint});
 
   final String label;
   final String value;
+  final Color tint;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 180,
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(label, style: Theme.of(context).textTheme.labelLarge),
-              const SizedBox(height: 8),
-              Text(value, style: Theme.of(context).textTheme.titleMedium),
-            ],
+    return Container(
+      width: 170,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF111827),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: tint.withValues(alpha: 0.15), width: 1.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(
+            label,
+            style: const TextStyle(
+              color: Color(0xFF64748B),
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.2,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-        ),
+          const SizedBox(height: 6),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Color(0xFFF8FAFC),
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }
 }
+
 

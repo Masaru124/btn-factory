@@ -1,5 +1,6 @@
 import 'package:btn_factory/core/constants/app_constants.dart';
 import 'package:btn_factory/core/storage/secure_storage.dart';
+import 'package:btn_factory/features/auth/application/auth_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,6 +23,12 @@ final dioProvider = Provider<Dio>((ref) {
           options.headers['Authorization'] = 'Bearer $token';
         }
         handler.next(options);
+      },
+      onError: (e, handler) {
+        if (e.response?.statusCode == 401 && e.requestOptions.path != '/auth/login') {
+          ref.read(authControllerProvider.notifier).logout();
+        }
+        handler.next(e);
       },
     ),
   );
