@@ -228,7 +228,7 @@ class AppImagePreview extends StatelessWidget {
           ),
           Column(
             mainAxisSize: MainAxisSize.min,
-            main: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Container(
                 padding: const EdgeInsets.all(10),

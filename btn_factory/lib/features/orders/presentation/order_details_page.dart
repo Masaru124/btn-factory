@@ -1,3 +1,4 @@
+import 'package:btn_factory/core/utils/pdf_export_service.dart';
 import 'package:btn_factory/shared/widgets/app_scaffold.dart';
 import 'package:btn_factory/shared/widgets/app_image_preview.dart';
 import 'package:btn_factory/shared/widgets/section_card.dart';
@@ -129,8 +130,14 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                     style: const TextStyle(color: Color(0xFF14B8A6), fontWeight: FontWeight.bold, fontSize: 12),
                   ),
                 ),
+                const SizedBox(width: 8),
+                IconButton(
+                  icon: const Icon(Icons.picture_as_pdf_outlined, color: Color(0xFF14B8A6)),
+                  tooltip: 'Export Order PDF',
+                  onPressed: () => PdfExportService.exportOrderPdf(order),
+                ),
                 if (isAdmin) ...[
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
                   IconButton(
                     icon: const Icon(Icons.edit_outlined, color: Color(0xFF14B8A6)),
                     tooltip: 'Edit Order',
@@ -195,7 +202,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
               spacing: 16,
               runSpacing: 16,
               children: <Widget>[
-                AppImagePreviewCard(title: 'PO Image', imageSource: order['po_image'] as String?),
+                if (isAdmin) AppImagePreviewCard(title: 'PO Image', imageSource: order['po_image'] as String?),
                 AppImagePreviewCard(title: 'Button Sample Image', imageSource: order['button_image'] as String?),
               ],
             ),
@@ -396,23 +403,6 @@ class _DetailChip extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _PreviewCard extends StatelessWidget {
-  const _PreviewCard({required this.title, this.fileName});
-
-  final String title;
-  final String? fileName;
-
-  @override
-  Widget build(BuildContext context) {
-    return AppImagePreviewCard(
-      title: title,
-      imageSource: fileName,
-      width: 200,
-      height: 170,
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:btn_factory/core/utils/pdf_export_service.dart';
 import 'package:btn_factory/shared/widgets/app_scaffold.dart';
 import 'package:btn_factory/shared/widgets/section_card.dart';
 import 'package:btn_factory/core/network/api_client.dart';
@@ -148,7 +149,7 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
             SectionCard(
               title: 'Production Report',
               trailing: TextButton.icon(
-                onPressed: () {},
+                onPressed: _reportData == null ? null : () => PdfExportService.exportReportPdf(_reportData!),
                 icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
                 label: const Text('Export PDF'),
                 style: TextButton.styleFrom(

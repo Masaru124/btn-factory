@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:btn_factory/shared/widgets/app_scaffold.dart';
 import 'package:btn_factory/shared/widgets/app_image_preview.dart';
 import 'package:btn_factory/core/network/api_client.dart';
+import 'package:btn_factory/features/auth/application/auth_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
@@ -29,12 +29,12 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
   final TextEditingController _rateController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _laserController = TextEditingController();
+  final TextEditingController _polishTypeController = TextEditingController();
+  final TextEditingController _packingOptionController = TextEditingController();
   String? _castingType;
   String? _thickness;
   String? _boxType;
   String? _linings;
-  String? _polishType;
-  String? _packingOption;
   DateTime? _poDate;
   DateTime? _dispatchDate;
   String? _poImageName;
@@ -44,6 +44,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
   String? _status;
 
   bool _isSubmitting = false;
+  bool _isSubmitted = false;
   bool _isLoadingOrder = false;
   String? _loadError;
 
@@ -63,8 +64,8 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
       _boxType = 'DD';
       _linings = '14';
       _laserController.text = 'Logo';
-      _polishType = 'Mirror';
-      _packingOption = 'Carton';
+      _polishTypeController.text = 'Mirror';
+      _packingOptionController.text = 'Carton';
       _poDate = DateTime.now();
       _dispatchDate = DateTime.now().add(const Duration(days: 14));
     }
@@ -91,8 +92,8 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
         _boxType = order['box_type'] as String?;
         _linings = order['linings'] as String?;
         _laserController.text = order['laser'] as String? ?? '';
-        _polishType = order['polish_type'] as String?;
-        _packingOption = order['packing_option'] as String?;
+        _polishTypeController.text = order['polish_type'] as String? ?? '';
+        _packingOptionController.text = order['packing_option'] as String? ?? '';
         _status = order['status'] as String?;
 
         if (order['po_date'] != null) {
@@ -120,6 +121,8 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
     _rateController.dispose();
     _quantityController.dispose();
     _laserController.dispose();
+    _polishTypeController.dispose();
+    _packingOptionController.dispose();
     super.dispose();
   }
 
@@ -224,65 +227,6 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
     return MaterialLocalizations.of(context).formatMediumDate(selectedDate);
   }
 
-  Widget _buildUploadTile({required String label, required String? fileName, required VoidCallback onPressed}) {
-    final bool hasFile = fileName != null && fileName.isNotEmpty;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFF111827),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: hasFile ? const Color(0xFF14B8A6).withValues(alpha: 0.3) : const Color(0xFF1F2937),
-          width: 1.5,
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: hasFile ? const Color(0xFF14B8A6).withValues(alpha: 0.1) : const Color(0xFF1F2937),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              hasFile ? Icons.file_present_outlined : Icons.upload_file_outlined,
-              color: hasFile ? const Color(0xFF14B8A6) : const Color(0xFF64748B),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  label,
-                  style: const TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold, fontSize: 14),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  fileName ?? 'No file selected',
-                  style: const TextStyle(color: Color(0xFF64748B), fontSize: 12),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-          OutlinedButton(
-            onPressed: onPressed,
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(color: hasFile ? const Color(0xFF14B8A6) : const Color(0xFF374151)),
-              foregroundColor: hasFile ? const Color(0xFF14B8A6) : const Color(0xFFE2E8F0),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-            child: const Text('Choose'),
-          ),
-        ],
-      ),
-    );
-  }
-
   Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) {
       return;
@@ -303,8 +247,8 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
         'quantity': int.tryParse(_quantityController.text) ?? 0,
         'linings': _linings,
         'laser': _laserController.text.trim(),
-        'polish_type': _polishType,
-        'packing_option': _packingOption,
+        'polish_type': _polishTypeController.text.trim(),
+        'packing_option': _packingOptionController.text.trim(),
         'dispatch_date': _dispatchDate?.toIso8601String().split('T').first,
         'po_image': _poImageName,
         'button_image': _buttonImageName,
@@ -323,6 +267,10 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
       
       if (!mounted) return;
       
+      setState(() {
+        _isSubmitted = true;
+      });
+
       if (widget.mode == OrderFormMode.edit) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Order updated successfully')));
       } else {
@@ -344,6 +292,38 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authControllerProvider).value;
+    final isAdmin = authState?.userRole == 'super_admin';
+
+    if (widget.mode == OrderFormMode.edit && !isAdmin) {
+      return AppScaffold(
+        selectedIndex: 1,
+        title: 'Access Denied',
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                Icon(Icons.lock_outline, size: 64, color: Color(0xFFEF4444)),
+                SizedBox(height: 16),
+                Text(
+                  'Access Denied: Only Admin can edit submitted forms.',
+                  style: TextStyle(color: Color(0xFFF8FAFC), fontSize: 18, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Form submission restriction is active. Non-admin users are denied access to modify submitted order forms.',
+                  style: TextStyle(color: Color(0xFF94A3B8), fontSize: 14),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
     if (_isLoadingOrder) {
       return AppScaffold(
         selectedIndex: 1,
@@ -496,8 +476,18 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                           style: const TextStyle(color: Color(0xFFF8FAFC)),
                           decoration: const InputDecoration(labelText: 'Laser Logo/Text'),
                         ),
-                        _buildDropdown('Polish Type', _polishType, const <String>['Mirror', 'Matt', 'Antique'], (value) => setState(() => _polishType = value)),
-                        _buildDropdown('Packing Option', _packingOption, const <String>['Carton', 'Bag', 'Pallet'], (value) => setState(() => _packingOption = value)),
+                        TextFormField(
+                          controller: _polishTypeController,
+                          enabled: !_isSubmitted,
+                          style: const TextStyle(color: Color(0xFFF8FAFC)),
+                          decoration: const InputDecoration(labelText: 'Polish Type'),
+                        ),
+                        TextFormField(
+                          controller: _packingOptionController,
+                          enabled: !_isSubmitted,
+                          style: const TextStyle(color: Color(0xFFF8FAFC)),
+                          decoration: const InputDecoration(labelText: 'Packing Type'),
+                        ),
                       ],
                     );
                   },
@@ -555,7 +545,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                 ],
                 const SizedBox(height: 36),
                 FilledButton(
-                  onPressed: _isSubmitting ? null : _submit,
+                  onPressed: (_isSubmitting || _isSubmitted) ? null : _submit,
                   style: FilledButton.styleFrom(
                     backgroundColor: const Color(0xFF14B8A6),
                     foregroundColor: Colors.black,

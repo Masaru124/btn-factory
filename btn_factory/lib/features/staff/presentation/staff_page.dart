@@ -54,12 +54,13 @@ class _StaffPageState extends ConsumerState<StaffPage> {
     }
   }
 
-  Future<void> _deleteStaff(int userId) async {
+  Future<void> _toggleStaffStatus(int userId, bool isCurrentlyActive) async {
+    final action = isCurrentlyActive ? 'Deactivate' : 'Activate';
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Deactivate Staff Account?'),
-        content: const Text('This will disable the user account. They will no longer be able to log in to the system.'),
+        title: Text('$action Staff Account?'),
+        content: Text('This will ${isCurrentlyActive ? 'disable' : 'enable'} the user account.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -68,10 +69,10 @@ class _StaffPageState extends ConsumerState<StaffPage> {
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
             style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFFEF4444),
+              backgroundColor: isCurrentlyActive ? const Color(0xFFEF4444) : const Color(0xFF10B981),
               foregroundColor: Colors.white,
             ),
-            child: const Text('Deactivate'),
+            child: Text(action),
           ),
         ],
       ),
@@ -81,17 +82,21 @@ class _StaffPageState extends ConsumerState<StaffPage> {
 
     try {
       final dio = ref.read(dioProvider);
-      await dio.delete('/auth/users/$userId');
+      if (isCurrentlyActive) {
+        await dio.delete('/auth/users/$userId');
+      } else {
+        await dio.put('/auth/users/$userId', data: {'is_active': true});
+      }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Staff account deactivated successfully')),
+          SnackBar(content: Text('Staff account ${action.toLowerCase()}d successfully')),
         );
         _fetchStaff();
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to deactivate staff: $e')),
+          SnackBar(content: Text('Failed to ${action.toLowerCase()} staff: $e')),
         );
       }
     }
@@ -259,9 +264,12 @@ class _StaffPageState extends ConsumerState<StaffPage> {
                                                 onPressed: () => _showStaffDialog(user as Map<String, dynamic>),
                                               ),
                                               IconButton(
-                                                icon: const Icon(Icons.delete_outline, color: Color(0xFFEF4444)),
-                                                tooltip: 'Deactivate Staff',
-                                                onPressed: isActive ? () => _deleteStaff(user['id'] as int) : null,
+                                                icon: Icon(
+                                                  isActive ? Icons.delete_outline : Icons.check_circle_outline,
+                                                  color: isActive ? const Color(0xFFEF4444) : const Color(0xFF10B981),
+                                                ),
+                                                tooltip: isActive ? 'Deactivate Staff' : 'Activate Staff',
+                                                onPressed: () => _toggleStaffStatus(user['id'] as int, isActive),
                                               ),
                                             ],
                                           ),
@@ -348,10 +356,14 @@ class _StaffPageState extends ConsumerState<StaffPage> {
                                           ),
                                           const SizedBox(width: 16),
                                           IconButton(
-                                            icon: const Icon(Icons.delete_outline, color: Color(0xFFEF4444), size: 20),
+                                            icon: Icon(
+                                              isActive ? Icons.delete_outline : Icons.check_circle_outline,
+                                              color: isActive ? const Color(0xFFEF4444) : const Color(0xFF10B981),
+                                              size: 20,
+                                            ),
                                             constraints: const BoxConstraints(),
                                             padding: EdgeInsets.zero,
-                                            onPressed: isActive ? () => _deleteStaff(user['id'] as int) : null,
+                                            onPressed: () => _toggleStaffStatus(user['id'] as int, isActive),
                                           ),
                                         ],
                                       ),
@@ -591,6 +603,7 @@ class _StaffFormDialogState extends ConsumerState<_StaffFormDialog> {
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
+                  key: ValueKey('role_$_role'),
                   initialValue: _role,
                   dropdownColor: const Color(0xFF111827),
                   style: const TextStyle(color: Color(0xFFF8FAFC)),
@@ -615,6 +628,7 @@ class _StaffFormDialogState extends ConsumerState<_StaffFormDialog> {
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
+                  key: ValueKey('dept_$_department'),
                   initialValue: _department,
                   dropdownColor: const Color(0xFF111827),
                   style: const TextStyle(color: Color(0xFFF8FAFC)),

@@ -477,26 +477,18 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                           _SnapshotChip(label: 'Expected Status', value: widget.currentStatusLabel),
                         ],
                       ),
-                      if (_order!['button_image'] != null || _order!['po_image'] != null) ...[
+                      if (_order!['button_image'] != null) ...[
                         const SizedBox(height: 16),
                         Wrap(
                           spacing: 12,
                           runSpacing: 12,
                           children: <Widget>[
-                            if (_order!['button_image'] != null)
-                              AppImagePreviewCard(
-                                title: 'Button Sample Image',
-                                imageSource: _order!['button_image'] as String?,
-                                width: 190,
-                                height: 150,
-                              ),
-                            if (_order!['po_image'] != null)
-                              AppImagePreviewCard(
-                                title: 'PO Image',
-                                imageSource: _order!['po_image'] as String?,
-                                width: 190,
-                                height: 150,
-                              ),
+                            AppImagePreviewCard(
+                              title: 'Button Sample Image',
+                              imageSource: _order!['button_image'] as String?,
+                              width: 190,
+                              height: 150,
+                            ),
                           ],
                         ),
                       ],

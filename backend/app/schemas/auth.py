@@ -18,6 +18,8 @@ class UserAuthResponse(BaseModel):
     email: str
     role: str
     department: str | None = None
+    is_active: bool = True
+
 
 
 
