@@ -14,7 +14,7 @@ def scrub_order_by_role(order_read: OrderRead, role: str) -> OrderRead:
     if role == 'super_admin':
         return order_read
 
-    if role != 'raw_material':
+    if role not in ('raw_material', 'casting'):
         order_read.raw_materials = []
     if role != 'casting':
         order_read.casting_process = None

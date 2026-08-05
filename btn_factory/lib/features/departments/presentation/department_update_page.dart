@@ -396,6 +396,26 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
     );
   }
 
+  bool get _isDepartmentAlreadySubmitted {
+    if (_order == null) return false;
+    switch (widget.title) {
+      case 'Raw Material':
+        final rawMaterials = _order!['raw_materials'] as List<dynamic>? ?? [];
+        final status = _order!['status'] as String? ?? 'Created';
+        return rawMaterials.isNotEmpty || status != 'Created';
+      case 'Casting':
+        return _order!['casting_process'] != null;
+      case 'Turning':
+        return _order!['turning_process'] != null;
+      case 'Polish':
+        return _order!['polishing_process'] != null;
+      case 'Packing':
+        return _order!['packing_process'] != null;
+      default:
+        return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final fields = _getFields();
@@ -553,112 +573,143 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
           const SizedBox(height: 16),
           SectionCard(
             title: 'Step 3: Department Form',
-            child: Form(
-              key: _formKey,
-              child: _order == null
-                  ? const Text('Fetch an order first to enable the department form.', style: TextStyle(fontStyle: FontStyle.italic))
-                  : widget.title == 'Raw Material'
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            ...List.generate(
-                              _rawMaterialRows.length,
-                              (index) => _buildRawMaterialRow(index, _rawMaterialRows[index]),
-                            ),
-                            const SizedBox(height: 8),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: TextButton.icon(
-                                onPressed: () {
-                                  setState(() {
-                                    _rawMaterialRows.add(RawMaterialInputRow());
-                                  });
-                                },
-                                icon: const Icon(Icons.add),
-                                label: const Text('Add Another Material'),
+            child: _isDepartmentAlreadySubmitted
+                ? Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1F2937),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFF10B981), width: 1.5),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.check_circle_outline, color: Color(0xFF10B981), size: 32),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${widget.title} Form Already Submitted',
+                                style: const TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold, fontSize: 16),
                               ),
-                            ),
-                          ],
-                        )
-                      : LayoutBuilder(
-                          builder: (context, constraints) {
-                            final columns = constraints.maxWidth >= 900 ? 2 : 1;
-
-                            return GridView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: columns,
-                                crossAxisSpacing: 16,
-                                mainAxisSpacing: 16,
-                                mainAxisExtent: 85,
+                              const SizedBox(height: 4),
+                              Text(
+                                'Details for ${widget.title} have already been submitted for order ${_order!['token']}. Form is locked and no longer taking inputs.',
+                                style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
                               ),
-                              itemCount: fields.length,
-                              itemBuilder: (context, index) {
-                                final field = fields[index];
-                                final controller = _fieldControllers[field.jsonKey];
-                                if (controller == null) {
-                                  // Re-initialize controller if not present (e.g. state changed dynamically)
-                                  return const SizedBox();
-                                }
-
-                                if (field.type == 'datetime') {
-                                  return Row(
-                                    children: [
-                                      Expanded(
-                                        child: TextFormField(
-                                          controller: controller,
-                                          readOnly: true,
-                                          decoration: InputDecoration(
-                                            labelText: field.label,
-                                            suffixIcon: IconButton(
-                                              icon: const Icon(Icons.calendar_today),
-                                              onPressed: () => _selectDateTime(context, controller),
-                                            ),
-                                            border: const OutlineInputBorder(),
-                                          ),
-                                          validator: (value) => value == null || value.trim().isEmpty ? '${field.label} is required' : null,
-                                          onTap: () => _selectDateTime(context, controller),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      TextButton(
-                                        onPressed: () {
-                                          controller.text = DateTime.now().toUtc().toIso8601String();
-                                        },
-                                        child: const Text('NOW'),
-                                      ),
-                                    ],
-                                  );
-                                }
-
-                                return TextFormField(
-                                  controller: controller,
-                                  decoration: InputDecoration(
-                                    labelText: field.label,
-                                    border: const OutlineInputBorder(),
-                                  ),
-                                  keyboardType: field.type == 'double' || field.type == 'int'
-                                      ? const TextInputType.numberWithOptions(decimal: true)
-                                      : TextInputType.text,
-                                  validator: (value) {
-                                    if (value == null || value.trim().isEmpty) {
-                                      return '${field.label} is required';
-                                    }
-                                    if (field.type == 'double' && double.tryParse(value) == null) {
-                                      return 'Enter a valid decimal number';
-                                    }
-                                    if (field.type == 'int' && int.tryParse(value) == null) {
-                                      return 'Enter a valid integer';
-                                    }
-                                    return null;
-                                  },
-                                );
-                              },
-                            );
-                          },
+                            ],
+                          ),
                         ),
-            ),
+                      ],
+                    ),
+                  )
+                : Form(
+                    key: _formKey,
+                    child: _order == null
+                        ? const Text('Fetch an order first to enable the department form.', style: TextStyle(fontStyle: FontStyle.italic))
+                        : widget.title == 'Raw Material'
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  ...List.generate(
+                                    _rawMaterialRows.length,
+                                    (index) => _buildRawMaterialRow(index, _rawMaterialRows[index]),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: TextButton.icon(
+                                      onPressed: () {
+                                        setState(() {
+                                          _rawMaterialRows.add(RawMaterialInputRow());
+                                        });
+                                      },
+                                      icon: const Icon(Icons.add),
+                                      label: const Text('Add Another Material'),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : LayoutBuilder(
+                                builder: (context, constraints) {
+                                  final columns = constraints.maxWidth >= 900 ? 2 : 1;
+
+                                  return GridView.builder(
+                                    shrinkWrap: true,
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: columns,
+                                      crossAxisSpacing: 16,
+                                      mainAxisSpacing: 16,
+                                      mainAxisExtent: 85,
+                                    ),
+                                    itemCount: fields.length,
+                                    itemBuilder: (context, index) {
+                                      final field = fields[index];
+                                      final controller = _fieldControllers[field.jsonKey];
+                                      if (controller == null) {
+                                        // Re-initialize controller if not present (e.g. state changed dynamically)
+                                        return const SizedBox();
+                                      }
+
+                                      if (field.type == 'datetime') {
+                                        return Row(
+                                          children: [
+                                            Expanded(
+                                              child: TextFormField(
+                                                controller: controller,
+                                                readOnly: true,
+                                                decoration: InputDecoration(
+                                                  labelText: field.label,
+                                                  suffixIcon: IconButton(
+                                                    icon: const Icon(Icons.calendar_today),
+                                                    onPressed: () => _selectDateTime(context, controller),
+                                                  ),
+                                                  border: const OutlineInputBorder(),
+                                                ),
+                                                validator: (value) => value == null || value.trim().isEmpty ? '${field.label} is required' : null,
+                                                onTap: () => _selectDateTime(context, controller),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            TextButton(
+                                              onPressed: () {
+                                                controller.text = DateTime.now().toUtc().toIso8601String();
+                                              },
+                                              child: const Text('NOW'),
+                                            ),
+                                          ],
+                                        );
+                                      }
+
+                                      return TextFormField(
+                                        controller: controller,
+                                        decoration: InputDecoration(
+                                          labelText: field.label,
+                                          border: const OutlineInputBorder(),
+                                        ),
+                                        keyboardType: field.type == 'double' || field.type == 'int'
+                                            ? const TextInputType.numberWithOptions(decimal: true)
+                                            : TextInputType.text,
+                                        validator: (value) {
+                                          if (value == null || value.trim().isEmpty) {
+                                            return '${field.label} is required';
+                                          }
+                                          if (field.type == 'double' && double.tryParse(value) == null) {
+                                            return 'Enter a valid decimal number';
+                                          }
+                                          if (field.type == 'int' && int.tryParse(value) == null) {
+                                            return 'Enter a valid integer';
+                                          }
+                                          return null;
+                                        },
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                  ),
           ),
           if (_submitError != null) ...[
             const SizedBox(height: 12),
@@ -669,14 +720,18 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
           ],
           const SizedBox(height: 20),
           FilledButton(
-            onPressed: _order == null || _isSubmitting ? null : _submitUpdate,
+            onPressed: (_order == null || _isSubmitting || _isDepartmentAlreadySubmitted) ? null : _submitUpdate,
             child: _isSubmitting
                 ? const SizedBox(
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                   )
-                : Text('Submit Update for ${widget.title}'),
+                : Text(
+                    _isDepartmentAlreadySubmitted
+                        ? 'Submitted for ${widget.title} (Locked)'
+                        : 'Submit Update for ${widget.title}',
+                  ),
           ),
         ],
       ),
