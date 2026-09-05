@@ -46,10 +46,37 @@ class OrderUpdate(BaseModel):
     status: str | None = None
 
 
+class UniversalRawMaterialCreate(BaseModel):
+    material_name: str
+    total_available_quantity: float = 0.0
+    unit: str = 'kg'
+    price: float = 0.0
+
+
+class UniversalRawMaterialUpdate(BaseModel):
+    material_name: str | None = None
+    total_available_quantity: float | None = None
+    unit: str | None = None
+    price: float | None = None
+
+
+class UniversalRawMaterialRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    material_name: str
+    total_available_quantity: float
+    unit: str
+    price: float
+    created_at: datetime
+    updated_at: datetime
+
+
 class RawMaterialCreate(BaseModel):
     order_token: str
     material_name: str
     quantity: float
+    total_available_quantity: float | None = None
     unit: str
     price: float
     created_by_id: int | None = None
@@ -58,6 +85,7 @@ class RawMaterialCreate(BaseModel):
 class RawMaterialItem(BaseModel):
     material_name: str
     quantity: float
+    total_available_quantity: float | None = None
     unit: str
     price: float
 
@@ -70,8 +98,12 @@ class RawMaterialBatchCreate(BaseModel):
 class CastingUpdate(BaseModel):
     order_token: str
     casting_type: str | None = None
+    date_of_casting: datetime | None = None
+    total_weight: float | None = None
     weight: float | None = None
+    blank_thickness: str | None = None
     thickness: str | None = None
+    no_of_sheets: int | None = None
     gross_quantity: int | None = None
     machine_no: str | None = None
     start_time: datetime | None = None
@@ -83,10 +115,13 @@ class TurningUpdate(BaseModel):
     order_token: str
     receiving_date: datetime | None = None
     date_of_turning: datetime | None = None
+    tool_no: str | None = None
     art_no: str | None = None
     machine_no: str | None = None
     hole_size: str | None = None
+    inward_weight: float | None = None
     weight: float | None = None
+    outward_weight: float | None = None
     turned_in_kgs: float | None = None
     gross_quantity: int | None = None
     semi_finish_thickness: str | None = None
@@ -97,9 +132,12 @@ class TurningUpdate(BaseModel):
 
 class PolishingUpdate(BaseModel):
     order_token: str
+    tool_no: str | None = None
     art_no: str | None = None
     receiving_date: datetime | None = None
+    inward_weight: float | None = None
     weight: float | None = None
+    outward_weight: float | None = None
     polish_type: str | None = None
     feeding_time: datetime | None = None
     out_time: datetime | None = None
@@ -111,7 +149,9 @@ class PolishingUpdate(BaseModel):
 class PackingUpdate(BaseModel):
     order_token: str
     receiving_date: datetime | None = None
+    tool_no: str | None = None
     art_no: str | None = None
+    inward_weight: float | None = None
     weight: float | None = None
     in_gross: int | None = None
     finishing: str | None = None
@@ -129,6 +169,7 @@ class RawMaterialRead(BaseModel):
     id: int
     material_name: str
     quantity: float
+    total_available_quantity: float | None = None
     unit: str
     price: float
     created_at: datetime
@@ -139,8 +180,12 @@ class CastingRead(BaseModel):
 
     id: int
     casting_type: str | None = None
+    date_of_casting: datetime | None = None
+    total_weight: float | None = None
     weight: float | None = None
+    blank_thickness: str | None = None
     thickness: str | None = None
+    no_of_sheets: int | None = None
     gross_quantity: int | None = None
     machine_no: str | None = None
     start_time: datetime | None = None
@@ -154,10 +199,13 @@ class TurningRead(BaseModel):
     id: int
     receiving_date: datetime | None = None
     date_of_turning: datetime | None = None
+    tool_no: str | None = None
     art_no: str | None = None
     machine_no: str | None = None
     hole_size: str | None = None
+    inward_weight: float | None = None
     weight: float | None = None
+    outward_weight: float | None = None
     turned_in_kgs: float | None = None
     gross_quantity: int | None = None
     semi_finish_thickness: str | None = None
@@ -170,9 +218,12 @@ class PolishingRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    tool_no: str | None = None
     art_no: str | None = None
     receiving_date: datetime | None = None
+    inward_weight: float | None = None
     weight: float | None = None
+    outward_weight: float | None = None
     polish_type: str | None = None
     feeding_time: datetime | None = None
     out_time: datetime | None = None
@@ -186,7 +237,9 @@ class PackingRead(BaseModel):
 
     id: int
     receiving_date: datetime | None = None
+    tool_no: str | None = None
     art_no: str | None = None
+    inward_weight: float | None = None
     weight: float | None = None
     in_gross: int | None = None
     finishing: str | None = None

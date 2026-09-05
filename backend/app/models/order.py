@@ -52,6 +52,18 @@ class Order(Base):
     packing_process = relationship('PackingProcess', back_populates='order', uselist=False, cascade='all, delete-orphan')
 
 
+class UniversalRawMaterial(Base):
+    __tablename__ = 'universal_raw_materials'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    material_name: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
+    total_available_quantity: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    unit: Mapped[str] = mapped_column(String(40), nullable=False, default='kg')
+    price: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+
 class RawMaterial(Base):
     __tablename__ = 'raw_materials'
 
@@ -59,6 +71,7 @@ class RawMaterial(Base):
     order_id: Mapped[int] = mapped_column(ForeignKey('orders.id'), nullable=False, index=True)
     material_name: Mapped[str] = mapped_column(String(255), nullable=False)
     quantity: Mapped[float] = mapped_column(Float, nullable=False)
+    total_available_quantity: Mapped[float | None] = mapped_column(Float, nullable=True)
     unit: Mapped[str] = mapped_column(String(40), nullable=False)
     price: Mapped[float] = mapped_column(Float, nullable=False)
     created_by_id: Mapped[int | None] = mapped_column(ForeignKey('users.id'), nullable=True)
@@ -74,8 +87,12 @@ class CastingProcess(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     order_id: Mapped[int] = mapped_column(ForeignKey('orders.id'), nullable=False, index=True)
     casting_type: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    date_of_casting: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    total_weight: Mapped[float | None] = mapped_column(Float, nullable=True)
     weight: Mapped[float | None] = mapped_column(Float, nullable=True)
+    blank_thickness: Mapped[str | None] = mapped_column(String(50), nullable=True)
     thickness: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    no_of_sheets: Mapped[int | None] = mapped_column(Integer, nullable=True)
     gross_quantity: Mapped[int | None] = mapped_column(Integer, nullable=True)
     machine_no: Mapped[str | None] = mapped_column(String(80), nullable=True)
     start_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
@@ -92,10 +109,13 @@ class TurningProcess(Base):
     order_id: Mapped[int] = mapped_column(ForeignKey('orders.id'), nullable=False, index=True)
     receiving_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     date_of_turning: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    tool_no: Mapped[str | None] = mapped_column(String(100), nullable=True)
     art_no: Mapped[str | None] = mapped_column(String(100), nullable=True)
     machine_no: Mapped[str | None] = mapped_column(String(80), nullable=True)
     hole_size: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    inward_weight: Mapped[float | None] = mapped_column(Float, nullable=True)
     weight: Mapped[float | None] = mapped_column(Float, nullable=True)
+    outward_weight: Mapped[float | None] = mapped_column(Float, nullable=True)
     turned_in_kgs: Mapped[float | None] = mapped_column(Float, nullable=True)
     gross_quantity: Mapped[int | None] = mapped_column(Integer, nullable=True)
     semi_finish_thickness: Mapped[str | None] = mapped_column(String(50), nullable=True)
@@ -111,9 +131,12 @@ class PolishingProcess(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     order_id: Mapped[int] = mapped_column(ForeignKey('orders.id'), nullable=False, index=True)
+    tool_no: Mapped[str | None] = mapped_column(String(100), nullable=True)
     art_no: Mapped[str | None] = mapped_column(String(100), nullable=True)
     receiving_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    inward_weight: Mapped[float | None] = mapped_column(Float, nullable=True)
     weight: Mapped[float | None] = mapped_column(Float, nullable=True)
+    outward_weight: Mapped[float | None] = mapped_column(Float, nullable=True)
     polish_type: Mapped[str | None] = mapped_column(String(100), nullable=True)
     feeding_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     out_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
@@ -130,7 +153,9 @@ class PackingProcess(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     order_id: Mapped[int] = mapped_column(ForeignKey('orders.id'), nullable=False, index=True)
     receiving_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    tool_no: Mapped[str | None] = mapped_column(String(100), nullable=True)
     art_no: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    inward_weight: Mapped[float | None] = mapped_column(Float, nullable=True)
     weight: Mapped[float | None] = mapped_column(Float, nullable=True)
     in_gross: Mapped[int | None] = mapped_column(Integer, nullable=True)
     finishing: Mapped[str | None] = mapped_column(String(100), nullable=True)

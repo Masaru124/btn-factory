@@ -4,10 +4,31 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.deps import get_current_user, require_roles
 from app.models.user import User
-from app.schemas.order import CastingUpdate, PackingUpdate, PolishingUpdate, RawMaterialCreate, RawMaterialBatchCreate, TurningUpdate
+from app.schemas.order import (
+    CastingUpdate,
+    PackingUpdate,
+    PolishingUpdate,
+    RawMaterialBatchCreate,
+    RawMaterialCreate,
+    TurningUpdate,
+    UniversalRawMaterialCreate,
+    UniversalRawMaterialRead,
+)
 from app.services.order_service import OrderService
 
 router = APIRouter()
+
+
+@router.get('/raw-material/universal', response_model=list[UniversalRawMaterialRead], dependencies=[Depends(get_current_user)])
+def get_universal_raw_materials(db: Session = Depends(get_db)) -> list:
+    service = OrderService(db)
+    return service.list_universal_raw_materials()
+
+
+@router.post('/raw-material/universal', response_model=UniversalRawMaterialRead, dependencies=[Depends(require_roles('super_admin', 'raw_material'))])
+def upsert_universal_raw_material(payload: UniversalRawMaterialCreate, db: Session = Depends(get_db)) -> UniversalRawMaterialRead:
+    service = OrderService(db)
+    return service.upsert_universal_raw_material(payload)
 
 
 @router.post('/raw-material/add', dependencies=[Depends(require_roles('super_admin', 'raw_material'))])
@@ -18,6 +39,7 @@ def add_raw_material(payload: RawMaterialBatchCreate, db: Session = Depends(get_
             order_token=payload.order_token,
             material_name=material.material_name,
             quantity=material.quantity,
+            total_available_quantity=material.total_available_quantity,
             unit=material.unit,
             price=material.price,
             created_by_id=current_user.id

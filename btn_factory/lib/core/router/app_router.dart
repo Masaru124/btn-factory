@@ -110,9 +110,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const DepartmentUpdatePage(
           title: 'Raw Material',
           selectedIndex: 2,
-          description: 'Search an order, record material usage, and submit raw material details.',
+          description: 'Search an order, view universal raw materials, and submit raw material details for the order.',
           currentStatusLabel: 'Created',
-          fieldLabels: <String>['Material Name', 'Quantity', 'Unit', 'Price', 'Remarks'],
+          fieldLabels: <String>['Material Name', 'Total Available Raw Material', 'Quantity for Order', 'Unit', 'Price'],
         ),
       ),
       GoRoute(
@@ -120,9 +120,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const DepartmentUpdatePage(
           title: 'Casting',
           selectedIndex: 3,
-          description: 'Update casting metrics after the order reaches the casting line.',
+          description: 'Update casting metrics including date, total weight, blank thickness, and sheets.',
           currentStatusLabel: 'Raw Material Updated',
-          fieldLabels: <String>['Casting Type', 'Weight', 'Thickness', 'Gross Quantity', 'Machine No', 'Start Time', 'End Time', 'Remarks'],
+          fieldLabels: <String>['Casting Type', 'Date of Casting', 'Total Weight (kg)', 'Blank Thickness', 'No. of Sheets', 'Gross Quantity', 'Machine No', 'Start Time', 'End Time', 'Remarks'],
         ),
       ),
       GoRoute(
@@ -130,9 +130,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const DepartmentUpdatePage(
           title: 'Turning',
           selectedIndex: 4,
-          description: 'Record turning machine data and finish dimensions.',
+          description: 'Record turning tool number, inward weight, and outward weight.',
           currentStatusLabel: 'Casting Completed',
-          fieldLabels: <String>['Machine No', 'Hole Size', 'Weight', 'Gross Quantity', 'Semi Finish Thickness', 'Finish Thickness', 'Remarks'],
+          fieldLabels: <String>['Receiving Date', 'Date of Turning', 'Inwards Weight (kg)', 'Tool Number', 'Hole', 'M/C No.', 'Outward Weight (kg)', 'Gross (Approx)', 'Semi Finish Thickness', 'Finish Thickness', 'Operator', 'Remarks'],
         ),
       ),
       GoRoute(
@@ -140,9 +140,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const DepartmentUpdatePage(
           title: 'Polish',
           selectedIndex: 5,
-          description: 'Capture polishing timings and output for the current order.',
+          description: 'Capture polishing inward and outward weight, operator, and timings.',
           currentStatusLabel: 'Turning Completed',
-          fieldLabels: <String>['Polish Type', 'Feeding Time', 'Out Time', 'Operator', 'Gross Quantity', 'Remarks'],
+          fieldLabels: <String>['Tool Number', 'Receiving Date', 'Inward Weight (kg)', 'Outward Weight (kg)', 'In Gross', 'Finishing', 'Time of Feeding', 'Out Time', 'Operator', 'Remarks'],
         ),
       ),
       GoRoute(
@@ -152,7 +152,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           selectedIndex: 6,
           description: 'Enter packed, rejected, short, and excess quantities before dispatch readiness.',
           currentStatusLabel: 'Polishing Completed',
-          fieldLabels: <String>['Packed Qty', 'Rejected Qty', 'Short Qty', 'Excess Qty', 'Remarks'],
+          fieldLabels: <String>['Receiving Date', 'Tool Number', 'Inward Weight (kg)', 'In Gross', 'Finishing', 'Packed in Gross', 'Excess Qty', 'Short Qty', 'Rejection Qty', 'Reason for Rejection', 'Operator'],
         ),
       ),
       GoRoute(

@@ -236,11 +236,12 @@ class PdfExportService {
                 _buildSectionHeader('Raw Material Logs'),
                 pw.SizedBox(height: 4),
                 pw.TableHelper.fromTextArray(
-                  headers: ['Material Name', 'Quantity', 'Unit', 'Price (INR)'],
+                  headers: ['Material Name', 'Order Qty', 'Total Available', 'Unit', 'Price (INR)'],
                   data: rawMaterials
                       .map((m) => [
                             '${m['material_name'] ?? 'N/A'}',
                             '${m['quantity'] ?? 'N/A'}',
+                            '${m['total_available_quantity'] ?? 'N/A'}',
                             '${m['unit'] ?? ''}',
                             'INR ${m['price'] ?? 'N/A'}',
                           ])
@@ -256,14 +257,15 @@ class PdfExportService {
                 _buildSectionHeader('Casting Log'),
                 pw.SizedBox(height: 4),
                 pw.TableHelper.fromTextArray(
-                  headers: ['Casting Type', 'Weight (kg)', 'Gross Qty', 'Machine No', 'Remarks'],
+                  headers: ['Casting Type', 'Date of Casting', 'Total Wt (kg)', 'Blank Thickness', 'Sheets', 'Gross Qty'],
                   data: [
                     [
                       '${casting['casting_type'] ?? 'N/A'}',
-                      '${casting['weight'] ?? 'N/A'}',
+                      casting['date_of_casting'] != null ? casting['date_of_casting'].toString().split('T').first : 'N/A',
+                      '${casting['total_weight'] ?? casting['weight'] ?? 'N/A'}',
+                      '${casting['blank_thickness'] ?? casting['thickness'] ?? 'N/A'}',
+                      '${casting['no_of_sheets'] ?? 'N/A'}',
                       '${casting['gross_quantity'] ?? 'N/A'}',
-                      '${casting['machine_no'] ?? 'N/A'}',
-                      '${casting['remarks'] ?? 'None'}',
                     ]
                   ],
                   headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
@@ -277,14 +279,15 @@ class PdfExportService {
                 _buildSectionHeader('Turning Log'),
                 pw.SizedBox(height: 4),
                 pw.TableHelper.fromTextArray(
-                  headers: ['M/C No', 'Hole Size', 'Gross Qty', 'Operator', 'Remarks'],
+                  headers: ['Tool No', 'Inwards Wt (kg)', 'Outward Wt (kg)', 'Gross Qty', 'M/C No', 'Operator'],
                   data: [
                     [
-                      '${turning['machine_no'] ?? 'N/A'}',
-                      '${turning['hole_size'] ?? 'N/A'}',
+                      '${turning['tool_no'] ?? turning['art_no'] ?? 'N/A'}',
+                      '${turning['inward_weight'] ?? turning['weight'] ?? 'N/A'}',
+                      '${turning['outward_weight'] ?? turning['turned_in_kgs'] ?? 'N/A'}',
                       '${turning['gross_quantity'] ?? 'N/A'}',
+                      '${turning['machine_no'] ?? 'N/A'}',
                       '${turning['operator'] ?? 'N/A'}',
-                      '${turning['remarks'] ?? 'None'}',
                     ]
                   ],
                   headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
@@ -298,13 +301,15 @@ class PdfExportService {
                 _buildSectionHeader('Polishing Log'),
                 pw.SizedBox(height: 4),
                 pw.TableHelper.fromTextArray(
-                  headers: ['Polish Type', 'Gross Qty', 'Operator', 'Remarks'],
+                  headers: ['Tool No', 'Inward Wt (kg)', 'Outward Wt (kg)', 'Gross Qty', 'Operator', 'Polish Type'],
                   data: [
                     [
-                      '${polish['polish_type'] ?? 'N/A'}',
+                      '${polish['tool_no'] ?? polish['art_no'] ?? 'N/A'}',
+                      '${polish['inward_weight'] ?? polish['weight'] ?? 'N/A'}',
+                      '${polish['outward_weight'] ?? 'N/A'}',
                       '${polish['gross_quantity'] ?? 'N/A'}',
                       '${polish['operator'] ?? 'N/A'}',
-                      '${polish['remarks'] ?? 'None'}',
+                      '${polish['polish_type'] ?? 'N/A'}',
                     ]
                   ],
                   headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
@@ -318,13 +323,14 @@ class PdfExportService {
                 _buildSectionHeader('Packing Log'),
                 pw.SizedBox(height: 4),
                 pw.TableHelper.fromTextArray(
-                  headers: ['Packed Qty', 'Rejected Qty', 'Short Qty', 'Excess Qty', 'Operator'],
+                  headers: ['Tool No', 'Inward Wt (kg)', 'Packed Qty', 'Rejected Qty', 'Short / Excess', 'Operator'],
                   data: [
                     [
+                      '${packing['tool_no'] ?? packing['art_no'] ?? 'N/A'}',
+                      '${packing['inward_weight'] ?? packing['weight'] ?? 'N/A'}',
                       '${packing['packed_qty'] ?? 'N/A'}',
                       '${packing['rejected_qty'] ?? 'N/A'}',
-                      '${packing['short_qty'] ?? 'N/A'}',
-                      '${packing['excess_qty'] ?? 'N/A'}',
+                      '${packing['short_qty'] ?? 0} / ${packing['excess_qty'] ?? 0}',
                       '${packing['operator'] ?? 'N/A'}',
                     ]
                   ],

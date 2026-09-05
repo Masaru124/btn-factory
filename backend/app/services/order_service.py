@@ -1,5 +1,6 @@
 from datetime import date, datetime
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.order import (
@@ -9,6 +10,7 @@ from app.models.order import (
     PolishingProcess,
     RawMaterial,
     TurningProcess,
+    UniversalRawMaterial,
 )
 from app.repositories.order import OrderRepository
 from app.schemas.order import (
@@ -19,6 +21,8 @@ from app.schemas.order import (
     PolishingUpdate,
     RawMaterialCreate,
     TurningUpdate,
+    UniversalRawMaterialCreate,
+    UniversalRawMaterialUpdate,
 )
 from app.services.status_engine import recompute_order_status
 
@@ -89,10 +93,32 @@ class OrderService:
         if order is None:
             return None
 
+        # Check or sync universal raw material
+        universal = self.session.scalar(
+            select(UniversalRawMaterial).where(UniversalRawMaterial.material_name == payload.material_name)
+        )
+        if universal is None:
+            avail = payload.total_available_quantity if payload.total_available_quantity is not None else payload.quantity
+            universal = UniversalRawMaterial(
+                material_name=payload.material_name,
+                total_available_quantity=avail,
+                unit=payload.unit,
+                price=payload.price,
+            )
+            self.session.add(universal)
+        else:
+            if payload.total_available_quantity is not None:
+                universal.total_available_quantity = payload.total_available_quantity
+            if payload.unit:
+                universal.unit = payload.unit
+            if payload.price:
+                universal.price = payload.price
+
         raw_material = RawMaterial(
             order_id=order.id,
             material_name=payload.material_name,
             quantity=payload.quantity,
+            total_available_quantity=payload.total_available_quantity if payload.total_available_quantity is not None else universal.total_available_quantity,
             unit=payload.unit,
             price=payload.price,
             created_by_id=created_by or payload.created_by_id,
@@ -108,7 +134,18 @@ class OrderService:
         if order is None:
             return None
 
-        casting = CastingProcess(order_id=order.id, **payload.model_dump(exclude={'order_token'}, exclude_unset=True))
+        data = payload.model_dump(exclude={'order_token'}, exclude_unset=True)
+        if 'total_weight' in data and 'weight' not in data:
+            data['weight'] = data['total_weight']
+        elif 'weight' in data and 'total_weight' not in data:
+            data['total_weight'] = data['weight']
+
+        if 'blank_thickness' in data and 'thickness' not in data:
+            data['thickness'] = data['blank_thickness']
+        elif 'thickness' in data and 'blank_thickness' not in data:
+            data['blank_thickness'] = data['thickness']
+
+        casting = CastingProcess(order_id=order.id, **data)
         self.orders.upsert_casting(order, casting)
         order.status = recompute_order_status(order)
         self.session.commit()
@@ -120,7 +157,23 @@ class OrderService:
         if order is None:
             return None
 
-        turning = TurningProcess(order_id=order.id, **payload.model_dump(exclude={'order_token'}, exclude_unset=True))
+        data = payload.model_dump(exclude={'order_token'}, exclude_unset=True)
+        if 'tool_no' in data and 'art_no' not in data:
+            data['art_no'] = data['tool_no']
+        elif 'art_no' in data and 'tool_no' not in data:
+            data['tool_no'] = data['art_no']
+
+        if 'inward_weight' in data and 'weight' not in data:
+            data['weight'] = data['inward_weight']
+        elif 'weight' in data and 'inward_weight' not in data:
+            data['inward_weight'] = data['weight']
+
+        if 'outward_weight' in data and 'turned_in_kgs' not in data:
+            data['turned_in_kgs'] = data['outward_weight']
+        elif 'turned_in_kgs' in data and 'outward_weight' not in data:
+            data['outward_weight'] = data['turned_in_kgs']
+
+        turning = TurningProcess(order_id=order.id, **data)
         self.orders.upsert_turning(order, turning)
         order.status = recompute_order_status(order)
         self.session.commit()
@@ -132,7 +185,18 @@ class OrderService:
         if order is None:
             return None
 
-        polishing = PolishingProcess(order_id=order.id, **payload.model_dump(exclude={'order_token'}, exclude_unset=True))
+        data = payload.model_dump(exclude={'order_token'}, exclude_unset=True)
+        if 'tool_no' in data and 'art_no' not in data:
+            data['art_no'] = data['tool_no']
+        elif 'art_no' in data and 'tool_no' not in data:
+            data['tool_no'] = data['art_no']
+
+        if 'inward_weight' in data and 'weight' not in data:
+            data['weight'] = data['inward_weight']
+        elif 'weight' in data and 'inward_weight' not in data:
+            data['inward_weight'] = data['weight']
+
+        polishing = PolishingProcess(order_id=order.id, **data)
         self.orders.upsert_polishing(order, polishing)
         order.status = recompute_order_status(order)
         self.session.commit()
@@ -144,9 +208,43 @@ class OrderService:
         if order is None:
             return None
 
-        packing = PackingProcess(order_id=order.id, **payload.model_dump(exclude={'order_token'}, exclude_unset=True))
+        data = payload.model_dump(exclude={'order_token'}, exclude_unset=True)
+        if 'tool_no' in data and 'art_no' not in data:
+            data['art_no'] = data['tool_no']
+        elif 'art_no' in data and 'tool_no' not in data:
+            data['tool_no'] = data['art_no']
+
+        if 'inward_weight' in data and 'weight' not in data:
+            data['weight'] = data['inward_weight']
+        elif 'weight' in data and 'inward_weight' not in data:
+            data['inward_weight'] = data['weight']
+
+        packing = PackingProcess(order_id=order.id, **data)
         self.orders.upsert_packing(order, packing)
         order.status = recompute_order_status(order)
         self.session.commit()
         self.session.refresh(packing)
         return packing
+
+    def list_universal_raw_materials(self) -> list[UniversalRawMaterial]:
+        return list(self.session.scalars(select(UniversalRawMaterial).order_by(UniversalRawMaterial.material_name)).all())
+
+    def upsert_universal_raw_material(self, payload: UniversalRawMaterialCreate) -> UniversalRawMaterial:
+        mat = self.session.scalar(
+            select(UniversalRawMaterial).where(UniversalRawMaterial.material_name == payload.material_name)
+        )
+        if mat is None:
+            mat = UniversalRawMaterial(
+                material_name=payload.material_name,
+                total_available_quantity=payload.total_available_quantity,
+                unit=payload.unit,
+                price=payload.price,
+            )
+            self.session.add(mat)
+        else:
+            mat.total_available_quantity = payload.total_available_quantity
+            mat.unit = payload.unit
+            mat.price = payload.price
+        self.session.commit()
+        self.session.refresh(mat)
+        return mat

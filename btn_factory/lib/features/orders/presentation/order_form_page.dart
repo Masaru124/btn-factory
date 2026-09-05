@@ -428,7 +428,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final columns = constraints.maxWidth >= 900 ? 2 : 1;
-                    final castingOptions = <String>['Sheet', 'Rod'];
+                    final castingOptions = <String>['Sheet', 'Rod', 'Blank', 'Block', 'Custom'];
                     if (_castingType != null && !castingOptions.contains(_castingType)) {
                       castingOptions.add(_castingType!);
                     }

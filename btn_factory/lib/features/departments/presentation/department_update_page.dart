@@ -17,8 +17,9 @@ class FieldDefinition {
 
 class RawMaterialInputRow {
   final nameController = TextEditingController();
+  final totalAvailableController = TextEditingController();
   final quantityController = TextEditingController();
-  final unitController = TextEditingController();
+  final unitController = TextEditingController(text: 'kg');
   final priceController = TextEditingController();
 }
 
@@ -54,21 +55,26 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
 
   final Map<String, TextEditingController> _fieldControllers = {};
   final List<RawMaterialInputRow> _rawMaterialRows = [];
+  List<Map<String, dynamic>> _universalMaterials = [];
+  bool _isLoadingUniversal = false;
 
   List<FieldDefinition> _getFields() {
     switch (widget.title) {
       case 'Raw Material':
         return const [
           FieldDefinition('Material Name', 'material_name', 'string'),
-          FieldDefinition('Quantity', 'quantity', 'double'),
+          FieldDefinition('Total Available Raw Material', 'total_available_quantity', 'double'),
+          FieldDefinition('Quantity for Order', 'quantity', 'double'),
           FieldDefinition('Unit', 'unit', 'string'),
           FieldDefinition('Price', 'price', 'double'),
         ];
       case 'Casting':
         return const [
           FieldDefinition('Casting Type', 'casting_type', 'string'),
-          FieldDefinition('Weight', 'weight', 'double'),
-          FieldDefinition('Thickness', 'thickness', 'string'),
+          FieldDefinition('Date of Casting', 'date_of_casting', 'datetime'),
+          FieldDefinition('Total Weight (kg)', 'total_weight', 'double'),
+          FieldDefinition('Blank Thickness', 'blank_thickness', 'string'),
+          FieldDefinition('No. of Sheets', 'no_of_sheets', 'int'),
           FieldDefinition('Gross Quantity', 'gross_quantity', 'int'),
           FieldDefinition('Machine No', 'machine_no', 'string'),
           FieldDefinition('Start Time', 'start_time', 'datetime'),
@@ -79,11 +85,11 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
         return const [
           FieldDefinition('Receiving Date (for Turning)', 'receiving_date', 'datetime'),
           FieldDefinition('Date of Turning', 'date_of_turning', 'datetime'),
-          FieldDefinition('Wt. in Kgs', 'weight', 'double'),
-          FieldDefinition('Art No.', 'art_no', 'string'),
+          FieldDefinition('Inwards Weight (kg)', 'inward_weight', 'double'),
+          FieldDefinition('Tool Number', 'tool_no', 'string'),
           FieldDefinition('Hole', 'hole_size', 'string'),
           FieldDefinition('M/C No.', 'machine_no', 'string'),
-          FieldDefinition('Turned in Kgs.', 'turned_in_kgs', 'double'),
+          FieldDefinition('Outward Weight (kg)', 'outward_weight', 'double'),
           FieldDefinition('Gross (Approx)', 'gross_quantity', 'int'),
           FieldDefinition('Semi Finish Thickness', 'semi_finish_thickness', 'string'),
           FieldDefinition('Finish Thickness', 'finish_thickness', 'string'),
@@ -92,20 +98,22 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
         ];
       case 'Polish':
         return const [
-          FieldDefinition('Art No.', 'art_no', 'string'),
+          FieldDefinition('Tool Number', 'tool_no', 'string'),
           FieldDefinition('Receiving Date (from Laser/Turning)', 'receiving_date', 'datetime'),
-          FieldDefinition('Wt. in Kgs', 'weight', 'double'),
+          FieldDefinition('Inward Weight (kg)', 'inward_weight', 'double'),
+          FieldDefinition('Outward Weight (kg)', 'outward_weight', 'double'),
           FieldDefinition('In Gross', 'gross_quantity', 'int'),
           FieldDefinition('Finishing : Polish / Semi Finish / F/R', 'polish_type', 'string'),
           FieldDefinition('Time of Feeding', 'feeding_time', 'datetime'),
           FieldDefinition('Out Time', 'out_time', 'datetime'),
           FieldDefinition('Operator', 'operator', 'string'),
+          FieldDefinition('Remarks', 'remarks', 'string'),
         ];
       case 'Packing':
         return const [
           FieldDefinition('Receiving Date (from Polishing)', 'receiving_date', 'datetime'),
-          FieldDefinition('Art No.', 'art_no', 'string'),
-          FieldDefinition('Wt. in Kgs', 'weight', 'double'),
+          FieldDefinition('Tool Number', 'tool_no', 'string'),
+          FieldDefinition('Inward Weight (kg)', 'inward_weight', 'double'),
           FieldDefinition('In Gross', 'in_gross', 'int'),
           FieldDefinition('Finishing : Polish / Semi Finish / F/R', 'finishing', 'string'),
           FieldDefinition('Packed in Gross', 'packed_qty', 'int'),
@@ -145,6 +153,23 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
     }
     if (widget.title == 'Raw Material') {
       _rawMaterialRows.add(RawMaterialInputRow());
+      WidgetsBinding.instance.addPostFrameCallback((_) => _fetchUniversalMaterials());
+    }
+  }
+
+  Future<void> _fetchUniversalMaterials() async {
+    setState(() => _isLoadingUniversal = true);
+    try {
+      final dio = ref.read(dioProvider);
+      final res = await dio.get('/department/raw-material/universal');
+      if (res.data is List) {
+        setState(() {
+          _universalMaterials = (res.data as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+          _isLoadingUniversal = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => _isLoadingUniversal = false);
     }
   }
 
@@ -156,6 +181,7 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
     }
     for (final row in _rawMaterialRows) {
       row.nameController.dispose();
+      row.totalAvailableController.dispose();
       row.quantityController.dispose();
       row.unitController.dispose();
       row.priceController.dispose();
@@ -179,6 +205,12 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
       setState(() {
         _order = response.data as Map<String, dynamic>;
         _isFetching = false;
+        if (widget.title == 'Casting' && _order != null && _order!['casting_type'] != null) {
+          final castingType = _order!['casting_type'].toString();
+          if (castingType.isNotEmpty && (_fieldControllers['casting_type']?.text.isEmpty ?? true)) {
+            _fieldControllers['casting_type']?.text = castingType;
+          }
+        }
       });
     } catch (e) {
       setState(() {
@@ -237,12 +269,17 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
     if (widget.title == 'Raw Material') {
       final materialsList = <Map<String, dynamic>>[];
       for (final row in _rawMaterialRows) {
-        materialsList.add({
+        final totalAvail = double.tryParse(row.totalAvailableController.text.trim());
+        final map = <String, dynamic>{
           'material_name': row.nameController.text.trim(),
           'quantity': double.tryParse(row.quantityController.text.trim()) ?? 0.0,
-          'unit': row.unitController.text.trim(),
+          'unit': row.unitController.text.trim().isEmpty ? 'kg' : row.unitController.text.trim(),
           'price': double.tryParse(row.priceController.text.trim()) ?? 0.0,
-        });
+        };
+        if (totalAvail != null) {
+          map['total_available_quantity'] = totalAvail;
+        }
+        materialsList.add(map);
       }
       payload['materials'] = materialsList;
     } else {
@@ -279,12 +316,14 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
       if (widget.title == 'Raw Material') {
         for (final row in _rawMaterialRows) {
           row.nameController.dispose();
+          row.totalAvailableController.dispose();
           row.quantityController.dispose();
           row.unitController.dispose();
           row.priceController.dispose();
         }
         _rawMaterialRows.clear();
         _rawMaterialRows.add(RawMaterialInputRow());
+        _fetchUniversalMaterials();
       } else {
         for (final controller in _fieldControllers.values) {
           controller.clear();
@@ -310,6 +349,68 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
         _submitError = 'Submission failed: $details';
       });
     }
+  }
+
+  Widget _buildUniversalMaterialSummary() {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      color: const Color(0xFF1E293B),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Row(
+                  children: [
+                    Icon(Icons.inventory_2_outlined, color: Color(0xFF14B8A6), size: 20),
+                    SizedBox(width: 8),
+                    Text(
+                      'Universal Available Raw Materials (Stock)',
+                      style: TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold, fontSize: 15),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  icon: const Icon(Icons.refresh, size: 20, color: Color(0xFF14B8A6)),
+                  tooltip: 'Refresh Available Stock',
+                  onPressed: _fetchUniversalMaterials,
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            if (_isLoadingUniversal)
+              const Center(child: Padding(padding: EdgeInsets.all(8), child: CircularProgressIndicator(color: Color(0xFF14B8A6))))
+            else if (_universalMaterials.isEmpty)
+              const Text('No universal stock registered yet. Entering materials below will establish available stock.', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 13, fontStyle: FontStyle.italic))
+            else
+              Wrap(
+                spacing: 10,
+                runSpacing: 8,
+                children: _universalMaterials.map((m) {
+                  final name = m['material_name'] as String? ?? '';
+                  final avail = m['total_available_quantity'] ?? 0;
+                  final unit = m['unit'] as String? ?? 'kg';
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0F172A),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: const Color(0xFF334155)),
+                    ),
+                    child: Text(
+                      '$name: $avail $unit',
+                      style: const TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.w600, fontSize: 13),
+                    ),
+                  );
+                }).toList(),
+              ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildRawMaterialRow(int index, RawMaterialInputRow row) {
@@ -341,7 +442,7 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
             const SizedBox(height: 12),
             LayoutBuilder(
               builder: (context, constraints) {
-                final columns = constraints.maxWidth >= 600 ? 2 : 1;
+                final columns = constraints.maxWidth >= 900 ? 3 : (constraints.maxWidth >= 600 ? 2 : 1);
                 return GridView(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -352,18 +453,65 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                     mainAxisExtent: 85,
                   ),
                   children: [
+                    Autocomplete<String>(
+                      initialValue: TextEditingValue(text: row.nameController.text),
+                      optionsBuilder: (TextEditingValue textEditingValue) {
+                        final names = _universalMaterials.map((m) => m['material_name'] as String? ?? '').where((n) => n.isNotEmpty);
+                        if (textEditingValue.text.isEmpty) {
+                          return names;
+                        }
+                        return names.where((n) => n.toLowerCase().contains(textEditingValue.text.toLowerCase()));
+                      },
+                      onSelected: (String selection) {
+                        row.nameController.text = selection;
+                        final match = _universalMaterials.firstWhere(
+                          (m) => (m['material_name'] as String?)?.toLowerCase() == selection.toLowerCase(),
+                          orElse: () => <String, dynamic>{},
+                        );
+                        if (match.isNotEmpty) {
+                          if (match['total_available_quantity'] != null) {
+                            row.totalAvailableController.text = match['total_available_quantity'].toString();
+                          }
+                          if (match['unit'] != null) {
+                            row.unitController.text = match['unit'].toString();
+                          }
+                          if (match['price'] != null) {
+                            row.priceController.text = match['price'].toString();
+                          }
+                          setState(() {});
+                        }
+                      },
+                      fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
+                        if (row.nameController.text.isNotEmpty && textEditingController.text.isEmpty) {
+                          textEditingController.text = row.nameController.text;
+                        }
+                        return TextFormField(
+                          controller: textEditingController,
+                          focusNode: focusNode,
+                          decoration: const InputDecoration(
+                            labelText: 'Material Name',
+                            hintText: 'e.g. Polyester Resin',
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (val) => row.nameController.text = val,
+                          validator: (value) => value == null || value.trim().isEmpty ? 'Material name is required' : null,
+                        );
+                      },
+                    ),
                     TextFormField(
-                      controller: row.nameController,
+                      controller: row.totalAvailableController,
                       decoration: const InputDecoration(
-                        labelText: 'Material Name',
+                        labelText: 'Total Available Raw Material',
+                        hintText: 'Universal available stock',
                         border: OutlineInputBorder(),
                       ),
-                      validator: (value) => value == null || value.trim().isEmpty ? 'Material name is required' : null,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     ),
                     TextFormField(
                       controller: row.quantityController,
                       decoration: const InputDecoration(
-                        labelText: 'Quantity',
+                        labelText: 'Quantity for Order',
+                        hintText: 'Used for this order',
                         border: OutlineInputBorder(),
                       ),
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -372,7 +520,7 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                     TextFormField(
                       controller: row.unitController,
                       decoration: const InputDecoration(
-                        labelText: 'Unit',
+                        labelText: 'Unit (e.g. kg, gross)',
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) => value == null || value.trim().isEmpty ? 'Unit is required' : null,
@@ -380,7 +528,7 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                     TextFormField(
                       controller: row.priceController,
                       decoration: const InputDecoration(
-                        labelText: 'Price',
+                        labelText: 'Price (₹)',
                         border: OutlineInputBorder(),
                       ),
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -570,6 +718,10 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                     ],
                   ),
           ),
+          if (widget.title == 'Raw Material') ...[
+            const SizedBox(height: 16),
+            _buildUniversalMaterialSummary(),
+          ],
           const SizedBox(height: 16),
           SectionCard(
             title: 'Step 3: Department Form',
