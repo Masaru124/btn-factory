@@ -351,6 +351,247 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
     }
   }
 
+  Future<void> _showUniversalMaterialDialog({Map<String, dynamic>? existingMaterial}) async {
+    final formKey = GlobalKey<FormState>();
+    final isEdit = existingMaterial != null;
+    final nameController = TextEditingController(text: existingMaterial?['material_name']?.toString() ?? '');
+    final quantityController = TextEditingController(
+      text: existingMaterial?['total_available_quantity'] != null
+          ? existingMaterial!['total_available_quantity'].toString()
+          : '',
+    );
+    final unitController = TextEditingController(text: existingMaterial?['unit']?.toString() ?? 'kg');
+    final priceController = TextEditingController(
+      text: existingMaterial?['price'] != null ? existingMaterial!['price'].toString() : '0.0',
+    );
+    bool isSaving = false;
+    String? errorMessage;
+
+    final messenger = ScaffoldMessenger.of(context);
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (dialogStateContext, setDialogState) {
+            return AlertDialog(
+              backgroundColor: const Color(0xFF1E293B),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              title: Row(
+                children: [
+                  Icon(
+                    isEdit ? Icons.edit_note : Icons.add_circle_outline,
+                    color: const Color(0xFF14B8A6),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    isEdit ? 'Edit Universal Material' : 'Add Universal Material',
+                    style: const TextStyle(color: Color(0xFFF8FAFC), fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              content: SizedBox(
+                width: 440,
+                child: Form(
+                  key: formKey,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (errorMessage != null) ...[
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            margin: const EdgeInsets.only(bottom: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade900.withValues(alpha: 0.4),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.redAccent),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.error_outline, color: Colors.redAccent, size: 18),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    errorMessage!,
+                                    style: const TextStyle(color: Colors.white, fontSize: 12),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                        TextFormField(
+                          controller: nameController,
+                          enabled: !isSaving && !isEdit,
+                          decoration: const InputDecoration(
+                            labelText: 'Material Name *',
+                            hintText: 'e.g. Polyester Resin, Brass Rod',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.category_outlined),
+                          ),
+                          validator: (val) {
+                            if (val == null || val.trim().isEmpty) {
+                              return 'Material name is required';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 14),
+                        TextFormField(
+                          controller: quantityController,
+                          enabled: !isSaving,
+                          decoration: const InputDecoration(
+                            labelText: 'Total Available Quantity (Stock) *',
+                            hintText: 'e.g. 500',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.inventory_2_outlined),
+                          ),
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          validator: (val) {
+                            if (val == null || val.trim().isEmpty) {
+                              return 'Stock quantity is required';
+                            }
+                            final n = double.tryParse(val.trim());
+                            if (n == null || n < 0) {
+                              return 'Enter a valid non-negative number';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 14),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: TextFormField(
+                                controller: unitController,
+                                enabled: !isSaving,
+                                decoration: const InputDecoration(
+                                  labelText: 'Unit *',
+                                  hintText: 'kg, pcs, m',
+                                  border: OutlineInputBorder(),
+                                  prefixIcon: Icon(Icons.straighten),
+                                ),
+                                validator: (val) {
+                                  if (val == null || val.trim().isEmpty) {
+                                    return 'Unit required';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              flex: 4,
+                              child: TextFormField(
+                                controller: priceController,
+                                enabled: !isSaving,
+                                decoration: const InputDecoration(
+                                  labelText: 'Price per Unit',
+                                  hintText: '0.0',
+                                  border: OutlineInputBorder(),
+                                  prefixIcon: Icon(Icons.currency_rupee),
+                                ),
+                                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                validator: (val) {
+                                  if (val != null && val.trim().isNotEmpty) {
+                                    final n = double.tryParse(val.trim());
+                                    if (n == null || n < 0) {
+                                      return 'Invalid price';
+                                    }
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: isSaving ? null : () => Navigator.of(dialogContext).pop(),
+                  child: const Text('Cancel'),
+                ),
+                FilledButton.icon(
+                  style: FilledButton.styleFrom(backgroundColor: const Color(0xFF14B8A6)),
+                  onPressed: isSaving
+                      ? null
+                      : () async {
+                          if (!formKey.currentState!.validate()) return;
+                          setDialogState(() {
+                            isSaving = true;
+                            errorMessage = null;
+                          });
+                          try {
+                            final dio = ref.read(dioProvider);
+                            await dio.post(
+                              '/department/raw-material/universal',
+                              data: {
+                                'material_name': nameController.text.trim(),
+                                'total_available_quantity': double.parse(quantityController.text.trim()),
+                                'unit': unitController.text.trim(),
+                                'price': double.tryParse(priceController.text.trim()) ?? 0.0,
+                              },
+                            );
+                            if (dialogContext.mounted) {
+                              Navigator.of(dialogContext).pop();
+                            }
+                            if (mounted) {
+                              messenger.showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    isEdit
+                                        ? "Material '${nameController.text.trim()}' updated successfully!"
+                                        : "Universal material '${nameController.text.trim()}' added successfully!",
+                                  ),
+                                  backgroundColor: const Color(0xFF10B981),
+                                ),
+                              );
+                              _fetchUniversalMaterials();
+                            }
+                          } catch (e) {
+                            String err = e.toString();
+                            if (e is DioException && e.response?.data != null) {
+                              final d = e.response?.data;
+                              if (d is Map && d.containsKey('detail')) {
+                                err = d['detail'].toString();
+                              }
+                            }
+                            setDialogState(() {
+                              isSaving = false;
+                              errorMessage = err;
+                            });
+                          }
+                        },
+                  icon: isSaving
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        )
+                      : const Icon(Icons.check, size: 18),
+                  label: Text(isEdit ? 'Update Stock' : 'Add Material'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    nameController.dispose();
+    quantityController.dispose();
+    unitController.dispose();
+    priceController.dispose();
+  }
+
   Widget _buildUniversalMaterialSummary() {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -363,28 +604,77 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Row(
+                const Expanded(
+                  child: Row(
+                    children: [
+                      Icon(Icons.inventory_2_outlined, color: Color(0xFF14B8A6), size: 20),
+                      SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          'Universal Available Raw Materials (Stock)',
+                          style: TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold, fontSize: 15),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Wrap(
+                  spacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    Icon(Icons.inventory_2_outlined, color: Color(0xFF14B8A6), size: 20),
-                    SizedBox(width: 8),
-                    Text(
-                      'Universal Available Raw Materials (Stock)',
-                      style: TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold, fontSize: 15),
+                    FilledButton.icon(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: const Color(0xFF0D9488),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                      ),
+                      icon: const Icon(Icons.add, size: 16),
+                      label: const Text('Add Universal Material'),
+                      onPressed: () => _showUniversalMaterialDialog(),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.refresh, size: 20, color: Color(0xFF14B8A6)),
+                      tooltip: 'Refresh Available Stock',
+                      onPressed: _fetchUniversalMaterials,
                     ),
                   ],
                 ),
-                IconButton(
-                  icon: const Icon(Icons.refresh, size: 20, color: Color(0xFF14B8A6)),
-                  tooltip: 'Refresh Available Stock',
-                  onPressed: _fetchUniversalMaterials,
-                ),
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
             if (_isLoadingUniversal)
               const Center(child: Padding(padding: EdgeInsets.all(8), child: CircularProgressIndicator(color: Color(0xFF14B8A6))))
             else if (_universalMaterials.isEmpty)
-              const Text('No universal stock registered yet. Entering materials below will establish available stock.', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 13, fontStyle: FontStyle.italic))
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0F172A),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFF334155)),
+                ),
+                child: Row(
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        'No universal stock registered yet. Click "Add Universal Material" to establish stock.',
+                        style: TextStyle(color: Color(0xFF94A3B8), fontSize: 13, fontStyle: FontStyle.italic),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFF14B8A6),
+                        side: const BorderSide(color: Color(0xFF14B8A6)),
+                      ),
+                      icon: const Icon(Icons.add, size: 16),
+                      label: const Text('Add Material'),
+                      onPressed: () => _showUniversalMaterialDialog(),
+                    ),
+                  ],
+                ),
+              )
             else
               Wrap(
                 spacing: 10,
@@ -393,16 +683,30 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                   final name = m['material_name'] as String? ?? '';
                   final avail = m['total_available_quantity'] ?? 0;
                   final unit = m['unit'] as String? ?? 'kg';
-                  return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF0F172A),
+                  return Tooltip(
+                    message: 'Click to view or edit stock for $name',
+                    child: InkWell(
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: const Color(0xFF334155)),
-                    ),
-                    child: Text(
-                      '$name: $avail $unit',
-                      style: const TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.w600, fontSize: 13),
+                      onTap: () => _showUniversalMaterialDialog(existingMaterial: m),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0F172A),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: const Color(0xFF334155)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '$name: $avail $unit',
+                              style: const TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.w600, fontSize: 13),
+                            ),
+                            const SizedBox(width: 6),
+                            const Icon(Icons.edit_outlined, size: 14, color: Color(0xFF64748B)),
+                          ],
+                        ),
+                      ),
                     ),
                   );
                 }).toList(),
@@ -578,6 +882,10 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
         children: <Widget>[
           Text(widget.description, style: Theme.of(context).textTheme.bodyMedium),
           const SizedBox(height: 20),
+          if (widget.title == 'Raw Material') ...[
+            _buildUniversalMaterialSummary(),
+            const SizedBox(height: 8),
+          ],
           SectionCard(
             title: 'Step 1: Search Token',
             child: Row(
@@ -718,10 +1026,6 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                     ],
                   ),
           ),
-          if (widget.title == 'Raw Material') ...[
-            const SizedBox(height: 16),
-            _buildUniversalMaterialSummary(),
-          ],
           const SizedBox(height: 16),
           SectionCard(
             title: 'Step 3: Department Form',
