@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class SecureStorage {
   Future<String?> read(String key);
@@ -29,6 +30,32 @@ class FlutterSecureStorageAdapter implements SecureStorage {
   }
 }
 
+class SharedPreferencesStorageAdapter implements SecureStorage {
+  @override
+  Future<void> delete(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(key);
+  }
+
+  @override
+  Future<void> deleteAll() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+  }
+
+  @override
+  Future<String?> read(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key);
+  }
+
+  @override
+  Future<void> write({required String key, required String value}) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(key, value);
+  }
+}
+
 class InMemorySecureStorage implements SecureStorage {
   final Map<String, String> _values = <String, String>{};
 
@@ -53,7 +80,8 @@ class InMemorySecureStorage implements SecureStorage {
 
 final secureStorageProvider = Provider<SecureStorage>((ref) {
   if (kIsWeb) {
-    return InMemorySecureStorage();
+    return SharedPreferencesStorageAdapter();
   }
   return FlutterSecureStorageAdapter();
 });
+

@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     algorithm: str = 'HS256'
     access_token_expire_minutes: int = 60 * 24
     database_url: str = Field(default='sqlite:///./btn_factory.db', alias='DATABASE_URL')
+    cors_origins: list[str] = Field(default=['*'], alias='CORS_ORIGINS')
     refresh_token_expire_days: int = 7
     cloudinary_cloud_name: str | None = Field(default=None, alias='CLOUDINARY_CLOUD_NAME')
     cloudinary_api_key: str | None = Field(default=None, alias='CLOUDINARY_API_KEY')

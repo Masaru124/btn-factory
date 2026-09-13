@@ -4,7 +4,7 @@ FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PORT=8000
-ENV DATABASE_URL=sqlite:////app/btn_factory.db
+ENV DATABASE_URL=sqlite:////app/data/btn_factory.db
 
 # Set work directory
 WORKDIR /app
@@ -20,6 +20,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy project
 COPY . /app/
+
+# Ensure persistent directory exists and declare volume
+RUN mkdir -p /app/data
+VOLUME ["/app/data"]
 
 # Expose port
 EXPOSE 8000

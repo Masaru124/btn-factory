@@ -11,13 +11,24 @@ settings = get_settings()
 cors_origins = getattr(settings, 'cors_origins', ['*'])
 
 app = FastAPI(title=settings.project_name)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=cors_origins,
-    allow_credentials=True,
-    allow_methods=['*'],
-    allow_headers=['*'],
-)
+
+if cors_origins == ['*'] or '*' in cors_origins:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origin_regex=r'^https?://.*',
+        allow_credentials=True,
+        allow_methods=['*'],
+        allow_headers=['*'],
+    )
+else:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=cors_origins,
+        allow_credentials=True,
+        allow_methods=['*'],
+        allow_headers=['*'],
+    )
+
 app.include_router(api_router, prefix=settings.api_v1_prefix)
 
 
