@@ -21,7 +21,8 @@ For web:
 
 ```powershell
 cd btn_factory
-flutter run -d chrome
+flutter run -d chrome 
+flutter run -d chrome --dart-define=API_BASE_URL="http://[IP_ADDRESS]"
 ```
 
 ## Backend
