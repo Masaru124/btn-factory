@@ -1,0 +1,17 @@
+# Caddy configuration for Button Factory Flutter Web Frontend
+# Replace 'yourdomain.com' with your actual bought domain name.
+
+yourdomain.com {
+    # Path to Flutter Web production build
+    root * C:/Users/User/Desktop/button_factory/btn_factory/build/web
+
+    # Enable compression (gzip & zstd) for fast loading
+    encode gzip zstd
+
+    # Serve static files
+    file_server
+
+    # Single Page Application (SPA) routing for Flutter web
+    # If a route like /dashboard or /orders is requested, serve index.html
+    try_files {path} /index.html
+}
