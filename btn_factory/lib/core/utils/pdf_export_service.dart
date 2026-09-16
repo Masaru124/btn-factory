@@ -257,7 +257,7 @@ class PdfExportService {
                 _buildSectionHeader('Casting Log'),
                 pw.SizedBox(height: 4),
                 pw.TableHelper.fromTextArray(
-                  headers: ['Casting Type', 'Date of Casting', 'Total Wt (kg)', 'Blank Thickness', 'Sheets', 'Gross Qty'],
+                  headers: ['Casting Type', 'Date of Casting', 'Total Raw Material', 'Blank Thickness', 'Number of Sheets', 'Gross Qty'],
                   data: [
                     [
                       '${casting['casting_type'] ?? 'N/A'}',

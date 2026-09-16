@@ -4,14 +4,15 @@ class AppConstants {
   static const String appName = 'Button Factory MES';
 
   static String get apiBaseUrl {
-    final envUrl = dotenv.env['API_BASE_URL'];
+    const dartDefineUrl = String.fromEnvironment('API_BASE_URL');
+    if (dartDefineUrl.trim().isNotEmpty) {
+      return dartDefineUrl.trim();
+    }
+    final envUrl = dotenv.isInitialized ? dotenv.env['API_BASE_URL'] : null;
     if (envUrl != null && envUrl.trim().isNotEmpty) {
       return envUrl.trim();
     }
-    return const String.fromEnvironment(
-      'API_BASE_URL',
-      defaultValue: 'http://127.0.0.1:8000/api',
-    );
+    return 'http://127.0.0.1:8000/api';
   }
 }
 

@@ -72,13 +72,10 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
         return const [
           FieldDefinition('Casting Type', 'casting_type', 'string'),
           FieldDefinition('Date of Casting', 'date_of_casting', 'datetime'),
-          FieldDefinition('Total Weight (kg)', 'total_weight', 'double'),
+          FieldDefinition('Total Raw Material', 'total_weight', 'double'),
           FieldDefinition('Blank Thickness', 'blank_thickness', 'string'),
-          FieldDefinition('No. of Sheets', 'no_of_sheets', 'int'),
+          FieldDefinition('Number of Sheets', 'no_of_sheets', 'int'),
           FieldDefinition('Gross Quantity', 'gross_quantity', 'int'),
-          FieldDefinition('Machine No', 'machine_no', 'string'),
-          FieldDefinition('Start Time', 'start_time', 'datetime'),
-          FieldDefinition('End Time', 'end_time', 'datetime'),
           FieldDefinition('Remarks', 'remarks', 'string'),
         ];
       case 'Turning':

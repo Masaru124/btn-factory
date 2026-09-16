@@ -120,9 +120,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const DepartmentUpdatePage(
           title: 'Casting',
           selectedIndex: 3,
-          description: 'Update casting metrics including date, total weight, blank thickness, and sheets.',
+          description: 'Update casting metrics including date of casting, total raw material, blank thickness, and number of sheets.',
           currentStatusLabel: 'Raw Material Updated',
-          fieldLabels: <String>['Casting Type', 'Date of Casting', 'Total Weight (kg)', 'Blank Thickness', 'No. of Sheets', 'Gross Quantity', 'Machine No', 'Start Time', 'End Time', 'Remarks'],
+          fieldLabels: <String>['Casting Type', 'Date of Casting', 'Total Raw Material', 'Blank Thickness', 'Number of Sheets', 'Gross Quantity', 'Remarks'],
         ),
       ),
       GoRoute(
