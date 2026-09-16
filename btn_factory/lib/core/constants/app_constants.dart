@@ -1,5 +1,3 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 class AppConstants {
   static const String appName = 'Button Factory MES';
 
@@ -7,10 +5,6 @@ class AppConstants {
     const dartDefineUrl = String.fromEnvironment('API_BASE_URL');
     if (dartDefineUrl.trim().isNotEmpty) {
       return dartDefineUrl.trim();
-    }
-    final envUrl = dotenv.isInitialized ? dotenv.env['API_BASE_URL'] : null;
-    if (envUrl != null && envUrl.trim().isNotEmpty) {
-      return envUrl.trim();
     }
     return 'http://127.0.0.1:8000/api';
   }

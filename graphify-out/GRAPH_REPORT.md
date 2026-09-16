@@ -1,48 +1,61 @@
-# Graph Report - button_factory  (2026-09-16)
+# Graph Report - btn-factory  (2026-09-16)
 
 ## Corpus Check
-- Corpus is ~42,868 words - fits in a single context window. You may not need a graph.
+- 103 files · ~42,846 words
+- Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 839 nodes · 1565 edges · 42 communities (32 shown, 10 thin omitted)
-- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 141 edges (avg confidence: 0.93)
+- 844 nodes · 1571 edges · 49 communities (34 shown, 7 thin omitted)
+- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 138 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
+## Graph Freshness
+- Built from commit: `a6cad854`
+- Run `git rev-parse HEAD` and compare to check if the graph is stale.
+- Run `graphify update .` after code changes (no API cost).
+
 ## Community Hubs (Navigation)
-- Database Migrations & Analytics Routes
-- Windows Flutter Desktop Host
-- Department & Raw Material Endpoints
-- Backend Authentication & User Management
-- App Configuration & Cross-Platform Settings
-- iOS Runner & Engine Lifecycle
-- Dashboard Overview & Quick Actions
-- Department Material Tracking View
-- Order Creation & Image Upload
-- Linux Desktop Runner & Plugins
-- Staff Management & Department Roles
-- Multi-Platform Secure Storage Adapters
-- Asset Previews & Fallback Graphics
-- App Theme & Splash Lifecycle
-- User Profile & Department Badges
-- Order Queue & List Presentation
-- Main Route Screens & Navigation State
-- Client-Side Auth State Model
-- Reports & Financial Presentation
-- Dio HTTP Client & Token Interceptors
-- Order Detail View & Status Modals
-- Responsive App Shell & Nav Drawer
-- Riverpod Auth Controller
-- Data Fetching & Material State
-- Login Form & Validation UI
-- Windows Desktop Entry & Console Utilities
-- Protected Route Controller Bindings
-- PWA Web Manifest & Assets
-- PDF Generation & Export Utilities
-- Dashboard Metrics & Summary Chips
-- Section Card Reusable Widget
-- Analytics Pydantic Data Models
-- Android Native Activity Runner
-- Dart Utility Extension Types
+- schemas/reports.py
+- Win32Window
+- OrderService
+- User
+- app_router.dart
+- GeneratedPluginRegistrant.swift
+- dashboard_page.dart
+- department_update_page.dart
+- order_form_page.dart
+- my_application.cc
+- staff_page.dart
+- secure_storage.dart
+- app_image_preview.dart
+- metric_card.dart
+- profile_page.dart
+- order_list_page.dart
+- ConsumerState
+- orders.py
+- reports_page.dart
+- package:flutter_riverpod/flutter_riverpod.dart
+- order_details_page.dart
+- app_scaffold.dart
+- _buildActionCards
+- dioProvider
+- login_page.dart
+- wWinMain
+- authControllerProvider
+- manifest.json
+- pdf_export_service.dart
+- StatelessWidget
+- package:flutter/material.dart
+- schemas/analytics.py
+- MainActivity.kt
+- String?
+- feature_placeholder_page.dart
+- _ActionCard
+- rules/graphify.md
+- workflows/graphify.md
+- README.md
+- _submit
+- build
 
 ## God Nodes (most connected - your core abstractions)
 1. `OrderService` - 49 edges
@@ -63,10 +76,10 @@
   backend/app/api/routes/auth.py → btn_factory/lib/core/storage/secure_storage.dart
 - `delete_order()` --references--> `delete`  [EXTRACTED]
   backend/app/api/routes/orders.py → btn_factory/lib/core/storage/secure_storage.dart
-- `Button Factory MES Specifications` --conceptually_related_to--> `Button Factory MES Overview`  [INFERRED]
-  btn_factory/plan-buttonFactoryMes.prompt.md → README.md
 - `Storage & Database Persistence` --conceptually_related_to--> `Docker Volume backend_data`  [INFERRED]
   DEPLOYMENT_GUIDE.md → docker-compose.yml
+- `Button Factory MES Specifications` --conceptually_related_to--> `Button Factory MES Overview`  [INFERRED]
+  btn_factory/plan-buttonFactoryMes.prompt.md → README.md
 
 ## Import Cycles
 - None detected.
@@ -74,150 +87,158 @@
 ## Hyperedges (group relationships)
 - **Authentication & Storage Persistence Flow** — backend_app_api_routes_auth_login, btn_factory_lib_core_network_api_client, btn_factory_lib_core_storage_secure_storage, deployment_guide_storage_persistence [INFERRED 0.85]
 
-## Communities (42 total, 10 thin omitted)
+## Communities (49 total, 7 thin omitted)
 
-### Community 0 - "Database Migrations & Analytics Routes"
+### Community 0 - "schemas/reports.py"
+Cohesion: 0.60
+Nodes (4): DateRangeRequest, MetricValue, BaseModel, ReportSummary
+
+### Community 1 - "Win32Window"
+Cohesion: 0.05
+Nodes (58): RegisterPlugins(), DartProject, HWND, LPARAM, LRESULT, UINT, WPARAM, FlutterWindow (+50 more)
+
+### Community 2 - "OrderService"
 Cohesion: 0.06
-Nodes (51): dashboard_stats(), orders_trend(), production_trend(), get, Session, Return real-time dashboard metrics computed from the database., Monthly order counts from the database., Per-status breakdown from the database. (+43 more)
+Nodes (68): add_raw_material(), get_universal_raw_materials(), get, post, Session, update_casting(), update_packing(), update_polish() (+60 more)
 
-### Community 1 - "Windows Flutter Desktop Host"
+### Community 3 - "User"
 Cohesion: 0.05
-Nodes (59): RegisterPlugins(), DartProject, HWND, LPARAM, LRESULT, UINT, WPARAM, FlutterWindow (+51 more)
+Nodes (58): dashboard_stats(), orders_trend(), production_trend(), get, Session, Return real-time dashboard metrics computed from the database., Monthly order counts from the database., Per-status breakdown from the database. (+50 more)
 
-### Community 2 - "Department & Raw Material Endpoints"
-Cohesion: 0.08
-Nodes (54): add_raw_material(), get_universal_raw_materials(), get, post, Session, update_casting(), update_packing(), update_polish() (+46 more)
+### Community 4 - "app_router.dart"
+Cohesion: 0.04
+Nodes (43): accessToken, AppConstants, appName, AppStorageKeys, refreshToken, userDepartment, userEmail, userName (+35 more)
 
-### Community 3 - "Backend Authentication & User Management"
-Cohesion: 0.08
-Nodes (38): delete_user(), list_users(), login(), get, post, put, Session, refresh() (+30 more)
-
-### Community 4 - "App Configuration & Cross-Platform Settings"
+### Community 5 - "GeneratedPluginRegistrant.swift"
 Cohesion: 0.05
-Nodes (41): get_settings(), Settings, FastAPI Python Dependencies, BaseSettings, accessToken, AppConstants, appName, AppStorageKeys (+33 more)
+Nodes (30): Any, AppDelegate, Bool, SceneDelegate, RunnerTests, RegisterGeneratedPlugins(), AppDelegate, Bool (+22 more)
 
-### Community 5 - "iOS Runner & Engine Lifecycle"
-Cohesion: 0.06
-Nodes (29): Any, AppDelegate, Bool, SceneDelegate, RunnerTests, RegisterGeneratedPlugins(), AppDelegate, Bool (+21 more)
+### Community 6 - "dashboard_page.dart"
+Cohesion: 0.11
+Nodes (18): color, _completedOrders, createState, description, _error, _formatCurrency, icon, initState (+10 more)
 
-### Community 6 - "Dashboard Overview & Quick Actions"
-Cohesion: 0.05
-Nodes (38): _submit, _ActionCard, _ActionCardState, _buildActionCards, color, _completedOrders, createState, description (+30 more)
-
-### Community 7 - "Department Material Tracking View"
+### Community 7 - "department_update_page.dart"
 Cohesion: 0.05
 Nodes (38): build, _buildRawMaterialRow, _buildUniversalMaterialSummary, color, createState, currentStatusLabel, description, dispose (+30 more)
 
-### Community 8 - "Order Creation & Image Upload"
+### Community 8 - "order_form_page.dart"
 Cohesion: 0.06
 Nodes (35): _boxType, _buildDateField, _buildDropdown, _buttonImageBytes, _buttonImageName, _castingType, _companyController, createState (+27 more)
 
-### Community 9 - "Linux Desktop Runner & Plugins"
+### Community 9 - "my_application.cc"
 Cohesion: 0.09
 Nodes (22): fl_register_plugins(), main(), first_frame_cb(), my_application_activate(), my_application_class_init(), my_application_dispose(), my_application_init(), my_application_local_command_line() (+14 more)
 
-### Community 10 - "Staff Management & Department Roles"
-Cohesion: 0.08
-Nodes (25): build, createState, _department, _departments, dispose, _emailController, _error, _formatRole (+17 more)
+### Community 10 - "staff_page.dart"
+Cohesion: 0.09
+Nodes (23): build, createState, _department, _departments, dispose, _emailController, _error, _formatRole (+15 more)
 
-### Community 11 - "Multi-Platform Secure Storage Adapters"
-Cohesion: 0.10
-Nodes (22): delete, deleteAll, FlutterSecureStorageAdapter, InMemorySecureStorage, read, SecureStorage, SharedPreferencesStorageAdapter, _storage (+14 more)
+### Community 11 - "secure_storage.dart"
+Cohesion: 0.06
+Nodes (36): AsyncNotifier, bool get, delete, deleteAll, FlutterSecureStorageAdapter, InMemorySecureStorage, read, SecureStorage (+28 more)
 
-### Community 12 - "Asset Previews & Fallback Graphics"
+### Community 12 - "app_image_preview.dart"
 Cohesion: 0.09
 Nodes (21): BorderRadius?, BoxFit, borderRadius, build, _buildFallbackGraphic, _buildImageWidget, fit, height (+13 more)
 
-### Community 13 - "App Theme & Splash Lifecycle"
-Cohesion: 0.12
-Nodes (14): AsyncValue, AppTheme, light, createState, _navigated, build, icon, MetricCard (+6 more)
+### Community 13 - "metric_card.dart"
+Cohesion: 0.25
+Nodes (7): build, icon, MetricCard, tint, title, value, IconData
 
-### Community 14 - "User Profile & Department Badges"
-Cohesion: 0.12
-Nodes (15): _formatDepartment, _formatRole, icon, label, _ProfileDetailRow, value, build, FeaturePlaceholderPage (+7 more)
+### Community 14 - "profile_page.dart"
+Cohesion: 0.25
+Nodes (7): _formatDepartment, _formatRole, icon, label, _ProfileDetailRow, value, package:btn_factory/shared/widgets/section_card.dart
 
-### Community 15 - "Order Queue & List Presentation"
+### Community 15 - "order_list_page.dart"
 Cohesion: 0.12
 Nodes (16): buttonImage, companyName, createState, dispose, _error, initState, _isLoading, _OrderRow (+8 more)
 
-### Community 16 - "Main Route Screens & Navigation State"
-Cohesion: 0.17
-Nodes (16): SplashPage, _SplashPageState, DashboardPage, _DashboardPageState, DepartmentUpdatePage, _DepartmentUpdatePageState, OrderDetailsPage, _OrderDetailsPageState (+8 more)
+### Community 16 - "ConsumerState"
+Cohesion: 0.16
+Nodes (18): SplashPage, _SplashPageState, DashboardPage, _DashboardPageState, DepartmentUpdatePage, _DepartmentUpdatePageState, OrderDetailsPage, _OrderDetailsPageState (+10 more)
 
-### Community 17 - "Client-Side Auth State Model"
-Cohesion: 0.13
-Nodes (14): bool get, accessToken, authenticated, AuthStatus, copyWith, errorMessage, isAuthenticated, loading (+6 more)
+### Community 17 - "orders.py"
+Cohesion: 0.22
+Nodes (17): create_order(), delete_order(), dispatch_order(), get_order(), list_orders(), get, post, put (+9 more)
 
-### Community 18 - "Reports & Financial Presentation"
+### Community 18 - "reports_page.dart"
 Cohesion: 0.13
 Nodes (14): build, createState, _error, _formatCount, _formatCurrency, initState, _isLoading, label (+6 more)
 
-### Community 19 - "Dio HTTP Client & Token Interceptors"
-Cohesion: 0.15
-Nodes (12): dio, storage, main, read, Dio, package:btn_factory/core/constants/app_constants.dart, package:btn_factory/core/storage/secure_storage.dart, package:btn_factory/features/auth/application/auth_controller.dart (+4 more)
+### Community 19 - "package:flutter_riverpod/flutter_riverpod.dart"
+Cohesion: 0.12
+Nodes (17): dio, storage, _extractMessage, login, main, read, Dio, package:btn_factory/core/constants/app_constants.dart (+9 more)
 
-### Community 20 - "Order Detail View & Status Modals"
+### Community 20 - "order_details_page.dart"
 Cohesion: 0.14
 Nodes (13): createState, _error, _fetchOrder, _formatDate, _formatDateTime, initState, _isLoading, label (+5 more)
 
-### Community 21 - "Responsive App Shell & Nav Drawer"
-Cohesion: 0.15
-Nodes (12): activeColor, _buildDepartmentTile, child, _getNavItems, _getRouteForStaticIndex, icon, label, NavItem (+4 more)
+### Community 21 - "app_scaffold.dart"
+Cohesion: 0.11
+Nodes (17): AsyncValue, createState, _navigated, activeColor, _buildDepartmentTile, child, _getNavItems, _getRouteForStaticIndex (+9 more)
 
-### Community 22 - "Riverpod Auth Controller"
-Cohesion: 0.20
-Nodes (11): AsyncNotifier, secureStorageProvider, AuthController, build, _extractMessage, login, logout, AuthState (+3 more)
+### Community 22 - "_buildActionCards"
+Cohesion: 0.18
+Nodes (12): _buildActionCards, build, Route /analytics, Route /casting, Route /orders, Route /packing, Route /polish, Route /profile (+4 more)
 
-### Community 23 - "Data Fetching & Material State"
+### Community 23 - "dioProvider"
 Cohesion: 0.17
 Nodes (12): dioProvider, _fetchDashboard, _fetchOrder, _fetchUniversalMaterials, _submitUpdate, _fetchOrderDetails, _submit, _fetchOrders (+4 more)
 
-### Community 24 - "Login Form & Validation UI"
+### Community 24 - "login_page.dart"
 Cohesion: 0.18
 Nodes (11): createState, dispose, _emailController, _formKey, LoginPage, _LoginPageState, _passwordController, _submitting (+3 more)
 
-### Community 25 - "Windows Desktop Entry & Console Utilities"
+### Community 25 - "wWinMain"
 Cohesion: 0.24
 Nodes (9): wWinMain(), string, wchar_t, CreateAndAttachConsole(), GetCommandLineArguments(), Utf8FromUtf16(), _In_, _In_opt_ (+1 more)
 
-### Community 26 - "Protected Route Controller Bindings"
+### Community 26 - "authControllerProvider"
 Cohesion: 0.22
 Nodes (11): authControllerProvider, build, build, ProfilePage, build, build, build, build (+3 more)
 
-### Community 27 - "PWA Web Manifest & Assets"
+### Community 27 - "manifest.json"
 Cohesion: 0.18
 Nodes (10): background_color, description, display, icons, name, orientation, prefer_related_applications, short_name (+2 more)
 
-### Community 28 - "PDF Generation & Export Utilities"
+### Community 28 - "pdf_export_service.dart"
 Cohesion: 0.22
 Nodes (8): _buildSectionHeader, exportOrderPdf, exportReportPdf, PdfExportService, package:intl/intl.dart, package:pdf/pdf.dart, package:pdf/widgets.dart, package:printing/printing.dart
 
-### Community 29 - "Dashboard Metrics & Summary Chips"
+### Community 29 - "StatelessWidget"
 Cohesion: 0.22
 Nodes (9): _SnapshotChip, _DetailChip, _ReportSummary, _SummaryTile, WidgetBorderStatus, AppImagePreview, AppImagePreviewCard, AppImageUploadCard (+1 more)
 
-### Community 30 - "Section Card Reusable Widget"
-Cohesion: 0.29
-Nodes (6): build, child, SectionCard, title, trailing, Widget
+### Community 30 - "package:flutter/material.dart"
+Cohesion: 0.18
+Nodes (9): AppTheme, light, build, child, SectionCard, title, trailing, package:flutter/material.dart (+1 more)
 
-### Community 31 - "Analytics Pydantic Data Models"
+### Community 31 - "schemas/analytics.py"
 Cohesion: 0.67
 Nodes (3): AnalyticsSeries, Point, BaseModel
 
+### Community 42 - "feature_placeholder_page.dart"
+Cohesion: 0.25
+Nodes (7): build, FeaturePlaceholderPage, icon, selectedIndex, subtitle, title, package:btn_factory/shared/widgets/app_scaffold.dart
+
+### Community 43 - "_ActionCard"
+Cohesion: 0.50
+Nodes (4): _ActionCard, _ActionCardState, State, StatefulWidget
+
 ## Knowledge Gaps
-- **275 isolated node(s):** `AppConstants`, `AppStorageKeys`, `appName`, `accessToken`, `refreshToken` (+270 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 403 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **10 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **278 isolated node(s):** `AppConstants`, `AppStorageKeys`, `appName`, `accessToken`, `refreshToken` (+273 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 406 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **7 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `User` connect `Backend Authentication & User Management` to `Database Migrations & Analytics Routes`, `Department & Raw Material Endpoints`?**
-  _High betweenness centrality (0.047) - this node is a cross-community bridge._
-- **Why does `AuthController` connect `Riverpod Auth Controller` to `Data Fetching & Material State`?**
+- **Why does `User` connect `User` to `orders.py`, `OrderService`?**
+  _High betweenness centrality (0.046) - this node is a cross-community bridge._
+- **Why does `AuthController` connect `secure_storage.dart` to `package:flutter_riverpod/flutter_riverpod.dart`, `dioProvider`?**
   _High betweenness centrality (0.031) - this node is a cross-community bridge._
-- **Why does `dioProvider` connect `Data Fetching & Material State` to `Staff Management & Department Roles`, `Main Route Screens & Navigation State`, `Dio HTTP Client & Token Interceptors`, `Order Detail View & Status Modals`, `Riverpod Auth Controller`?**
-  _High betweenness centrality (0.029) - this node is a cross-community bridge._
+- **Why does `dioProvider` connect `dioProvider` to `staff_page.dart`, `secure_storage.dart`, `ConsumerState`, `package:flutter_riverpod/flutter_riverpod.dart`, `order_details_page.dart`?**
+  _High betweenness centrality (0.028) - this node is a cross-community bridge._
 - **Are the 29 inferred relationships involving `OrderService` (e.g. with `add_raw_material()` and `get_universal_raw_materials()`) actually correct?**
   _`OrderService` has 29 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 21 inferred relationships involving `User` (e.g. with `dashboard_stats()` and `orders_trend()`) actually correct?**
