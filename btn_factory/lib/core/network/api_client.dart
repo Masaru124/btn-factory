@@ -11,7 +11,10 @@ final dioProvider = Provider<Dio>((ref) {
       baseUrl: AppConstants.apiBaseUrl,
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 15),
-      headers: <String, dynamic>{'Content-Type': 'application/json'},
+      headers: <String, dynamic>{
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      },
     ),
   );
 
