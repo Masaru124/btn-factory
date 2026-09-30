@@ -1,5 +1,7 @@
 from datetime import date, datetime
 
+from sqlalchemy.exc import IntegrityError
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -33,6 +35,20 @@ class OrderService:
         self.orders = OrderRepository(session)
 
     def create_order(self, payload: OrderCreate) -> Order:
+        # Retry once on a token collision (e.g. concurrent creation): the
+        # sequence is advanced again so the retry gets a fresh token.
+        for attempt in range(2):
+            try:
+                order = self._create_order(payload)
+                self.session.commit()
+                self.session.refresh(order)
+                return order
+            except IntegrityError:
+                self.session.rollback()
+                if attempt == 1:
+                    raise
+
+    def _create_order(self, payload: OrderCreate) -> Order:
         order = Order(
             token=self.orders.next_token(),
             company_name=payload.company_name,
@@ -54,8 +70,6 @@ class OrderService:
             created_by_id=payload.created_by_id,
         )
         self.orders.create(order)
-        self.session.commit()
-        self.session.refresh(order)
         return order
 
     def update_order(self, token: str, payload: OrderUpdate) -> Order | None:

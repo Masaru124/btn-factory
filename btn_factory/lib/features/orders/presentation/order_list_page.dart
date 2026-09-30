@@ -2,6 +2,7 @@ import 'package:btn_factory/shared/widgets/app_scaffold.dart';
 import 'package:btn_factory/shared/widgets/app_image_preview.dart';
 import 'package:btn_factory/core/network/api_client.dart';
 import 'package:btn_factory/features/auth/application/auth_controller.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,6 +21,7 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
   List<_OrderRow> _orders = <_OrderRow>[];
   bool _isLoading = true;
   String? _error;
+  String? _deletingToken;
 
   @override
   void initState() {
@@ -81,6 +83,78 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
         return const Color(0xFF10B981); // Green
       default:
         return const Color(0xFF3B82F6); // Blue
+    }
+  }
+
+  /// Shows a confirmation popup, then deletes the order via the backend API
+  /// and refreshes the list. Never opens the order details page.
+  Future<void> _confirmAndDelete(_OrderRow order) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: const Color(0xFF111827),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: Color(0xFF1F2937)),
+        ),
+        title: const Text(
+          'Delete order?',
+          style: TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          'Order ${order.token} for ${order.companyName} will be permanently deleted. Its token will not be reused for future orders.',
+          style: const TextStyle(color: Color(0xFF94A3B8), height: 1.4),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancel', style: TextStyle(color: Color(0xFF94A3B8))),
+          ),
+          FilledButton.icon(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFFEF4444),
+              foregroundColor: Colors.white,
+            ),
+            icon: const Icon(Icons.delete_outline, size: 18),
+            label: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _deletingToken = order.token);
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.delete('/orders/delete/${order.token}');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Order ${order.token} deleted'),
+          backgroundColor: const Color(0xFF10B981),
+        ),
+      );
+      await _fetchOrders();
+    } catch (e) {
+      if (!mounted) return;
+      String message = 'Failed to delete order ${order.token}';
+      if (e is DioException) {
+        final detail = e.response?.data;
+        if (detail is Map && detail['detail'] is String) {
+          message = detail['detail'] as String;
+        } else if (e.response?.statusCode == 403) {
+          message = 'You do not have permission to delete orders';
+        } else if (e.response?.statusCode == 404) {
+          message = 'Order ${order.token} was not found';
+        }
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message), backgroundColor: const Color(0xFFEF4444)),
+      );
+    } finally {
+      if (mounted) setState(() => _deletingToken = null);
     }
   }
 
@@ -283,20 +357,46 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
                                       'PO ${order.poNumber}',
                                       style: const TextStyle(color: Color(0xFF64748B), fontSize: 13),
                                     ),
-                                    trailing: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                      decoration: BoxDecoration(
-                                        color: order.statusColor.withValues(alpha: 0.1),
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Text(
-                                        order.status,
-                                        style: TextStyle(
-                                          color: order.statusColor,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                          decoration: BoxDecoration(
+                                            color: order.statusColor.withValues(alpha: 0.1),
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                          child: Text(
+                                            order.status,
+                                            style: TextStyle(
+                                              color: order.statusColor,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                         ),
-                                      ),
+                                        if (isAdmin) ...[
+                                          const SizedBox(width: 8),
+                                          _deletingToken == order.token
+                                              ? const SizedBox(
+                                                  width: 20,
+                                                  height: 20,
+                                                  child: CircularProgressIndicator(
+                                                    strokeWidth: 2,
+                                                    color: Color(0xFFEF4444),
+                                                  ),
+                                                )
+                                              : IconButton(
+                                                  onPressed: () => _confirmAndDelete(order),
+                                                  icon: const Icon(Icons.delete_outline),
+                                                  tooltip: 'Delete order',
+                                                  color: const Color(0xFFEF4444),
+                                                  visualDensity: VisualDensity.compact,
+                                                  constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                                                  padding: EdgeInsets.zero,
+                                                ),
+                                        ],
+                                      ],
                                     ),
                                   ),
                                 );

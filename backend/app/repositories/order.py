@@ -1,7 +1,4 @@
-from datetime import datetime
-from itertools import count
-
-from sqlalchemy import func, select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session, selectinload
 
 from app.models.order import (
@@ -10,6 +7,7 @@ from app.models.order import (
     PackingProcess,
     PolishingProcess,
     RawMaterial,
+    TokenCounter,
     TurningProcess,
 )
 from app.repositories.base import BaseRepository
@@ -19,10 +17,40 @@ class OrderRepository(BaseRepository):
     def __init__(self, session: Session) -> None:
         super().__init__(session)
 
+    TOKEN_START = 1001
+
     def next_token(self) -> str:
-        current_year = datetime.utcnow().year
-        total = self.session.scalar(select(func.count(Order.id))) or 0
-        return f'BTN-{current_year}-{total + 1:04d}'
+        """Return the next sequential order token: 1001, 1002, 1003, ...
+
+        The counter lives in the database and is incremented with a single
+        atomic UPDATE, so concurrent creations get distinct tokens and the
+        sequence only ever moves forward. Deleted tokens are never reused,
+        even when the order holding the highest token is removed.
+        """
+        counter = self._ensure_counter()
+        self.session.execute(
+            update(TokenCounter)
+            .where(TokenCounter.id == counter.id)
+            .values(last_value=TokenCounter.last_value + 1)
+        )
+        self.session.flush()
+        self.session.refresh(counter)
+        return str(counter.last_value)
+
+    def _ensure_counter(self) -> TokenCounter:
+        counter = self.session.get(TokenCounter, 1)
+        if counter is None:
+            # Seed the sequence past any legacy numeric tokens so the very
+            # first generated token can never collide with existing data.
+            last_used = self.TOKEN_START - 1
+            existing_tokens = self.session.scalars(select(Order.token)).all()
+            for existing_token in existing_tokens:
+                if existing_token and existing_token.isdigit():
+                    last_used = max(last_used, int(existing_token))
+            counter = TokenCounter(id=1, last_value=last_used)
+            self.session.add(counter)
+            self.session.flush()
+        return counter
 
     def create(self, order: Order) -> Order:
         self.session.add(order)

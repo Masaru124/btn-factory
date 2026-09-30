@@ -1,10 +1,10 @@
-from uuid import uuid4
 from datetime import date
 
 from app.core.database import engine, SessionLocal, Base
 from app.core.security import get_password_hash
 from app.models.user import User, UserRole
 from app.models.order import Order
+from app.repositories.order import OrderRepository
 
 
 def run_seed() -> None:
@@ -34,7 +34,7 @@ def run_seed() -> None:
         existing = db.query(Order).filter(Order.company_name == 'Seed Co').first()
         if existing is None:
             order = Order(
-                token=uuid4().hex[:20],
+                token=OrderRepository(db).next_token(),
                 company_name='Seed Co',
                 po_number=None,
                 po_date=date.today(),

@@ -52,6 +52,19 @@ class Order(Base):
     packing_process = relationship('PackingProcess', back_populates='order', uselist=False, cascade='all, delete-orphan')
 
 
+class TokenCounter(Base):
+    """Persistent monotonic order-token sequence (1001, 1002, ...).
+
+    Stored in the database so tokens are generated server-side and never
+    reused, even after the order holding the highest token is deleted.
+    """
+
+    __tablename__ = 'token_counter'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    last_value: Mapped[int] = mapped_column(Integer, nullable=False, default=1000)
+
+
 class UniversalRawMaterial(Base):
     __tablename__ = 'universal_raw_materials'
 
