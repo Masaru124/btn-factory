@@ -31,9 +31,9 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
   final TextEditingController _laserController = TextEditingController();
   final TextEditingController _polishTypeController = TextEditingController();
   final TextEditingController _packingOptionController = TextEditingController();
+  final TextEditingController _thicknessController = TextEditingController();
+  final TextEditingController _boxTypeController = TextEditingController();
   String? _castingType;
-  String? _thickness;
-  String? _boxType;
   String? _linings;
   DateTime? _poDate;
   DateTime? _dispatchDate;
@@ -60,8 +60,8 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
       _rateController.text = '42.50';
       _quantityController.text = '12000';
       _castingType = 'Sheet';
-      _thickness = '1.2 mm';
-      _boxType = 'DD';
+      _thicknessController.text = '1.2 mm';
+      _boxTypeController.text = 'DD';
       _linings = '14';
       _laserController.text = 'Logo';
       _polishTypeController.text = 'Mirror';
@@ -88,8 +88,8 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
         _rateController.text = order['rate']?.toString() ?? '';
         _quantityController.text = order['quantity']?.toString() ?? '';
         _castingType = order['casting_type'] as String?;
-        _thickness = order['thickness'] as String?;
-        _boxType = order['box_type'] as String?;
+        _thicknessController.text = order['thickness'] as String? ?? '';
+        _boxTypeController.text = order['box_type'] as String? ?? '';
         _linings = order['linings'] as String?;
         _laserController.text = order['laser'] as String? ?? '';
         _polishTypeController.text = order['polish_type'] as String? ?? '';
@@ -123,6 +123,8 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
     _laserController.dispose();
     _polishTypeController.dispose();
     _packingOptionController.dispose();
+    _thicknessController.dispose();
+    _boxTypeController.dispose();
     super.dispose();
   }
 
@@ -240,9 +242,9 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
         'company_name': _companyController.text.trim(),
         'po_date': _poDate?.toIso8601String().split('T').first,
         'casting_type': _castingType,
-        'thickness': _thickness,
+        'thickness': _thicknessController.text.trim(),
         'holes': _holesController.text.trim(),
-        'box_type': _boxType,
+        'box_type': _boxTypeController.text.trim(),
         'rate': double.tryParse(_rateController.text) ?? 0.0,
         'quantity': int.tryParse(_quantityController.text) ?? 0,
         'linings': _linings,
@@ -447,7 +449,12 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                       ),
                       children: <Widget>[
                         _buildDropdown('Casting Type', _castingType, castingOptions, (value) => setState(() => _castingType = value)),
-                        _buildDropdown('Thickness', _thickness, const <String>['0.8 mm', '1.0 mm', '1.2 mm', '1.5 mm'], (value) => setState(() => _thickness = value)),
+                        TextFormField(
+                          controller: _thicknessController,
+                          style: const TextStyle(color: Color(0xFFF8FAFC)),
+                          decoration: const InputDecoration(labelText: 'Thickness'),
+                          validator: (value) => value == null || value.trim().isEmpty ? 'Thickness is required' : null,
+                        ),
                         TextFormField(
                           controller: _holesController,
                           style: const TextStyle(color: Color(0xFFF8FAFC)),
@@ -455,7 +462,12 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                           keyboardType: TextInputType.number,
                           validator: (value) => value == null || value.trim().isEmpty ? 'Holes are required' : null,
                         ),
-                        _buildDropdown('Box Type', _boxType, const <String>['DD', 'SD'], (value) => setState(() => _boxType = value)),
+                        TextFormField(
+                          controller: _boxTypeController,
+                          style: const TextStyle(color: Color(0xFFF8FAFC)),
+                          decoration: const InputDecoration(labelText: 'Box Type'),
+                          validator: (value) => value == null || value.trim().isEmpty ? 'Box Type is required' : null,
+                        ),
                         TextFormField(
                           controller: _rateController,
                           style: const TextStyle(color: Color(0xFFF8FAFC)),
