@@ -24,6 +24,7 @@ class OrderFormPage extends ConsumerStatefulWidget {
 
 class _OrderFormPageState extends ConsumerState<OrderFormPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _tokenController = TextEditingController();
   final TextEditingController _companyController = TextEditingController();
   final TextEditingController _holesController = TextEditingController();
   final TextEditingController _rateController = TextEditingController();
@@ -33,6 +34,8 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
   final TextEditingController _packingOptionController = TextEditingController();
   final TextEditingController _thicknessController = TextEditingController();
   final TextEditingController _boxTypeController = TextEditingController();
+  final TextEditingController _sampleController = TextEditingController();
+  String _orderType = 'Production';
   String? _castingType;
   String? _linings;
   DateTime? _poDate;
@@ -52,6 +55,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
   void initState() {
     super.initState();
     if (widget.mode == OrderFormMode.edit && widget.orderToken != null) {
+      _tokenController.text = widget.orderToken!;
       WidgetsBinding.instance.addPostFrameCallback((_) => _fetchOrderDetails());
     } else {
       // Set default values for Create Mode
@@ -62,13 +66,30 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
       _castingType = 'Sheet';
       _thicknessController.text = '1.2 mm';
       _boxTypeController.text = 'DD';
+      _sampleController.text = '';
       _linings = '14';
       _laserController.text = 'Logo';
       _polishTypeController.text = 'Mirror';
       _packingOptionController.text = 'Carton';
+      _orderType = 'Production';
       _poDate = DateTime.now();
       _dispatchDate = DateTime.now().add(const Duration(days: 14));
+      WidgetsBinding.instance.addPostFrameCallback((_) => _fetchNextToken());
     }
+  }
+
+  Future<void> _fetchNextToken() async {
+    try {
+      final dio = ref.read(dioProvider);
+      final res = await dio.get('/orders/next-token');
+      if (res.data is Map && res.data['next_token'] != null) {
+        if (mounted && _tokenController.text.isEmpty) {
+          setState(() {
+            _tokenController.text = res.data['next_token'].toString();
+          });
+        }
+      }
+    } catch (_) {}
   }
 
   Future<void> _fetchOrderDetails() async {
@@ -83,11 +104,17 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
       final order = response.data as Map<String, dynamic>;
 
       setState(() {
+        if (order['token'] != null) {
+          _tokenController.text = order['token'].toString();
+        }
+        _orderType = (order['order_type'] as String?) ?? 'Production';
         _companyController.text = order['company_name'] as String? ?? '';
         _holesController.text = order['holes'] as String? ?? '';
         _rateController.text = order['rate']?.toString() ?? '';
         _quantityController.text = order['quantity']?.toString() ?? '';
-        _castingType = order['casting_type'] as String?;
+        final rawCasting = order['casting_type'] as String?;
+        _castingType = (rawCasting != null && rawCasting.toLowerCase() == 'rod') ? 'Rod' : 'Sheet';
+        _sampleController.text = order['sample'] as String? ?? '';
         _thicknessController.text = order['thickness'] as String? ?? '';
         _boxTypeController.text = order['box_type'] as String? ?? '';
         _linings = order['linings'] as String?;
@@ -116,6 +143,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
 
   @override
   void dispose() {
+    _tokenController.dispose();
     _companyController.dispose();
     _holesController.dispose();
     _rateController.dispose();
@@ -125,6 +153,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
     _packingOptionController.dispose();
     _thicknessController.dispose();
     _boxTypeController.dispose();
+    _sampleController.dispose();
     super.dispose();
   }
 
@@ -172,24 +201,58 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
       } catch (_) {}
     }
 
-    String imageValue;
-    if (bytes != null && bytes.isNotEmpty) {
-      final ext = platformFile.name.contains('.') ? platformFile.name.split('.').last.toLowerCase() : 'png';
-      final mime = (ext == 'jpg' || ext == 'jpeg') ? 'image/jpeg' : (ext == 'webp' ? 'image/webp' : 'image/png');
-      imageValue = 'data:$mime;base64,${base64Encode(bytes)}';
-    } else {
-      imageValue = platformFile.path ?? platformFile.name;
+    if (bytes == null || bytes.isEmpty) {
+      return;
     }
 
+    // Set immediate memory bytes for instant preview
     setState(() {
       if (isPoImage) {
-        _poImageName = imageValue;
         _poImageBytes = bytes;
+        _poImageName = platformFile.name;
       } else {
-        _buttonImageName = imageValue;
         _buttonImageBytes = bytes;
+        _buttonImageName = platformFile.name;
       }
     });
+
+    // Upload to local on-premise media server
+    try {
+      final dio = ref.read(dioProvider);
+      final formData = FormData.fromMap({
+        'file': MultipartFile.fromBytes(
+          bytes,
+          filename: platformFile.name,
+        ),
+      });
+      final res = await dio.post('/media/upload', data: formData);
+      if (res.data is Map && res.data['file_url'] != null) {
+        final String uploadedUrl = res.data['file_url'] as String;
+        if (mounted) {
+          setState(() {
+            if (isPoImage) {
+              _poImageName = uploadedUrl;
+            } else {
+              _buttonImageName = uploadedUrl;
+            }
+          });
+        }
+      }
+    } catch (e) {
+      // In case of local upload error, fall back to base64 data URI so form can still proceed
+      if (mounted) {
+        final ext = platformFile.name.contains('.') ? platformFile.name.split('.').last.toLowerCase() : 'png';
+        final mime = (ext == 'jpg' || ext == 'jpeg') ? 'image/jpeg' : (ext == 'webp' ? 'image/webp' : 'image/png');
+        final fallbackVal = 'data:$mime;base64,${base64Encode(bytes)}';
+        setState(() {
+          if (isPoImage) {
+            _poImageName = fallbackVal;
+          } else {
+            _buttonImageName = fallbackVal;
+          }
+        });
+      }
+    }
   }
 
   Widget _buildDropdown(String label, String? value, List<String> options, ValueChanged<String?> onChanged) {
@@ -239,6 +302,9 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
     try {
       final Dio dio = ref.read(dioProvider);
       final Map<String, dynamic> payload = {
+        'token': _tokenController.text.trim().isNotEmpty ? _tokenController.text.trim() : null,
+        'order_type': _orderType,
+        'sample': _sampleController.text.trim().isNotEmpty ? _sampleController.text.trim() : null,
         'company_name': _companyController.text.trim(),
         'po_date': _poDate?.toIso8601String().split('T').first,
         'casting_type': _castingType,
@@ -367,6 +433,74 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
+                // Order Identification & Classification header
+                Row(
+                  children: [
+                    Container(
+                      width: 4,
+                      height: 16,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF14B8A6),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Order Identification & Classification',
+                      style: TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isWide = constraints.maxWidth >= 700;
+                    return Flex(
+                      direction: isWide ? Axis.horizontal : Axis.vertical,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Flexible(
+                          flex: isWide ? 3 : 0,
+                          child: TextFormField(
+                            controller: _tokenController,
+                            style: const TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.w600),
+                            decoration: const InputDecoration(
+                              labelText: 'Order Number (Job Card No.) *',
+                              hintText: 'e.g. 1001',
+                              helperText: 'Editable number. If deleted, it is freed & new orders can reuse it.',
+                              prefixIcon: Icon(Icons.tag, color: Color(0xFF14B8A6)),
+                            ),
+                            validator: (value) => value == null || value.trim().isEmpty ? 'Order Number is required' : null,
+                          ),
+                        ),
+                        if (isWide) const SizedBox(width: 16) else const SizedBox(height: 16),
+                        Flexible(
+                          flex: isWide ? 2 : 0,
+                          child: DropdownButtonFormField<String>(
+                            initialValue: _orderType,
+                            dropdownColor: const Color(0xFF111827),
+                            style: const TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.w600),
+                            decoration: const InputDecoration(
+                              labelText: 'Order Type *',
+                              prefixIcon: Icon(Icons.category_outlined, color: Color(0xFF14B8A6)),
+                              helperText: 'Production, Sampling, or Stock',
+                            ),
+                            items: const [
+                              DropdownMenuItem(value: 'Production', child: Text('Production')),
+                              DropdownMenuItem(value: 'Sampling', child: Text('Sampling')),
+                              DropdownMenuItem(value: 'Stock', child: Text('Stock')),
+                            ],
+                            onChanged: (val) {
+                              if (val != null) setState(() => _orderType = val);
+                            },
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(height: 28),
+
                 // Company section header
                 Row(
                   children: [
@@ -430,9 +564,9 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final columns = constraints.maxWidth >= 900 ? 2 : 1;
-                    final castingOptions = <String>['Sheet', 'Rod', 'Blank', 'Block', 'Custom'];
-                    if (_castingType != null && !castingOptions.contains(_castingType)) {
-                      castingOptions.add(_castingType!);
+                    const castingOptions = <String>['Sheet', 'Rod'];
+                    if (_castingType == null || !castingOptions.contains(_castingType)) {
+                      _castingType = 'Sheet';
                     }
                     final liningOptions = List<String>.generate(15, (i) => (14 + i * 2).toString());
                     if (_linings != null && !liningOptions.contains(_linings)) {
@@ -449,6 +583,11 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                       ),
                       children: <Widget>[
                         _buildDropdown('Casting Type', _castingType, castingOptions, (value) => setState(() => _castingType = value)),
+                        TextFormField(
+                          controller: _sampleController,
+                          style: const TextStyle(color: Color(0xFFF8FAFC)),
+                          decoration: const InputDecoration(labelText: 'Sample', hintText: 'Enter sample reference or details'),
+                        ),
                         TextFormField(
                           controller: _thicknessController,
                           style: const TextStyle(color: Color(0xFFF8FAFC)),

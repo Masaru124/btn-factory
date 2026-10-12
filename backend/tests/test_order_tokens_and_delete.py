@@ -29,7 +29,7 @@ def test_tokens_start_at_1001_and_increment():
     assert tokens == ['1001', '1002', '1003', '1004']
 
 
-def test_deleted_tokens_are_not_reused():
+def test_deleted_tokens_are_reused_and_editable():
     session = setup_test_db()
     service = OrderService(session)
 
@@ -38,17 +38,20 @@ def test_deleted_tokens_are_not_reused():
     third = service.create_order(_order_payload('Third'))
     assert [first.token, second.token, third.token] == ['1001', '1002', '1003']
 
-    # Delete the middle order; 1002 must not be handed out again.
+    # Delete the middle order; 1002 should be let go and new order takes that number.
     assert service.delete_order(second.token) is True
     assert service.get_order('1002') is None
 
     fourth = service.create_order(_order_payload('Fourth'))
-    assert fourth.token == '1004'
+    assert fourth.token == '1002'
 
-    # Deleting the highest token also must not rewind the sequence.
-    assert service.delete_order(fourth.token) is True
+    # Test custom editable token
+    custom = service.create_order(OrderCreate(token='CUSTOM-99', company_name='Custom', po_date=date.today()))
+    assert custom.token == 'CUSTOM-99'
+
+    # Next automatic token after 1003 (since 1001, 1002, 1003 exist) is 1004
     fifth = service.create_order(_order_payload('Fifth'))
-    assert fifth.token == '1005'
+    assert fifth.token == '1004'
 
 
 def test_delete_only_removes_target_order():
@@ -85,10 +88,34 @@ def test_delete_is_atomic_when_child_rows_exist():
     assert orphans == []
 
 
-def test_sequence_seeds_past_legacy_numeric_tokens():
+def test_sequence_fills_available_slots_starting_at_1001():
     session = setup_test_db()
-    session.add(Order(token='9999', company_name='Legacy', po_date=date.today()))
+    session.add(Order(token='1001', company_name='Existing', po_date=date.today()))
     session.commit()
 
     service = OrderService(session)
-    assert service.create_order(_order_payload('Next')).token == '10000'
+    assert service.create_order(_order_payload('Next')).token == '1002'
+
+
+def test_token_and_order_type_editable():
+    session = setup_test_db()
+    service = OrderService(session)
+
+    order = service.create_order(OrderCreate(
+        token='ORD-101',
+        company_name='Edit Co',
+        po_date=date.today(),
+        order_type='Sampling',
+    ))
+    assert order.token == 'ORD-101'
+    assert order.order_type == 'Sampling'
+
+    # Update token and order type
+    from app.schemas.order import OrderUpdate
+    updated = service.update_order('ORD-101', OrderUpdate(
+        token='ORD-102',
+        order_type='Stock',
+    ))
+    assert updated is not None
+    assert updated.token == 'ORD-102'
+    assert updated.order_type == 'Stock'

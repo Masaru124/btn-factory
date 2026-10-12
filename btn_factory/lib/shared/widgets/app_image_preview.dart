@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:btn_factory/core/constants/app_constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -143,12 +144,19 @@ class AppImagePreview extends StatelessWidget {
       );
     }
 
-    final String? src = imageSource?.trim();
-    if (src == null || src.isEmpty) {
+    final String? rawSrc = imageSource?.trim();
+    if (rawSrc == null || rawSrc.isEmpty) {
       return _buildFallbackGraphic(context, label: 'No image');
     }
 
-    // 2. HTTP / HTTPS Network URL
+    String src = rawSrc;
+    if (src.startsWith('/media') || src.startsWith('/static')) {
+      src = '${AppConstants.mediaBaseUrl}$src';
+    } else if (src.startsWith('media/') || src.startsWith('static/')) {
+      src = '${AppConstants.mediaBaseUrl}/$src';
+    }
+
+    // 2. HTTP / HTTPS Network URL (including resolved local/LAN media URLs)
     if (src.startsWith('http://') || src.startsWith('https://')) {
       return Image.network(
         src,

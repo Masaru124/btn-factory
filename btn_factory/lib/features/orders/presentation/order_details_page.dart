@@ -99,6 +99,10 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
     final order = _order!;
     final rawMaterials = order['raw_materials'] as List<dynamic>? ?? [];
     final casting = order['casting_process'] as Map<String, dynamic>?;
+    final blanking = order['blanking_process'] as Map<String, dynamic>? ??
+        (casting != null && (casting['gross_quantity'] != null || casting['rejection_weight'] != null || casting['operator'] != null)
+            ? casting
+            : null);
     final turning = order['turning_process'] as Map<String, dynamic>?;
     final polish = order['polishing_process'] as Map<String, dynamic>?;
     final packing = order['packing_process'] as Map<String, dynamic>?;
@@ -158,6 +162,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                 _DetailChip(label: 'Company Name', value: order['company_name'] as String? ?? 'N/A'),
                 _DetailChip(label: 'PO Date', value: _formatDate(order['po_date'] as String?)),
                 _DetailChip(label: 'Token', value: order['token'] as String? ?? 'N/A'),
+                _DetailChip(label: 'Order Type', value: order['order_type'] as String? ?? 'Production'),
               ],
             ),
           ),
@@ -169,6 +174,8 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
               spacing: 12,
               runSpacing: 12,
               children: <Widget>[
+                if (order['sample'] != null && (order['sample'] as String).isNotEmpty)
+                  _DetailChip(label: 'Sample', value: order['sample'] as String),
                 _DetailChip(label: 'Casting Type', value: order['casting_type'] as String? ?? 'N/A'),
                 _DetailChip(label: 'Thickness', value: order['thickness'] as String? ?? 'N/A'),
                 _DetailChip(label: 'Holes', value: order['holes'] as String? ?? 'N/A'),
@@ -261,17 +268,60 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                       padding: EdgeInsets.symmetric(vertical: 12),
                       child: Text('Casting details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B))),
                     )
+                  : Builder(
+                      builder: (context) {
+                        final isRod = (casting['casting_type'] as String?)?.toLowerCase() == 'rod';
+                        return Wrap(
+                          spacing: 12,
+                          runSpacing: 12,
+                          children: <Widget>[
+                            _DetailChip(label: 'Casting Type', value: casting['casting_type'] as String? ?? 'N/A'),
+                            _DetailChip(label: 'Date of Casting', value: _formatDateTime(casting['date_of_casting'] as String?)),
+                            if (isRod) ...[
+                              if (casting['sheet'] != null)
+                                _DetailChip(label: 'Sheet', value: casting['sheet'] as String),
+                              if (casting['line'] != null)
+                                _DetailChip(label: 'Line', value: casting['line'] as String),
+                              if (casting['total_resin'] != null)
+                                _DetailChip(label: 'Total (Resin)', value: '${casting['total_resin']} kg'),
+                              _DetailChip(label: 'Blank Thickness', value: (casting['blank_thickness'] ?? casting['thickness']) as String? ?? 'N/A'),
+                              _DetailChip(label: 'No. of ROD', value: '${casting['no_of_rods'] ?? 'N/A'}'),
+                              if (casting['gross_quantity'] != null)
+                                _DetailChip(label: 'Gross (Approx)', value: '${casting['gross_quantity']}'),
+                              if (casting['operator'] != null)
+                                _DetailChip(label: 'Operator', value: casting['operator'] as String),
+                            ] else ...[
+                              _DetailChip(label: 'Total Raw Material', value: '${casting['total_weight'] ?? casting['weight'] ?? 'N/A'} kg'),
+                              _DetailChip(label: 'Number of Sheets', value: '${casting['no_of_sheets'] ?? 'N/A'}'),
+                              _DetailChip(label: 'Blank Thickness', value: (casting['blank_thickness'] ?? casting['thickness']) as String? ?? 'N/A'),
+                            ],
+                            _DetailChip(label: 'Remarks', value: casting['remarks'] as String? ?? 'None'),
+                          ],
+                        );
+                      },
+                    ),
+            ),
+          ],
+          if (isAdmin || userRole == 'blanking') ...[
+            const SizedBox(height: 18),
+            SectionCard(
+              title: 'Blanking Process Logs',
+              child: blanking == null
+                  ? const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Text('Blanking details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B))),
+                    )
                   : Wrap(
                       spacing: 12,
                       runSpacing: 12,
                       children: <Widget>[
-                        _DetailChip(label: 'Casting Type', value: casting['casting_type'] as String? ?? 'N/A'),
-                        _DetailChip(label: 'Date of Casting', value: _formatDateTime(casting['date_of_casting'] as String?)),
-                        _DetailChip(label: 'Total Raw Material', value: '${casting['total_weight'] ?? casting['weight'] ?? 'N/A'} kg'),
-                        _DetailChip(label: 'Blank Thickness', value: (casting['blank_thickness'] ?? casting['thickness']) as String? ?? 'N/A'),
-                        _DetailChip(label: 'Number of Sheets', value: '${casting['no_of_sheets'] ?? 'N/A'}'),
-                        _DetailChip(label: 'Gross Quantity', value: '${casting['gross_quantity'] ?? 'N/A'}'),
-                        _DetailChip(label: 'Remarks', value: casting['remarks'] as String? ?? 'None'),
+                        _DetailChip(label: 'Weight in kgs', value: '${blanking['weight'] ?? 'N/A'} kg'),
+                        _DetailChip(label: 'In Gross', value: '${blanking['gross_quantity'] ?? 'N/A'}'),
+                        _DetailChip(label: 'Rejection in kgs', value: '${blanking['rejection_weight'] ?? 'N/A'} kg'),
+                        _DetailChip(label: 'Operator', value: blanking['operator'] as String? ?? 'N/A'),
+                        if (blanking['blank_thickness'] != null)
+                          _DetailChip(label: 'Blank Thickness', value: blanking['blank_thickness'] as String? ?? 'N/A'),
+                        _DetailChip(label: 'Remarks', value: blanking['remarks'] as String? ?? 'None'),
                       ],
                     ),
             ),
@@ -297,7 +347,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                         _DetailChip(label: 'Inwards Weight', value: '${turning['inward_weight'] ?? turning['weight'] ?? 'N/A'} kg'),
                         _DetailChip(label: 'Outward Weight', value: '${turning['outward_weight'] ?? turning['turned_in_kgs'] ?? 'N/A'} kg'),
                         _DetailChip(label: 'Gross Quantity', value: '${turning['gross_quantity'] ?? 'N/A'}'),
-                        _DetailChip(label: 'Semi Finish Thickness', value: turning['semi_finish_thickness'] as String? ?? 'N/A'),
+                        _DetailChip(label: 'Blank Thickness', value: (turning['blank_thickness'] ?? turning['semi_finish_thickness']) as String? ?? 'N/A'),
                         _DetailChip(label: 'Finish Thickness', value: turning['finish_thickness'] as String? ?? 'N/A'),
                         _DetailChip(label: 'Operator', value: turning['operator'] as String? ?? 'N/A'),
                         _DetailChip(label: 'Remarks', value: turning['remarks'] as String? ?? 'None'),
@@ -318,13 +368,12 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                       spacing: 12,
                       runSpacing: 12,
                       children: <Widget>[
-                        _DetailChip(label: 'Tool Number', value: (polish['tool_no'] ?? polish['art_no']) as String? ?? 'N/A'),
                         _DetailChip(label: 'Receiving Date', value: _formatDateTime(polish['receiving_date'] as String?)),
                         _DetailChip(label: 'Inward Weight', value: '${polish['inward_weight'] ?? polish['weight'] ?? 'N/A'} kg'),
                         _DetailChip(label: 'Outward Weight', value: '${polish['outward_weight'] ?? 'N/A'} kg'),
                         _DetailChip(label: 'In Gross', value: '${polish['gross_quantity'] ?? 'N/A'}'),
                         _DetailChip(label: 'Polish Type', value: polish['polish_type'] as String? ?? 'N/A'),
-                        _DetailChip(label: 'Feeding Time', value: _formatDateTime(polish['feeding_time'] as String?)),
+                        _DetailChip(label: 'In Time', value: _formatDateTime(polish['feeding_time'] as String?)),
                         _DetailChip(label: 'Out Time', value: _formatDateTime(polish['out_time'] as String?)),
                         _DetailChip(label: 'Operator', value: polish['operator'] as String? ?? 'N/A'),
                         _DetailChip(label: 'Remarks', value: polish['remarks'] as String? ?? 'None'),
@@ -346,8 +395,9 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                       runSpacing: 12,
                       children: <Widget>[
                         _DetailChip(label: 'Receiving Date', value: _formatDateTime(packing['receiving_date'] as String?)),
-                        _DetailChip(label: 'Tool Number', value: (packing['tool_no'] ?? packing['art_no']) as String? ?? 'N/A'),
                         _DetailChip(label: 'Inward Weight', value: '${packing['inward_weight'] ?? packing['weight'] ?? 'N/A'} kg'),
+                        _DetailChip(label: 'Outward Weight', value: '${packing['outward_weight'] ?? 'N/A'} kg'),
+                        _DetailChip(label: 'One Gross Weight', value: '${packing['one_gross_weight'] ?? 'N/A'} kg'),
                         _DetailChip(label: 'In Gross', value: '${packing['in_gross'] ?? 'N/A'}'),
                         _DetailChip(label: 'Finishing', value: packing['finishing'] as String? ?? 'N/A'),
                         _DetailChip(label: 'Packed Qty (Gross)', value: '${packing['packed_qty'] ?? 'N/A'}'),

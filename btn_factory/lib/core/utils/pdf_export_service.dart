@@ -153,6 +153,10 @@ class PdfExportService {
 
     final rawMaterials = order['raw_materials'] as List<dynamic>? ?? [];
     final casting = order['casting_process'] as Map<String, dynamic>?;
+    final blanking = order['blanking_process'] as Map<String, dynamic>? ??
+        (casting != null && (casting['gross_quantity'] != null || casting['rejection_weight'] != null || casting['operator'] != null)
+            ? casting
+            : null);
     final turning = order['turning_process'] as Map<String, dynamic>?;
     final polish = order['polishing_process'] as Map<String, dynamic>?;
     final packing = order['packing_process'] as Map<String, dynamic>?;
@@ -191,6 +195,11 @@ class PdfExportService {
                           'Company: $companyName',
                           style: const pw.TextStyle(color: PdfColors.white, fontSize: 12),
                         ),
+                        pw.SizedBox(height: 2),
+                        pw.Text(
+                          'Order Type: ${order['order_type'] ?? 'Production'}',
+                          style: const pw.TextStyle(color: PdfColors.teal100, fontSize: 11),
+                        ),
                       ],
                     ),
                     pw.Column(
@@ -219,11 +228,13 @@ class PdfExportService {
                 headers: ['Parameter', 'Specification', 'Parameter', 'Specification'],
                 data: [
                   ['PO Date', '${order['po_date'] ?? 'N/A'}', 'Dispatch Date', '${order['dispatch_date'] ?? 'N/A'}'],
-                  ['Casting Type', '${order['casting_type'] ?? 'N/A'}', 'Thickness', '${order['thickness'] ?? 'N/A'}'],
+                  ['Order Type', '${order['order_type'] ?? 'Production'}', 'Casting Type', '${order['casting_type'] ?? 'N/A'}'],
+                  ['Sample', '${order['sample'] ?? 'N/A'}', 'Thickness', '${order['thickness'] ?? 'N/A'}'],
                   ['Holes', '${order['holes'] ?? 'N/A'}', 'Box Type', '${order['box_type'] ?? 'N/A'}'],
-                  ['Quantity', '${order['quantity'] ?? 'N/A'}', 'Rate', 'INR ${order['rate'] ?? 'N/A'}'],
+                  ['Rate', 'INR ${order['rate'] ?? 'N/A'}', 'Quantity', '${order['quantity'] ?? 'N/A'}'],
                   ['Linings', '${order['linings'] ?? 'N/A'}', 'Laser', '${order['laser'] ?? 'N/A'}'],
                   ['Polish Type', '${order['polish_type'] ?? 'N/A'}', 'Packing Option', '${order['packing_option'] ?? 'N/A'}'],
+                  ['Status', status, '', ''],
                 ],
                 headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
                 headerDecoration: const pw.BoxDecoration(color: PdfColors.teal700),
@@ -256,22 +267,14 @@ class PdfExportService {
               if (casting != null) ...[
                 _buildSectionHeader('Casting Log'),
                 pw.SizedBox(height: 4),
-                pw.TableHelper.fromTextArray(
-                  headers: ['Casting Type', 'Date of Casting', 'Total Raw Material', 'Blank Thickness', 'Number of Sheets', 'Gross Qty'],
-                  data: [
-                    [
-                      '${casting['casting_type'] ?? 'N/A'}',
-                      casting['date_of_casting'] != null ? casting['date_of_casting'].toString().split('T').first : 'N/A',
-                      '${casting['total_weight'] ?? casting['weight'] ?? 'N/A'}',
-                      '${casting['blank_thickness'] ?? casting['thickness'] ?? 'N/A'}',
-                      '${casting['no_of_sheets'] ?? 'N/A'}',
-                      '${casting['gross_quantity'] ?? 'N/A'}',
-                    ]
-                  ],
-                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
-                  headerDecoration: const pw.BoxDecoration(color: PdfColors.grey700),
-                  cellHeight: 18,
-                ),
+                _buildCastingTable(casting),
+                pw.SizedBox(height: 10),
+              ],
+
+              if (blanking != null) ...[
+                _buildSectionHeader('Blanking Log'),
+                pw.SizedBox(height: 4),
+                _buildBlankingTable(blanking),
                 pw.SizedBox(height: 10),
               ],
 
@@ -279,13 +282,14 @@ class PdfExportService {
                 _buildSectionHeader('Turning Log'),
                 pw.SizedBox(height: 4),
                 pw.TableHelper.fromTextArray(
-                  headers: ['Tool No', 'Inwards Wt (kg)', 'Outward Wt (kg)', 'Gross Qty', 'M/C No', 'Operator'],
+                  headers: ['Tool No', 'Inwards Wt (kg)', 'Outward Wt (kg)', 'Gross Qty', 'Blank Thickness', 'M/C No', 'Operator'],
                   data: [
                     [
                       '${turning['tool_no'] ?? turning['art_no'] ?? 'N/A'}',
                       '${turning['inward_weight'] ?? turning['weight'] ?? 'N/A'}',
                       '${turning['outward_weight'] ?? turning['turned_in_kgs'] ?? 'N/A'}',
                       '${turning['gross_quantity'] ?? 'N/A'}',
+                      '${turning['blank_thickness'] ?? turning['semi_finish_thickness'] ?? 'N/A'}',
                       '${turning['machine_no'] ?? 'N/A'}',
                       '${turning['operator'] ?? 'N/A'}',
                     ]
@@ -301,13 +305,15 @@ class PdfExportService {
                 _buildSectionHeader('Polishing Log'),
                 pw.SizedBox(height: 4),
                 pw.TableHelper.fromTextArray(
-                  headers: ['Tool No', 'Inward Wt (kg)', 'Outward Wt (kg)', 'Gross Qty', 'Operator', 'Polish Type'],
+                  headers: ['Receiving Date', 'Inward Wt (kg)', 'Outward Wt (kg)', 'Gross Qty', 'In Time', 'Out Time', 'Operator', 'Polish Type'],
                   data: [
                     [
-                      '${polish['tool_no'] ?? polish['art_no'] ?? 'N/A'}',
+                      polish['receiving_date'] != null ? polish['receiving_date'].toString().split('T').first : 'N/A',
                       '${polish['inward_weight'] ?? polish['weight'] ?? 'N/A'}',
                       '${polish['outward_weight'] ?? 'N/A'}',
                       '${polish['gross_quantity'] ?? 'N/A'}',
+                      polish['feeding_time'] != null ? polish['feeding_time'].toString().split('T').last.split('.').first : 'N/A',
+                      polish['out_time'] != null ? polish['out_time'].toString().split('T').last.split('.').first : 'N/A',
                       '${polish['operator'] ?? 'N/A'}',
                       '${polish['polish_type'] ?? 'N/A'}',
                     ]
@@ -323,14 +329,16 @@ class PdfExportService {
                 _buildSectionHeader('Packing Log'),
                 pw.SizedBox(height: 4),
                 pw.TableHelper.fromTextArray(
-                  headers: ['Tool No', 'Inward Wt (kg)', 'Packed Qty', 'Rejected Qty', 'Short / Excess', 'Operator'],
+                  headers: ['Receiving Date', 'Inward Wt (kg)', 'Outward Wt (kg)', '1 Gross Wt (kg)', 'In Gross', 'Packed Qty', 'Rejection', 'Operator'],
                   data: [
                     [
-                      '${packing['tool_no'] ?? packing['art_no'] ?? 'N/A'}',
+                      packing['receiving_date'] != null ? packing['receiving_date'].toString().split('T').first : 'N/A',
                       '${packing['inward_weight'] ?? packing['weight'] ?? 'N/A'}',
+                      '${packing['outward_weight'] ?? 'N/A'}',
+                      '${packing['one_gross_weight'] ?? 'N/A'}',
+                      '${packing['in_gross'] ?? 'N/A'}',
                       '${packing['packed_qty'] ?? 'N/A'}',
                       '${packing['rejected_qty'] ?? 'N/A'}',
-                      '${packing['short_qty'] ?? 0} / ${packing['excess_qty'] ?? 0}',
                       '${packing['operator'] ?? 'N/A'}',
                     ]
                   ],
@@ -348,6 +356,59 @@ class PdfExportService {
     await Printing.layoutPdf(
       onLayout: (PdfPageFormat format) async => pdf.save(),
       name: 'order_${token}_jobcard.pdf',
+    );
+  }
+
+  static pw.Widget _buildCastingTable(Map<String, dynamic> casting) {
+    final isRod = (casting['casting_type'] as String?)?.toLowerCase() == 'rod';
+    return pw.TableHelper.fromTextArray(
+      headers: isRod
+          ? ['Sheet', 'Line', 'Total (Resin)', 'Blank Thickness', 'Remarks', 'Date', 'No. of ROD', 'Gross (Approx)', 'Operator']
+          : ['Casting Type', 'Date', 'Total RM (kg)', 'Sheets', 'Thickness', 'Remarks'],
+      data: [
+        isRod
+            ? [
+                '${casting['sheet'] ?? 'N/A'}',
+                '${casting['line'] ?? 'N/A'}',
+                '${casting['total_resin'] ?? 'N/A'}',
+                '${casting['blank_thickness'] ?? casting['thickness'] ?? 'N/A'}',
+                '${casting['remarks'] ?? 'None'}',
+                casting['date_of_casting'] != null ? casting['date_of_casting'].toString().split('T').first : 'N/A',
+                '${casting['no_of_rods'] ?? 'N/A'}',
+                '${casting['gross_quantity'] ?? 'N/A'}',
+                '${casting['operator'] ?? 'N/A'}',
+              ]
+            : [
+                '${casting['casting_type'] ?? 'Sheet'}',
+                casting['date_of_casting'] != null ? casting['date_of_casting'].toString().split('T').first : 'N/A',
+                '${casting['total_weight'] ?? 'N/A'}',
+                '${casting['no_of_sheets'] ?? 'N/A'}',
+                '${casting['blank_thickness'] ?? casting['thickness'] ?? 'N/A'}',
+                '${casting['remarks'] ?? 'None'}',
+              ]
+      ],
+      headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+      headerDecoration: const pw.BoxDecoration(color: PdfColors.grey700),
+      cellHeight: 18,
+    );
+  }
+
+  static pw.Widget _buildBlankingTable(Map<String, dynamic> blanking) {
+    return pw.TableHelper.fromTextArray(
+      headers: ['Weight (kg)', 'In Gross', 'Rejection (kg)', 'Operator', 'Blank Thickness', 'Remarks'],
+      data: [
+        [
+          '${blanking['weight'] ?? 'N/A'}',
+          '${blanking['gross_quantity'] ?? 'N/A'}',
+          '${blanking['rejection_weight'] ?? '0'}',
+          '${blanking['operator'] ?? 'N/A'}',
+          '${blanking['blank_thickness'] ?? 'N/A'}',
+          '${blanking['remarks'] ?? 'None'}',
+        ]
+      ],
+      headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+      headerDecoration: const pw.BoxDecoration(color: PdfColors.grey700),
+      cellHeight: 18,
     );
   }
 

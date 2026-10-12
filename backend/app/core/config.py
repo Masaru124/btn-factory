@@ -15,6 +15,16 @@ class Settings(BaseSettings):
     database_url: str = Field(default='sqlite:///./btn_factory.db', alias='DATABASE_URL')
     cors_origins: list[str] = Field(default=['*'], alias='CORS_ORIGINS')
     refresh_token_expire_days: int = 7
+    # Local On-Premise Storage (Zero Cloud)
+    media_dir: str = Field(default='./media', alias='MEDIA_DIR')
+    media_base_url: str = Field(default='/media', alias='MEDIA_BASE_URL')
+
+    # Redis & Multi-tier Database Options
+    redis_url: str = Field(default='redis://localhost:6379/0', alias='REDIS_URL')
+    enable_redis: bool = Field(default=False, alias='ENABLE_REDIS')
+    neon_database_url: str | None = Field(default=None, alias='NEON_DATABASE_URL')
+
+    # Cloud legacy placeholders (optional / disabled for local hosting)
     cloudinary_cloud_name: str | None = Field(default=None, alias='CLOUDINARY_CLOUD_NAME')
     cloudinary_api_key: str | None = Field(default=None, alias='CLOUDINARY_API_KEY')
     cloudinary_api_secret: str | None = Field(default=None, alias='CLOUDINARY_API_SECRET')

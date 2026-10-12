@@ -1,17 +1,60 @@
-# Caddy configuration for Button Factory Flutter Web Frontend
-# Replace 'yourdomain.com' with your actual bought domain name.
+# ==============================================================================
+# Button Factory MES - Production Caddy Configuration
+# Fully Local / On-Premise Gateway & Reverse Proxy
+# Serves: Flutter Web UI, FastAPI Backend (Load Balanced), and Local Media Store
+# ==============================================================================
 
-yourdomain.com {
-    # Path to Flutter Web production build
-    root * C:/Users/User/Desktop/button_factory/btn_factory/build/web
+:80 {
+    # 1. Root directory for compiled Flutter Web production build
+    root * "C:/Users/User/Desktop/button_factory/btn_factory/build/web"
 
-    # Enable compression (gzip & zstd) for fast loading
-    encode gzip zstd
+    # 2. Response compression (gzip and zstd) for fast tablet loading on LAN
+    encode zstd gzip
 
-    # Serve static files
-    file_server
+    # 3. Security, CORS, and ngrok headers
+    header {
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Access-Control-Allow-Origin "*"
+        Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        Access-Control-Allow-Headers "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization,ngrok-skip-browser-warning,X-Idempotency-Key"
+    }
 
-    # Single Page Application (SPA) routing for Flutter web
-    # If a route like /dashboard or /orders is requested, serve index.html
-    try_files {path} /index.html
+    # 4. Handle CORS preflight requests
+    @options {
+        method OPTIONS
+    }
+    respond @options 204
+
+    # 5. Reverse proxy all API requests to FastAPI with upstream load balancing
+    handle /api/* {
+        reverse_proxy 127.0.0.1:8000 {
+            # Load balancing policy (round_robin across available local workers)
+            lb_policy round_robin
+            lb_try_duration 2s
+
+            header_up Host {upstream_hostport}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # 6. High-performance direct static media file serving straight from disk
+    handle /media/* {
+        uri strip_prefix /media
+        root * "C:/Users/User/Desktop/button_factory/backend/media"
+        file_server {
+            hide .*
+        }
+        # Cache static WebP images in browser for 30 days
+        header Cache-Control "public, max-age=2592000, immutable"
+    }
+
+    # 7. Single Page Application (SPA) routing fallback for Flutter Web
+    handle {
+        try_files {path} {path}/ /index.html
+        file_server
+    }
 }

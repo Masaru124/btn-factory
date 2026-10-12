@@ -58,6 +58,15 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
   List<Map<String, dynamic>> _universalMaterials = [];
   bool _isLoadingUniversal = false;
 
+  bool get _isCastingRod {
+    final t = _fieldControllers['casting_type']?.text.trim().toLowerCase();
+    if (t != null && t.isNotEmpty) {
+      return t == 'rod';
+    }
+    final ot = (_order?['casting_type'] as String?)?.trim().toLowerCase();
+    return ot == 'rod';
+  }
+
   List<FieldDefinition> _getFields() {
     switch (widget.title) {
       case 'Raw Material':
@@ -69,13 +78,36 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
           FieldDefinition('Price', 'price', 'double'),
         ];
       case 'Casting':
+        if (_isCastingRod) {
+          return const [
+            FieldDefinition('Casting Type', 'casting_type', 'string'),
+            FieldDefinition('Sheet', 'sheet', 'string'),
+            FieldDefinition('Line', 'line', 'string'),
+            FieldDefinition('Total (Resin)', 'total_resin', 'double'),
+            FieldDefinition('Blank Thickness', 'blank_thickness', 'string'),
+            FieldDefinition('Remarks', 'remarks', 'string'),
+            FieldDefinition('Date of Casting', 'date_of_casting', 'datetime'),
+            FieldDefinition('No. of ROD', 'no_of_rods', 'int'),
+            FieldDefinition('Gross (Approx)', 'gross_quantity', 'int'),
+            FieldDefinition('Operator', 'operator', 'string'),
+          ];
+        } else {
+          return const [
+            FieldDefinition('Casting Type', 'casting_type', 'string'),
+            FieldDefinition('Date of Casting', 'date_of_casting', 'datetime'),
+            FieldDefinition('Total Raw Material (kg)', 'total_weight', 'double'),
+            FieldDefinition('Number of Sheets', 'no_of_sheets', 'int'),
+            FieldDefinition('Blank Thickness', 'blank_thickness', 'string'),
+            FieldDefinition('Remarks', 'remarks', 'string'),
+          ];
+        }
+      case 'Blanking':
         return const [
-          FieldDefinition('Casting Type', 'casting_type', 'string'),
-          FieldDefinition('Date of Casting', 'date_of_casting', 'datetime'),
-          FieldDefinition('Total Raw Material', 'total_weight', 'double'),
+          FieldDefinition('Weight in kgs', 'weight', 'double'),
+          FieldDefinition('In Gross', 'gross_quantity', 'int'),
+          FieldDefinition('Rejection in kgs', 'rejection_weight', 'double'),
+          FieldDefinition('Operator', 'operator', 'string'),
           FieldDefinition('Blank Thickness', 'blank_thickness', 'string'),
-          FieldDefinition('Number of Sheets', 'no_of_sheets', 'int'),
-          FieldDefinition('Gross Quantity', 'gross_quantity', 'int'),
           FieldDefinition('Remarks', 'remarks', 'string'),
         ];
       case 'Turning':
@@ -88,20 +120,19 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
           FieldDefinition('M/C No.', 'machine_no', 'string'),
           FieldDefinition('Outward Weight (kg)', 'outward_weight', 'double'),
           FieldDefinition('Gross (Approx)', 'gross_quantity', 'int'),
-          FieldDefinition('Semi Finish Thickness', 'semi_finish_thickness', 'string'),
+          FieldDefinition('Blank Thickness', 'blank_thickness', 'string'),
           FieldDefinition('Finish Thickness', 'finish_thickness', 'string'),
           FieldDefinition('Operator', 'operator', 'string'),
           FieldDefinition('Remarks', 'remarks', 'string'),
         ];
       case 'Polish':
         return const [
-          FieldDefinition('Tool Number', 'tool_no', 'string'),
           FieldDefinition('Receiving Date (from Laser/Turning)', 'receiving_date', 'datetime'),
           FieldDefinition('Inward Weight (kg)', 'inward_weight', 'double'),
           FieldDefinition('Outward Weight (kg)', 'outward_weight', 'double'),
           FieldDefinition('In Gross', 'gross_quantity', 'int'),
           FieldDefinition('Finishing : Polish / Semi Finish / F/R', 'polish_type', 'string'),
-          FieldDefinition('Time of Feeding', 'feeding_time', 'datetime'),
+          FieldDefinition('In Time', 'feeding_time', 'datetime'),
           FieldDefinition('Out Time', 'out_time', 'datetime'),
           FieldDefinition('Operator', 'operator', 'string'),
           FieldDefinition('Remarks', 'remarks', 'string'),
@@ -109,8 +140,9 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
       case 'Packing':
         return const [
           FieldDefinition('Receiving Date (from Polishing)', 'receiving_date', 'datetime'),
-          FieldDefinition('Tool Number', 'tool_no', 'string'),
           FieldDefinition('Inward Weight (kg)', 'inward_weight', 'double'),
+          FieldDefinition('Outward Weight (kg)', 'outward_weight', 'double'),
+          FieldDefinition('One Gross Weight (kg)', 'one_gross_weight', 'double'),
           FieldDefinition('In Gross', 'in_gross', 'int'),
           FieldDefinition('Finishing : Polish / Semi Finish / F/R', 'finishing', 'string'),
           FieldDefinition('Packed in Gross', 'packed_qty', 'int'),
@@ -131,6 +163,8 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
         return '/department/raw-material/add';
       case 'Casting':
         return '/department/casting/update';
+      case 'Blanking':
+        return '/department/blanking/update';
       case 'Turning':
         return '/department/turning/update';
       case 'Polish':
@@ -145,8 +179,51 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
   @override
   void initState() {
     super.initState();
+    const allFieldKeys = [
+      'material_name',
+      'total_available_quantity',
+      'quantity',
+      'unit',
+      'price',
+      'casting_type',
+      'date_of_casting',
+      'total_weight',
+      'blank_thickness',
+      'no_of_sheets',
+      'no_of_rods',
+      'sheet',
+      'line',
+      'total_resin',
+      'gross_quantity',
+      'weight',
+      'rejection_weight',
+      'operator',
+      'remarks',
+      'receiving_date',
+      'date_of_turning',
+      'inward_weight',
+      'tool_no',
+      'hole_size',
+      'machine_no',
+      'outward_weight',
+      'semi_finish_thickness',
+      'finish_thickness',
+      'polish_type',
+      'feeding_time',
+      'out_time',
+      'one_gross_weight',
+      'in_gross',
+      'finishing',
+      'packed_qty',
+      'excess_qty',
+      'short_qty',
+      'rejected_qty',
+    ];
+    for (final key in allFieldKeys) {
+      _fieldControllers[key] = TextEditingController();
+    }
     for (final field in _getFields()) {
-      _fieldControllers[field.jsonKey] = TextEditingController();
+      _fieldControllers.putIfAbsent(field.jsonKey, () => TextEditingController());
     }
     if (widget.title == 'Raw Material') {
       _rawMaterialRows.add(RawMaterialInputRow());
@@ -203,9 +280,9 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
         _order = response.data as Map<String, dynamic>;
         _isFetching = false;
         if (widget.title == 'Casting' && _order != null && _order!['casting_type'] != null) {
-          final castingType = _order!['casting_type'].toString();
-          if (castingType.isNotEmpty && (_fieldControllers['casting_type']?.text.isEmpty ?? true)) {
-            _fieldControllers['casting_type']?.text = castingType;
+          final castingType = _order!['casting_type'].toString().trim();
+          if (castingType.isNotEmpty) {
+            _fieldControllers['casting_type']?.text = castingType.toLowerCase() == 'rod' ? 'Rod' : 'Sheet';
           }
         }
       });
@@ -348,6 +425,37 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
     }
   }
 
+  Future<String?> _showCustomUnitDialog(BuildContext context) async {
+    final customCtrl = TextEditingController();
+    return showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1E293B),
+        title: const Text('Enter Custom Unit', style: TextStyle(color: Color(0xFFF8FAFC))),
+        content: TextField(
+          controller: customCtrl,
+          autofocus: true,
+          style: const TextStyle(color: Color(0xFFF8FAFC)),
+          decoration: const InputDecoration(
+            labelText: 'Unit Name',
+            hintText: 'e.g. bundle, roll, drum',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(null),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(customCtrl.text.trim()),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _showUniversalMaterialDialog({Map<String, dynamic>? existingMaterial}) async {
     final formKey = GlobalKey<FormState>();
     final isEdit = existingMaterial != null;
@@ -463,20 +571,57 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                           children: [
                             Expanded(
                               flex: 3,
-                              child: TextFormField(
-                                controller: unitController,
-                                enabled: !isSaving,
-                                decoration: const InputDecoration(
-                                  labelText: 'Unit *',
-                                  hintText: 'kg, pcs, m',
-                                  border: OutlineInputBorder(),
-                                  prefixIcon: Icon(Icons.straighten),
-                                ),
-                                validator: (val) {
-                                  if (val == null || val.trim().isEmpty) {
-                                    return 'Unit required';
+                              child: Builder(
+                                builder: (context) {
+                                  const defaultUnits = [
+                                    'kg',
+                                    'g',
+                                    'Gross',
+                                    'pcs',
+                                    'liters',
+                                    'ml',
+                                    'rods',
+                                    'sheets',
+                                    'meters',
+                                    'bags',
+                                    'boxes',
+                                  ];
+                                  final currentUnit = unitController.text.trim().isEmpty ? 'kg' : unitController.text.trim();
+                                  final unitOptions = <String>[...defaultUnits];
+                                  if (!unitOptions.contains(currentUnit)) {
+                                    unitOptions.add(currentUnit);
                                   }
-                                  return null;
+                                  return DropdownButtonFormField<String>(
+                                    initialValue: currentUnit,
+                                    dropdownColor: const Color(0xFF1E293B),
+                                    style: const TextStyle(color: Color(0xFFF8FAFC), fontSize: 14),
+                                    decoration: const InputDecoration(
+                                      labelText: 'Unit *',
+                                      border: OutlineInputBorder(),
+                                      prefixIcon: Icon(Icons.straighten),
+                                    ),
+                                    items: [
+                                      ...unitOptions.map((u) => DropdownMenuItem(value: u, child: Text(u))),
+                                      const DropdownMenuItem(value: '__custom__', child: Text('+ Custom Unit...')),
+                                    ],
+                                    onChanged: isSaving
+                                        ? null
+                                        : (newUnit) async {
+                                            if (newUnit == '__custom__') {
+                                              final custom = await _showCustomUnitDialog(context);
+                                              if (custom != null && custom.trim().isNotEmpty) {
+                                                setDialogState(() {
+                                                  unitController.text = custom.trim();
+                                                });
+                                              }
+                                            } else if (newUnit != null) {
+                                              setDialogState(() {
+                                                unitController.text = newUnit;
+                                              });
+                                            }
+                                          },
+                                    validator: (val) => val == null || val.trim().isEmpty ? 'Unit required' : null,
+                                  );
                                 },
                               ),
                             ),
@@ -818,13 +963,56 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       validator: (value) => value == null || double.tryParse(value) == null ? 'Enter a valid quantity' : null,
                     ),
-                    TextFormField(
-                      controller: row.unitController,
-                      decoration: const InputDecoration(
-                        labelText: 'Unit (e.g. kg, gross)',
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) => value == null || value.trim().isEmpty ? 'Unit is required' : null,
+                    Builder(
+                      builder: (context) {
+                        const defaultUnits = [
+                          'kg',
+                          'g',
+                          'Gross',
+                          'pcs',
+                          'liters',
+                          'ml',
+                          'rods',
+                          'sheets',
+                          'meters',
+                          'bags',
+                          'boxes',
+                        ];
+                        final currentUnit = row.unitController.text.trim().isEmpty ? 'kg' : row.unitController.text.trim();
+                        final unitOptions = <String>[...defaultUnits];
+                        if (!unitOptions.contains(currentUnit)) {
+                          unitOptions.add(currentUnit);
+                        }
+                        return DropdownButtonFormField<String>(
+                          initialValue: currentUnit,
+                          dropdownColor: const Color(0xFF1E293B),
+                          style: const TextStyle(color: Color(0xFFF8FAFC), fontSize: 14),
+                          decoration: const InputDecoration(
+                            labelText: 'Unit *',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.straighten),
+                          ),
+                          items: [
+                            ...unitOptions.map((u) => DropdownMenuItem(value: u, child: Text(u))),
+                            const DropdownMenuItem(value: '__custom__', child: Text('+ Custom Unit...')),
+                          ],
+                          onChanged: (newUnit) async {
+                            if (newUnit == '__custom__') {
+                              final custom = await _showCustomUnitDialog(context);
+                              if (custom != null && custom.trim().isNotEmpty) {
+                                setState(() {
+                                  row.unitController.text = custom.trim();
+                                });
+                              }
+                            } else if (newUnit != null) {
+                              setState(() {
+                                row.unitController.text = newUnit;
+                              });
+                            }
+                          },
+                          validator: (value) => value == null || value.trim().isEmpty ? 'Unit is required' : null,
+                        );
+                      },
                     ),
                     TextFormField(
                       controller: row.priceController,
@@ -854,6 +1042,8 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
         return rawMaterials.isNotEmpty || status != 'Created';
       case 'Casting':
         return _order!['casting_process'] != null;
+      case 'Blanking':
+        return _order!['blanking_process'] != null;
       case 'Turning':
         return _order!['turning_process'] != null;
       case 'Polish':
@@ -869,7 +1059,9 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
   Widget build(BuildContext context) {
     final fields = _getFields();
     final hasStatusMismatch = _order != null &&
-        _order!['status'] != widget.currentStatusLabel;
+        (widget.title == 'Turning'
+            ? (_order!['status'] != 'Casting Completed' && _order!['status'] != 'Blanking Completed')
+            : _order!['status'] != widget.currentStatusLabel);
 
     return AppScaffold(
       selectedIndex: widget.selectedIndex,
@@ -936,10 +1128,16 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                         runSpacing: 16,
                         children: <Widget>[
                           _SnapshotChip(label: 'Company', value: _order!['company_name'] as String? ?? 'N/A'),
+                          if (_order!['sample'] != null && (_order!['sample'] as String).isNotEmpty)
+                            _SnapshotChip(label: 'Sample', value: _order!['sample'] as String),
                           if (widget.title == 'Raw Material')
                             _SnapshotChip(label: 'Order Qty', value: '${_order!['quantity'] ?? 'N/A'}'),
                           if (widget.title == 'Casting') ...[
                             _SnapshotChip(label: 'Total Quantity', value: '${_order!['quantity'] ?? 'N/A'}'),
+                            _SnapshotChip(label: 'Casting Type', value: _order!['casting_type'] as String? ?? 'N/A'),
+                          ],
+                          if (widget.title == 'Blanking') ...[
+                            _SnapshotChip(label: 'Order Qty', value: '${_order!['quantity'] ?? 'N/A'}'),
                             _SnapshotChip(label: 'Casting Type', value: _order!['casting_type'] as String? ?? 'N/A'),
                           ],
                           _SnapshotChip(
@@ -947,7 +1145,10 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                             value: _order!['status'] as String? ?? 'N/A',
                             color: hasStatusMismatch ? Colors.amber.shade900 : null,
                           ),
-                          _SnapshotChip(label: 'Expected Status', value: widget.currentStatusLabel),
+                          _SnapshotChip(
+                            label: 'Expected Status',
+                            value: widget.title == 'Turning' ? 'Casting/Blanking Completed' : widget.currentStatusLabel,
+                          ),
                         ],
                       ),
                       if (_order!['button_image'] != null) ...[
@@ -1106,6 +1307,34 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                                         return const SizedBox();
                                       }
 
+                                      if (field.jsonKey == 'casting_type') {
+                                        final currentVal = controller.text.trim();
+                                        const allowedValues = ['Sheet', 'Rod'];
+                                        final matchedVal = allowedValues.firstWhere(
+                                          (opt) => opt.toLowerCase() == currentVal.toLowerCase(),
+                                          orElse: () => _isCastingRod ? 'Rod' : 'Sheet',
+                                        );
+                                        if (controller.text.isEmpty) {
+                                          controller.text = matchedVal;
+                                        }
+                                        return DropdownButtonFormField<String>(
+                                          initialValue: matchedVal,
+                                          decoration: InputDecoration(
+                                            labelText: field.label,
+                                            border: const OutlineInputBorder(),
+                                            prefixIcon: const Icon(Icons.category_outlined),
+                                          ),
+                                          items: allowedValues.map((v) => DropdownMenuItem(value: v, child: Text(v))).toList(),
+                                          onChanged: (val) {
+                                            if (val != null) {
+                                              setState(() {
+                                                controller.text = val;
+                                              });
+                                            }
+                                          },
+                                        );
+                                      }
+
                                       if (field.type == 'datetime') {
                                         return Row(
                                           children: [
@@ -1146,6 +1375,12 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                                             ? const TextInputType.numberWithOptions(decimal: true)
                                             : TextInputType.text,
                                         validator: (value) {
+                                          if (field.jsonKey == 'remarks' || field.jsonKey == 'rejection_weight' || field.jsonKey == 'sheet' || field.jsonKey == 'line') {
+                                            if (value != null && value.trim().isNotEmpty && field.type == 'double' && double.tryParse(value) == null) {
+                                              return 'Enter a valid decimal number';
+                                            }
+                                            return null;
+                                          }
                                           if (value == null || value.trim().isEmpty) {
                                             return '${field.label} is required';
                                           }

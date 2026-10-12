@@ -119,7 +119,7 @@ class _StaffPageState extends ConsumerState<StaffPage> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const AppScaffold(
-        selectedIndex: 8,
+        selectedIndex: 9,
         title: 'Manage Staff',
         child: Center(child: CircularProgressIndicator(color: Color(0xFF14B8A6))),
       );
@@ -127,7 +127,7 @@ class _StaffPageState extends ConsumerState<StaffPage> {
 
     if (_error != null) {
       return AppScaffold(
-        selectedIndex: 8,
+        selectedIndex: 9,
         title: 'Manage Staff',
         child: Center(
           child: Padding(
@@ -156,7 +156,7 @@ class _StaffPageState extends ConsumerState<StaffPage> {
     }
 
     return AppScaffold(
-      selectedIndex: 8,
+      selectedIndex: 9,
       title: 'Manage Staff',
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),

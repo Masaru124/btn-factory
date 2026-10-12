@@ -13,3 +13,6 @@ python-multipart==0.0.20
 pytest>=8.3.0
 boto3==1.38.41
 cloudinary==1.44.1
+pillow==12.3.0
+redis==8.1.0
+httpx==0.28.1

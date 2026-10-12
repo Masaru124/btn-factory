@@ -2,6 +2,7 @@ from sqlalchemy import select, update
 from sqlalchemy.orm import Session, selectinload
 
 from app.models.order import (
+    BlankingProcess,
     CastingProcess,
     Order,
     PackingProcess,
@@ -20,37 +21,20 @@ class OrderRepository(BaseRepository):
     TOKEN_START = 1001
 
     def next_token(self) -> str:
-        """Return the next sequential order token: 1001, 1002, 1003, ...
+        """Return the lowest available numeric order token >= 1001.
 
-        The counter lives in the database and is incremented with a single
-        atomic UPDATE, so concurrent creations get distinct tokens and the
-        sequence only ever moves forward. Deleted tokens are never reused,
-        even when the order holding the highest token is removed.
+        If an order is deleted, its token is freed and automatically taken
+        by the next order created or suggested.
         """
-        counter = self._ensure_counter()
-        self.session.execute(
-            update(TokenCounter)
-            .where(TokenCounter.id == counter.id)
-            .values(last_value=TokenCounter.last_value + 1)
-        )
-        self.session.flush()
-        self.session.refresh(counter)
-        return str(counter.last_value)
+        existing_tokens = set()
+        for token_val in self.session.scalars(select(Order.token)).all():
+            if token_val and token_val.isdigit():
+                existing_tokens.add(int(token_val))
 
-    def _ensure_counter(self) -> TokenCounter:
-        counter = self.session.get(TokenCounter, 1)
-        if counter is None:
-            # Seed the sequence past any legacy numeric tokens so the very
-            # first generated token can never collide with existing data.
-            last_used = self.TOKEN_START - 1
-            existing_tokens = self.session.scalars(select(Order.token)).all()
-            for existing_token in existing_tokens:
-                if existing_token and existing_token.isdigit():
-                    last_used = max(last_used, int(existing_token))
-            counter = TokenCounter(id=1, last_value=last_used)
-            self.session.add(counter)
-            self.session.flush()
-        return counter
+        candidate = self.TOKEN_START
+        while candidate in existing_tokens:
+            candidate += 1
+        return str(candidate)
 
     def create(self, order: Order) -> Order:
         self.session.add(order)
@@ -61,6 +45,7 @@ class OrderRepository(BaseRepository):
         statement = select(Order).options(
             selectinload(Order.raw_materials),
             selectinload(Order.casting_process),
+            selectinload(Order.blanking_process),
             selectinload(Order.turning_process),
             selectinload(Order.polishing_process),
             selectinload(Order.packing_process),
@@ -71,6 +56,7 @@ class OrderRepository(BaseRepository):
         statement = select(Order).where(Order.token == token).options(
             selectinload(Order.raw_materials),
             selectinload(Order.casting_process),
+            selectinload(Order.blanking_process),
             selectinload(Order.turning_process),
             selectinload(Order.polishing_process),
             selectinload(Order.packing_process),
@@ -91,6 +77,12 @@ class OrderRepository(BaseRepository):
         self.session.add(casting)
         self.session.flush()
         return casting
+
+    def upsert_blanking(self, order: Order, blanking: BlankingProcess) -> BlankingProcess:
+        order.blanking_process = blanking
+        self.session.add(blanking)
+        self.session.flush()
+        return blanking
 
     def upsert_turning(self, order: Order, turning: TurningProcess) -> TurningProcess:
         order.turning_process = turning

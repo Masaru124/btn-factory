@@ -6,6 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.order import (
+    BlankingProcess,
     CastingProcess,
     Order,
     PackingProcess,
@@ -16,6 +17,7 @@ from app.models.order import (
 )
 from app.repositories.order import OrderRepository
 from app.schemas.order import (
+    BlankingUpdate,
     CastingUpdate,
     OrderCreate,
     OrderUpdate,
@@ -49,8 +51,13 @@ class OrderService:
                     raise
 
     def _create_order(self, payload: OrderCreate) -> Order:
+        token = payload.token.strip() if payload.token and payload.token.strip() else self.orders.next_token()
+        existing = self.orders.get_by_token(token)
+        if existing is not None:
+            raise ValueError(f"Order number '{token}' already exists")
+
         order = Order(
-            token=self.orders.next_token(),
+            token=token,
             company_name=payload.company_name,
             po_number=payload.po_number,
             po_date=payload.po_date,
@@ -67,6 +74,8 @@ class OrderService:
             dispatch_date=payload.dispatch_date,
             po_image=payload.po_image,
             button_image=payload.button_image,
+            order_type=payload.order_type or 'Production',
+            sample=payload.sample,
             created_by_id=payload.created_by_id,
         )
         self.orders.create(order)
@@ -78,6 +87,15 @@ class OrderService:
             return None
 
         payload_data = payload.model_dump(exclude_unset=True)
+        if 'token' in payload_data and payload_data['token']:
+            new_token = str(payload_data['token']).strip()
+            if new_token != order.token:
+                existing = self.orders.get_by_token(new_token)
+                if existing is not None and existing.id != order.id:
+                    raise ValueError(f"Order number '{new_token}' already exists")
+                order.token = new_token
+            payload_data.pop('token', None)
+
         for field, value in payload_data.items():
             setattr(order, field, value)
 
@@ -166,6 +184,19 @@ class OrderService:
         self.session.refresh(casting)
         return casting
 
+    def update_blanking(self, payload: BlankingUpdate) -> BlankingProcess | None:
+        order = self.orders.get_by_token(payload.order_token)
+        if order is None:
+            return None
+
+        data = payload.model_dump(exclude={'order_token'}, exclude_unset=True)
+        blanking = BlankingProcess(order_id=order.id, **data)
+        self.orders.upsert_blanking(order, blanking)
+        order.status = recompute_order_status(order)
+        self.session.commit()
+        self.session.refresh(blanking)
+        return blanking
+
     def update_turning(self, payload: TurningUpdate) -> TurningProcess | None:
         order = self.orders.get_by_token(payload.order_token)
         if order is None:
@@ -186,6 +217,11 @@ class OrderService:
             data['turned_in_kgs'] = data['outward_weight']
         elif 'turned_in_kgs' in data and 'outward_weight' not in data:
             data['outward_weight'] = data['turned_in_kgs']
+
+        if 'blank_thickness' in data and 'semi_finish_thickness' not in data:
+            data['semi_finish_thickness'] = data['blank_thickness']
+        elif 'semi_finish_thickness' in data and 'blank_thickness' not in data:
+            data['blank_thickness'] = data['semi_finish_thickness']
 
         turning = TurningProcess(order_id=order.id, **data)
         self.orders.upsert_turning(order, turning)

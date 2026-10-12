@@ -20,13 +20,17 @@ class OrderBase(BaseModel):
     dispatch_date: date | None = None
     po_image: str | None = None
     button_image: str | None = None
+    order_type: str | None = 'Production'
+    sample: str | None = None
 
 
 class OrderCreate(OrderBase):
+    token: str | None = None
     created_by_id: int | None = None
 
 
 class OrderUpdate(BaseModel):
+    token: str | None = None
     company_name: str | None = None
     po_number: str | None = None
     po_date: date | None = None
@@ -43,6 +47,8 @@ class OrderUpdate(BaseModel):
     dispatch_date: date | None = None
     po_image: str | None = None
     button_image: str | None = None
+    order_type: str | None = None
+    sample: str | None = None
     status: str | None = None
 
 
@@ -104,10 +110,27 @@ class CastingUpdate(BaseModel):
     blank_thickness: str | None = None
     thickness: str | None = None
     no_of_sheets: int | None = None
+    no_of_rods: int | None = None
+    sheet: str | None = None
+    line: str | None = None
+    total_resin: float | None = None
     gross_quantity: int | None = None
+    rejection_weight: float | None = None
+    operator: str | None = None
     machine_no: str | None = None
     start_time: datetime | None = None
     end_time: datetime | None = None
+    remarks: str | None = None
+
+
+class BlankingUpdate(BaseModel):
+    order_token: str
+    weight: float | None = None
+    gross_quantity: int | None = None
+    rejection_weight: float | None = None
+    operator: str | None = None
+    blank_thickness: str | None = None
+    date_of_blanking: datetime | None = None
     remarks: str | None = None
 
 
@@ -124,6 +147,7 @@ class TurningUpdate(BaseModel):
     outward_weight: float | None = None
     turned_in_kgs: float | None = None
     gross_quantity: int | None = None
+    blank_thickness: str | None = None
     semi_finish_thickness: str | None = None
     finish_thickness: str | None = None
     operator: str | None = None
@@ -153,6 +177,8 @@ class PackingUpdate(BaseModel):
     art_no: str | None = None
     inward_weight: float | None = None
     weight: float | None = None
+    outward_weight: float | None = None
+    one_gross_weight: float | None = None
     in_gross: int | None = None
     finishing: str | None = None
     packed_qty: int | None = None
@@ -186,11 +212,32 @@ class CastingRead(BaseModel):
     blank_thickness: str | None = None
     thickness: str | None = None
     no_of_sheets: int | None = None
+    no_of_rods: int | None = None
+    sheet: str | None = None
+    line: str | None = None
+    total_resin: float | None = None
     gross_quantity: int | None = None
+    rejection_weight: float | None = None
+    operator: str | None = None
     machine_no: str | None = None
     start_time: datetime | None = None
     end_time: datetime | None = None
     remarks: str | None = None
+
+
+class BlankingRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    weight: float | None = None
+    gross_quantity: int | None = None
+    rejection_weight: float | None = None
+    operator: str | None = None
+    blank_thickness: str | None = None
+    date_of_blanking: datetime | None = None
+    remarks: str | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
 
 class TurningRead(BaseModel):
@@ -208,6 +255,7 @@ class TurningRead(BaseModel):
     outward_weight: float | None = None
     turned_in_kgs: float | None = None
     gross_quantity: int | None = None
+    blank_thickness: str | None = None
     semi_finish_thickness: str | None = None
     finish_thickness: str | None = None
     operator: str | None = None
@@ -241,6 +289,8 @@ class PackingRead(BaseModel):
     art_no: str | None = None
     inward_weight: float | None = None
     weight: float | None = None
+    outward_weight: float | None = None
+    one_gross_weight: float | None = None
     in_gross: int | None = None
     finishing: str | None = None
     packed_qty: int | None = None
@@ -263,6 +313,7 @@ class OrderRead(OrderBase):
 
     raw_materials: list[RawMaterialRead] = []
     casting_process: CastingRead | None = None
+    blanking_process: BlankingRead | None = None
     turning_process: TurningRead | None = None
     polishing_process: PolishingRead | None = None
     packing_process: PackingRead | None = None
@@ -274,6 +325,7 @@ class OrderListItem(BaseModel):
     token: str
     company_name: str
     po_number: str | None = None
+    order_type: str = 'Production'
     status: str
     created_at: datetime
 

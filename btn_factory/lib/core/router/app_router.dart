@@ -120,39 +120,49 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const DepartmentUpdatePage(
           title: 'Casting',
           selectedIndex: 3,
-          description: 'Update casting metrics including date of casting, total raw material, blank thickness, and number of sheets.',
+          description: 'Update casting metrics: date of casting, total raw material, rods or sheets, and thickness.',
           currentStatusLabel: 'Raw Material Updated',
-          fieldLabels: <String>['Casting Type', 'Date of Casting', 'Total Raw Material', 'Blank Thickness', 'Number of Sheets', 'Gross Quantity', 'Remarks'],
+          fieldLabels: <String>['Casting Type', 'Date of Casting', 'Total Raw Material (kg)', 'Number of Rods', 'Number of Sheets', 'Blank Thickness', 'Remarks'],
+        ),
+      ),
+      GoRoute(
+        path: '/blanking',
+        builder: (context, state) => const DepartmentUpdatePage(
+          title: 'Blanking',
+          selectedIndex: 4,
+          description: 'Record blank cutting output: weight in kgs, in Gross, rejection in kgs, and operator.',
+          currentStatusLabel: 'Casting Completed',
+          fieldLabels: <String>['Weight in kgs', 'In Gross', 'Rejection in kgs', 'Operator', 'Blank Thickness', 'Remarks'],
         ),
       ),
       GoRoute(
         path: '/turning',
         builder: (context, state) => const DepartmentUpdatePage(
           title: 'Turning',
-          selectedIndex: 4,
+          selectedIndex: 5,
           description: 'Record turning tool number, inward weight, and outward weight.',
           currentStatusLabel: 'Casting Completed',
-          fieldLabels: <String>['Receiving Date', 'Date of Turning', 'Inwards Weight (kg)', 'Tool Number', 'Hole', 'M/C No.', 'Outward Weight (kg)', 'Gross (Approx)', 'Semi Finish Thickness', 'Finish Thickness', 'Operator', 'Remarks'],
+          fieldLabels: <String>['Receiving Date', 'Date of Turning', 'Inwards Weight (kg)', 'Tool Number', 'Hole', 'M/C No.', 'Outward Weight (kg)', 'Gross (Approx)', 'Blank Thickness', 'Finish Thickness', 'Operator', 'Remarks'],
         ),
       ),
       GoRoute(
         path: '/polish',
         builder: (context, state) => const DepartmentUpdatePage(
           title: 'Polish',
-          selectedIndex: 5,
+          selectedIndex: 6,
           description: 'Capture polishing inward and outward weight, operator, and timings.',
           currentStatusLabel: 'Turning Completed',
-          fieldLabels: <String>['Tool Number', 'Receiving Date', 'Inward Weight (kg)', 'Outward Weight (kg)', 'In Gross', 'Finishing', 'Time of Feeding', 'Out Time', 'Operator', 'Remarks'],
+          fieldLabels: <String>['Receiving Date', 'Inward Weight (kg)', 'Outward Weight (kg)', 'In Gross', 'Finishing', 'In Time', 'Out Time', 'Operator', 'Remarks'],
         ),
       ),
       GoRoute(
         path: '/packing',
         builder: (context, state) => const DepartmentUpdatePage(
           title: 'Packing',
-          selectedIndex: 6,
+          selectedIndex: 7,
           description: 'Enter packed, rejected, short, and excess quantities before dispatch readiness.',
           currentStatusLabel: 'Polishing Completed',
-          fieldLabels: <String>['Receiving Date', 'Tool Number', 'Inward Weight (kg)', 'In Gross', 'Finishing', 'Packed in Gross', 'Excess Qty', 'Short Qty', 'Rejection Qty', 'Reason for Rejection', 'Operator'],
+          fieldLabels: <String>['Receiving Date', 'Inward Weight (kg)', 'Outward Weight (kg)', 'One Gross Weight (kg)', 'In Gross', 'Finishing', 'Packed in Gross', 'Excess Qty', 'Short Qty', 'Rejection Qty', 'Reason for Rejection', 'Operator'],
         ),
       ),
       GoRoute(
@@ -165,7 +175,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           title: 'Analytics',
           subtitle: 'Orders trend, production trend, material consumption, and rejection analysis will be charted here.',
           icon: Icons.insights_outlined,
-          selectedIndex: 7,
+          selectedIndex: 8,
         ),
       ),
       GoRoute(

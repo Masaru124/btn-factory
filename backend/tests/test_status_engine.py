@@ -8,6 +8,7 @@ def make_order(**overrides):
     defaults = {
         'raw_materials': [],
         'casting_process': None,
+        'blanking_process': None,
         'turning_process': None,
         'polishing_process': None,
         'packing_process': None,
@@ -29,6 +30,13 @@ def test_status_progression_matches_workflow() -> None:
         casting_process=SimpleNamespace(end_time='2026-06-07T10:00:00Z'),
     )
     assert determine_order_status(order) == OrderStatus.CASTING_COMPLETED.value
+
+    order = make_order(
+        raw_materials=[SimpleNamespace(id=1)],
+        casting_process=SimpleNamespace(end_time='2026-06-07T10:00:00Z'),
+        blanking_process=SimpleNamespace(id=15),
+    )
+    assert determine_order_status(order) == OrderStatus.BLANKING_COMPLETED.value
 
     order = make_order(
         raw_materials=[SimpleNamespace(id=1)],

@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class AppConstants {
   static const String appName = 'Button Factory MES';
 
@@ -6,7 +8,33 @@ class AppConstants {
     if (dartDefineUrl.trim().isNotEmpty) {
       return dartDefineUrl.trim();
     }
+    // Dynamic origin detection for Web (supports LAN IP e.g. 192.168.1.50, Caddy port 80, or ngrok)
+    if (kIsWeb) {
+      final origin = Uri.base.origin;
+      // When running Flutter web debug on ephemeral port (e.g. 50000+), connect to local backend port 8000
+      final port = Uri.base.port;
+      if (port > 10000) {
+        return 'http://127.0.0.1:8000/api';
+      }
+      return '$origin/api';
+    }
     return 'http://127.0.0.1:8000/api';
+  }
+
+  static String get mediaBaseUrl {
+    const dartDefineUrl = String.fromEnvironment('MEDIA_BASE_URL');
+    if (dartDefineUrl.trim().isNotEmpty) {
+      return dartDefineUrl.trim();
+    }
+    if (kIsWeb) {
+      final origin = Uri.base.origin;
+      final port = Uri.base.port;
+      if (port > 10000) {
+        return 'http://127.0.0.1:8000';
+      }
+      return origin;
+    }
+    return 'http://127.0.0.1:8000';
   }
 }
 

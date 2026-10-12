@@ -32,6 +32,7 @@ class AppScaffold extends ConsumerWidget {
           NavItem(Icons.list_alt_outlined, 'Orders', '/orders', activeColor: Color(0xFF14B8A6)),
           NavItem(Icons.grain_outlined, 'Raw Material', '/raw-material', activeColor: Color(0xFF0D9488)),
           NavItem(Icons.local_fire_department_outlined, 'Casting', '/casting', activeColor: Color(0xFFF97316)),
+          NavItem(Icons.crop_free_outlined, 'Blanking', '/blanking', activeColor: Color(0xFFEAB308)),
           NavItem(Icons.precision_manufacturing_outlined, 'Turning', '/turning', activeColor: Color(0xFF3B82F6)),
           NavItem(Icons.auto_fix_high_outlined, 'Polishing', '/polish', activeColor: Color(0xFFA855F7)),
           NavItem(Icons.inventory_2_outlined, 'Packing', '/packing', activeColor: Color(0xFF10B981)),
@@ -42,6 +43,8 @@ class AppScaffold extends ConsumerWidget {
         return const [NavItem(Icons.grain_outlined, 'Raw Material', '/raw-material')];
       case 'casting':
         return const [NavItem(Icons.local_fire_department_outlined, 'Casting', '/casting')];
+      case 'blanking':
+        return const [NavItem(Icons.crop_free_outlined, 'Blanking', '/blanking')];
       case 'turning':
         return const [NavItem(Icons.precision_manufacturing_outlined, 'Turning', '/turning')];
       case 'polish':
@@ -67,14 +70,16 @@ class AppScaffold extends ConsumerWidget {
       case 3:
         return '/casting';
       case 4:
-        return '/turning';
+        return '/blanking';
       case 5:
-        return '/polish';
+        return '/turning';
       case 6:
-        return '/packing';
+        return '/polish';
       case 7:
-        return '/reports';
+        return '/packing';
       case 8:
+        return '/reports';
+      case 9:
         return '/staff';
       case 176:
         return '/profile';
@@ -117,6 +122,7 @@ class AppScaffold extends ConsumerWidget {
                 const SizedBox(height: 16),
                 _buildDepartmentTile(context, Icons.grain_outlined, 'Raw Material', '/raw-material', const Color(0xFF0D9488)),
                 _buildDepartmentTile(context, Icons.local_fire_department_outlined, 'Casting', '/casting', const Color(0xFFF97316)),
+                _buildDepartmentTile(context, Icons.crop_free_outlined, 'Blanking', '/blanking', const Color(0xFFEAB308)),
                 _buildDepartmentTile(context, Icons.precision_manufacturing_outlined, 'Turning', '/turning', const Color(0xFF3B82F6)),
                 _buildDepartmentTile(context, Icons.auto_fix_high_outlined, 'Polishing', '/polish', const Color(0xFFA855F7)),
                 _buildDepartmentTile(context, Icons.inventory_2_outlined, 'Packing', '/packing', const Color(0xFF10B981)),
@@ -355,9 +361,9 @@ class AppScaffold extends ConsumerWidget {
         activeBottomIndex = 0; // Dashboard
       } else if (selectedIndex == 1) {
         activeBottomIndex = 1; // Orders
-      } else if (selectedIndex >= 2 && selectedIndex <= 6) {
+      } else if (selectedIndex >= 2 && selectedIndex <= 7) {
         activeBottomIndex = 2; // Departments page (we will highlight the 'Departments' tab)
-      } else if (selectedIndex == 7) {
+      } else if (selectedIndex == 8) {
         activeBottomIndex = 3; // Reports
       } else if (selectedIndex == 176) {
         activeBottomIndex = 4; // Profile

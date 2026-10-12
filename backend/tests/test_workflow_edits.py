@@ -14,6 +14,7 @@ from app.models.order import (
     UniversalRawMaterial,
 )
 from app.schemas.order import (
+    BlankingUpdate,
     CastingUpdate,
     OrderCreate,
     PackingUpdate,
@@ -94,6 +95,17 @@ def test_department_field_normalization():
         )
     )
 
+    # Add raw material so status can progress past Created
+    service.add_raw_material(
+        RawMaterialCreate(
+            order_token=order.token,
+            material_name='Test Resin',
+            quantity=50.0,
+            unit='kg',
+            price=100.0,
+        )
+    )
+
     # 1. Casting with total_weight, blank_thickness, no_of_sheets, date_of_casting
     now = datetime.now()
     casting = service.update_casting(
@@ -104,6 +116,9 @@ def test_department_field_normalization():
             total_weight=45.5,
             blank_thickness='2.5 mm',
             no_of_sheets=12,
+            no_of_rods=50,
+            rejection_weight=1.5,
+            operator='Jane Smith',
             end_time=now,
         )
     )
@@ -113,15 +128,39 @@ def test_department_field_normalization():
     assert casting.blank_thickness == '2.5 mm'
     assert casting.thickness == '2.5 mm'
     assert casting.no_of_sheets == 12
+    assert casting.no_of_rods == 50
+    assert casting.rejection_weight == 1.5
+    assert casting.operator == 'Jane Smith'
     assert casting.date_of_casting is not None
 
-    # 2. Turning with tool_no, inward_weight, outward_weight
+    # 1b. Blanking with weight, gross_quantity, rejection_weight, operator, blank_thickness
+    blanking = service.update_blanking(
+        BlankingUpdate(
+            order_token=order.token,
+            weight=43.5,
+            gross_quantity=450,
+            rejection_weight=1.2,
+            operator='Bob Wilson',
+            blank_thickness='2.5 mm',
+            remarks='Smooth cut blanks',
+        )
+    )
+    assert blanking is not None
+    assert blanking.weight == 43.5
+    assert blanking.gross_quantity == 450
+    assert blanking.rejection_weight == 1.2
+    assert blanking.operator == 'Bob Wilson'
+    assert blanking.blank_thickness == '2.5 mm'
+    assert order.status == OrderStatus.BLANKING_COMPLETED.value
+
+    # 2. Turning with tool_no, inward_weight, outward_weight, blank_thickness
     turning = service.update_turning(
         TurningUpdate(
             order_token=order.token,
             tool_no='TOOL-99',
             inward_weight=45.5,
             outward_weight=42.0,
+            blank_thickness='2.5 mm',
             machine_no='TURN-1',
         )
     )
@@ -132,6 +171,8 @@ def test_department_field_normalization():
     assert turning.weight == 45.5
     assert turning.outward_weight == 42.0
     assert turning.turned_in_kgs == 42.0
+    assert turning.blank_thickness == '2.5 mm'
+    assert turning.semi_finish_thickness == '2.5 mm'
 
     # 3. Polishing with tool_no, inward_weight, outward_weight
     polish = service.update_polishing(
@@ -151,15 +192,19 @@ def test_department_field_normalization():
     assert polish.outward_weight == 41.2
     assert polish.operator == 'John Doe'
 
-    # 4. Packing with tool_no, inward_weight
+    # 4. Packing with inward_weight, outward_weight, one_gross_weight
     packing = service.update_packing(
         PackingUpdate(
             order_token=order.token,
-            tool_no='TOOL-99',
             inward_weight=41.2,
+            outward_weight=40.8,
+            one_gross_weight=0.08,
+            in_gross=500,
             packed_qty=500,
         )
     )
     assert packing is not None
-    assert packing.tool_no == 'TOOL-99'
     assert packing.inward_weight == 41.2
+    assert packing.outward_weight == 40.8
+    assert packing.one_gross_weight == 0.08
+    assert packing.in_gross == 500

@@ -6,6 +6,7 @@ from app.models.order import Order, OrderStatus
 def determine_order_status(order: Order) -> str:
     has_raw_material = len(order.raw_materials) > 0
     has_casting = order.casting_process is not None and order.casting_process.end_time is not None
+    has_blanking = getattr(order, 'blanking_process', None) is not None
     has_turning = order.turning_process is not None
     has_polish = order.polishing_process is not None
     has_packing = order.packing_process is not None
@@ -15,6 +16,8 @@ def determine_order_status(order: Order) -> str:
     if not has_casting:
         return OrderStatus.RAW_MATERIAL_UPDATED.value
     if not has_turning:
+        if has_blanking:
+            return OrderStatus.BLANKING_COMPLETED.value
         return OrderStatus.CASTING_COMPLETED.value
     if not has_polish:
         return OrderStatus.TURNING_COMPLETED.value

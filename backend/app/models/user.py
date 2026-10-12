@@ -11,6 +11,7 @@ class UserRole(str, Enum):
     SUPER_ADMIN = 'super_admin'
     RAW_MATERIAL = 'raw_material'
     CASTING = 'casting'
+    BLANKING = 'blanking'
     TURNING = 'turning'
     POLISH = 'polish'
     PACKING = 'packing'

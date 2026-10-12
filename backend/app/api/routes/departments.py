@@ -3,8 +3,10 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.deps import get_current_user, require_roles
+from app.core.redis_client import cache_client
 from app.models.user import User
 from app.schemas.order import (
+    BlankingUpdate,
     CastingUpdate,
     PackingUpdate,
     PolishingUpdate,
@@ -47,6 +49,7 @@ def add_raw_material(payload: RawMaterialBatchCreate, db: Session = Depends(get_
         created = service.add_raw_material(single_payload, created_by=current_user.id)
         if created is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Order not found')
+    cache_client.delete_pattern('orders:*')
     return {'order_token': payload.order_token, 'message': 'Raw materials updated'}
 
 
@@ -56,7 +59,18 @@ def update_casting(payload: CastingUpdate, db: Session = Depends(get_db), curren
     created = service.update_casting(payload)
     if created is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Order not found')
+    cache_client.delete_pattern('orders:*')
     return {'id': created.id, 'order_token': payload.order_token, 'message': 'Casting updated'}
+
+
+@router.post('/blanking/update', dependencies=[Depends(require_roles('super_admin', 'blanking', 'casting'))])
+def update_blanking(payload: BlankingUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> dict:
+    service = OrderService(db)
+    created = service.update_blanking(payload)
+    if created is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Order not found')
+    cache_client.delete_pattern('orders:*')
+    return {'id': created.id, 'order_token': payload.order_token, 'message': 'Blanking updated'}
 
 
 @router.post('/turning/update', dependencies=[Depends(require_roles('super_admin', 'turning'))])
@@ -65,6 +79,7 @@ def update_turning(payload: TurningUpdate, db: Session = Depends(get_db), curren
     created = service.update_turning(payload)
     if created is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Order not found')
+    cache_client.delete_pattern('orders:*')
     return {'id': created.id, 'order_token': payload.order_token, 'message': 'Turning updated'}
 
 
@@ -74,6 +89,7 @@ def update_polish(payload: PolishingUpdate, db: Session = Depends(get_db), curre
     created = service.update_polishing(payload)
     if created is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Order not found')
+    cache_client.delete_pattern('orders:*')
     return {'id': created.id, 'order_token': payload.order_token, 'message': 'Polish updated'}
 
 
@@ -83,4 +99,5 @@ def update_packing(payload: PackingUpdate, db: Session = Depends(get_db), curren
     created = service.update_packing(payload)
     if created is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Order not found')
+    cache_client.delete_pattern('orders:*')
     return {'id': created.id, 'order_token': payload.order_token, 'message': 'Packing updated'}

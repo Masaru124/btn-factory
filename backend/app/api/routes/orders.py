@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.deps import get_current_user, require_roles
+from app.core.redis_client import cache_client
 from app.models.user import User
 from app.schemas.order import OrderCreate, OrderRead, OrderUpdate
 from app.services.order_service import OrderService
@@ -29,10 +30,27 @@ def scrub_order_by_role(order_read: OrderRead, role: str) -> OrderRead:
 
 
 @router.post('/create', response_model=OrderRead)
-def create_order(payload: OrderCreate, db: Session = Depends(get_db)) -> OrderRead:
+def create_order(payload: OrderCreate, request: Request, db: Session = Depends(get_db)) -> OrderRead:
+    idempotency_key = request.headers.get('X-Idempotency-Key')
+    if idempotency_key and not cache_client.check_idempotency(idempotency_key, ttl=30):
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail='Duplicate submission detected. Please wait.',
+        )
+
     service = OrderService(db)
-    order = service.create_order(payload)
-    return OrderRead.model_validate(order)
+    try:
+        order = service.create_order(payload)
+        cache_client.delete_pattern('orders:*')
+        return OrderRead.model_validate(order)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.get('/next-token', response_model=dict)
+def get_next_token(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> dict:
+    service = OrderService(db)
+    return {'next_token': service.orders.next_token()}
 
 
 @router.get('/list', response_model=list[OrderRead])
@@ -56,8 +74,12 @@ def update_order(token: str, payload: OrderUpdate, db: Session = Depends(get_db)
     order = service.get_order(token)
     if order is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Order not found')
-    updated = service.update_order(token, payload)
-    return OrderRead.model_validate(updated)
+    try:
+        updated = service.update_order(token, payload)
+        cache_client.delete_pattern('orders:*')
+        return OrderRead.model_validate(updated)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 @router.delete('/delete/{token}', status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(require_roles('super_admin'))])
@@ -66,6 +88,7 @@ def delete_order(token: str, db: Session = Depends(get_db), current_user: User =
     success = service.delete_order(token)
     if not success:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Order not found')
+    cache_client.delete_pattern('orders:*')
 
 
 @router.post('/dispatch/{token}', response_model=OrderRead, dependencies=[Depends(require_roles('super_admin'))])
@@ -77,4 +100,5 @@ def dispatch_order(token: str, db: Session = Depends(get_db), current_user: User
     order.status = 'Dispatched'
     db.commit()
     db.refresh(order)
+    cache_client.delete_pattern('orders:*')
     return OrderRead.model_validate(order)

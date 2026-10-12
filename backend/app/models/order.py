@@ -11,6 +11,7 @@ class OrderStatus(str, enum.Enum):
     CREATED = 'Created'
     RAW_MATERIAL_UPDATED = 'Raw Material Updated'
     CASTING_COMPLETED = 'Casting Completed'
+    BLANKING_COMPLETED = 'Blanking Completed'
     TURNING_COMPLETED = 'Turning Completed'
     POLISHING_COMPLETED = 'Polishing Completed'
     PACKING_COMPLETED = 'Packing Completed'
@@ -39,6 +40,8 @@ class Order(Base):
     dispatch_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     po_image: Mapped[str | None] = mapped_column(Text, nullable=True)
     button_image: Mapped[str | None] = mapped_column(Text, nullable=True)
+    order_type: Mapped[str] = mapped_column(String(50), nullable=False, default='Production')
+    sample: Mapped[str | None] = mapped_column(String(100), nullable=True)
     status: Mapped[str] = mapped_column(String(60), nullable=False, default=OrderStatus.CREATED.value)
     created_by_id: Mapped[int | None] = mapped_column(ForeignKey('users.id'), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
@@ -47,6 +50,7 @@ class Order(Base):
     created_by = relationship('User')
     raw_materials = relationship('RawMaterial', back_populates='order', cascade='all, delete-orphan')
     casting_process = relationship('CastingProcess', back_populates='order', uselist=False, cascade='all, delete-orphan')
+    blanking_process = relationship('BlankingProcess', back_populates='order', uselist=False, cascade='all, delete-orphan')
     turning_process = relationship('TurningProcess', back_populates='order', uselist=False, cascade='all, delete-orphan')
     polishing_process = relationship('PolishingProcess', back_populates='order', uselist=False, cascade='all, delete-orphan')
     packing_process = relationship('PackingProcess', back_populates='order', uselist=False, cascade='all, delete-orphan')
@@ -102,17 +106,41 @@ class CastingProcess(Base):
     casting_type: Mapped[str | None] = mapped_column(String(100), nullable=True)
     date_of_casting: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     total_weight: Mapped[float | None] = mapped_column(Float, nullable=True)
+    total_resin: Mapped[float | None] = mapped_column(Float, nullable=True)
     weight: Mapped[float | None] = mapped_column(Float, nullable=True)
+    sheet: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    line: Mapped[str | None] = mapped_column(String(100), nullable=True)
     blank_thickness: Mapped[str | None] = mapped_column(String(50), nullable=True)
     thickness: Mapped[str | None] = mapped_column(String(50), nullable=True)
     no_of_sheets: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    no_of_rods: Mapped[int | None] = mapped_column(Integer, nullable=True)
     gross_quantity: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    rejection_weight: Mapped[float | None] = mapped_column(Float, nullable=True)
+    operator: Mapped[str | None] = mapped_column(String(120), nullable=True)
     machine_no: Mapped[str | None] = mapped_column(String(80), nullable=True)
     start_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     end_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     remarks: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     order = relationship('Order', back_populates='casting_process')
+
+
+class BlankingProcess(Base):
+    __tablename__ = 'blanking_process'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    order_id: Mapped[int] = mapped_column(ForeignKey('orders.id'), nullable=False, index=True)
+    weight: Mapped[float | None] = mapped_column(Float, nullable=True)
+    gross_quantity: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    rejection_weight: Mapped[float | None] = mapped_column(Float, nullable=True)
+    operator: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    blank_thickness: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    date_of_blanking: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    remarks: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    order = relationship('Order', back_populates='blanking_process')
 
 
 class TurningProcess(Base):
@@ -131,6 +159,7 @@ class TurningProcess(Base):
     outward_weight: Mapped[float | None] = mapped_column(Float, nullable=True)
     turned_in_kgs: Mapped[float | None] = mapped_column(Float, nullable=True)
     gross_quantity: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    blank_thickness: Mapped[str | None] = mapped_column(String(50), nullable=True)
     semi_finish_thickness: Mapped[str | None] = mapped_column(String(50), nullable=True)
     finish_thickness: Mapped[str | None] = mapped_column(String(50), nullable=True)
     operator: Mapped[str | None] = mapped_column(String(120), nullable=True)
@@ -170,6 +199,8 @@ class PackingProcess(Base):
     art_no: Mapped[str | None] = mapped_column(String(100), nullable=True)
     inward_weight: Mapped[float | None] = mapped_column(Float, nullable=True)
     weight: Mapped[float | None] = mapped_column(Float, nullable=True)
+    outward_weight: Mapped[float | None] = mapped_column(Float, nullable=True)
+    one_gross_weight: Mapped[float | None] = mapped_column(Float, nullable=True)
     in_gross: Mapped[int | None] = mapped_column(Integer, nullable=True)
     finishing: Mapped[str | None] = mapped_column(String(100), nullable=True)
     packed_qty: Mapped[int | None] = mapped_column(Integer, nullable=True)

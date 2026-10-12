@@ -80,7 +80,7 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const AppScaffold(
-        selectedIndex: 7,
+        selectedIndex: 8,
         title: 'Reports',
         child: Center(child: CircularProgressIndicator(color: Color(0xFF14B8A6))),
       );
@@ -88,7 +88,7 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
 
     if (_error != null) {
       return AppScaffold(
-        selectedIndex: 7,
+        selectedIndex: 8,
         title: 'Reports',
         child: Center(
           child: Padding(
@@ -123,7 +123,7 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
     final revenue = data['revenue'] as Map<String, dynamic>? ?? {};
 
     return AppScaffold(
-      selectedIndex: 7,
+      selectedIndex: 8,
       title: 'Reports & Analytics',
       child: RefreshIndicator(
         onRefresh: _fetchReport,

@@ -47,6 +47,7 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
             token: map['token'] as String? ?? '',
             companyName: map['company_name'] as String? ?? '',
             poNumber: map['po_number'] as String? ?? '',
+            orderType: map['order_type'] as String? ?? 'Production',
             status: status,
             statusColor: _statusColor(status),
             buttonImage: map['button_image'] as String?,
@@ -102,7 +103,7 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
           style: TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold),
         ),
         content: Text(
-          'Order ${order.token} for ${order.companyName} will be permanently deleted. Its token will not be reused for future orders.',
+          'Order ${order.token} for ${order.companyName} will be permanently deleted. Its token number will be released and can be reused for future orders.',
           style: const TextStyle(color: Color(0xFF94A3B8), height: 1.4),
         ),
         actions: <Widget>[
@@ -346,12 +347,51 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
                                             ),
                                             child: Icon(Icons.receipt_long, color: order.statusColor),
                                           ),
-                                    title: Text(
-                                      '${order.companyName} • ${order.token}',
-                                      style: const TextStyle(
-                                        color: Color(0xFFF8FAFC),
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                    title: Row(
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                            '${order.companyName} • ${order.token}',
+                                            style: const TextStyle(
+                                              color: Color(0xFFF8FAFC),
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: order.orderType == 'Sampling'
+                                                ? const Color(0xFFA855F7).withValues(alpha: 0.2)
+                                                : (order.orderType == 'Stock'
+                                                    ? const Color(0xFF3B82F6).withValues(alpha: 0.2)
+                                                    : const Color(0xFF14B8A6).withValues(alpha: 0.2)),
+                                            borderRadius: BorderRadius.circular(6),
+                                            border: Border.all(
+                                              color: order.orderType == 'Sampling'
+                                                  ? const Color(0xFFA855F7)
+                                                  : (order.orderType == 'Stock'
+                                                      ? const Color(0xFF3B82F6)
+                                                      : const Color(0xFF14B8A6)),
+                                              width: 0.8,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            order.orderType,
+                                            style: TextStyle(
+                                              color: order.orderType == 'Sampling'
+                                                  ? const Color(0xFFC084FC)
+                                                  : (order.orderType == 'Stock'
+                                                      ? const Color(0xFF60A5FA)
+                                                      : const Color(0xFF2DD4BF)),
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                     subtitle: Text(
                                       'PO ${order.poNumber}',
@@ -417,6 +457,7 @@ class _OrderRow {
     required this.poNumber,
     required this.status,
     required this.statusColor,
+    this.orderType = 'Production',
     this.buttonImage,
     this.poImage,
   });
@@ -426,6 +467,7 @@ class _OrderRow {
   final String poNumber;
   final String status;
   final Color statusColor;
+  final String orderType;
   final String? buttonImage;
   final String? poImage;
 }
