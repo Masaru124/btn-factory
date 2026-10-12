@@ -24,9 +24,9 @@
     "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "backend/app/api/router.py": {
-    "mtime": 1791802199.05663,
-    "seen": 1791802792.861429,
-    "ast_hash": "4491182b71b91dacd049ab0a8a72df27",
+    "mtime": 1791805263.5876987,
+    "seen": 1791805450.940119,
+    "ast_hash": "ed855fe91beb9bf4938531a7a710a159",
     "semantic_hash": ""
   },
   "backend/app/api/routes/__init__.py": {
@@ -66,15 +66,15 @@
     "semantic_hash": ""
   },
   "backend/app/core/config.py": {
-    "mtime": 1791802142.654212,
-    "seen": 1791802792.8614438,
-    "ast_hash": "cd0ca866cea864f0816658ea9d0d8773",
+    "mtime": 1791805214.0644126,
+    "seen": 1791805450.9401355,
+    "ast_hash": "731f121f6b13f17ac623a6f3b3e6f83d",
     "semantic_hash": ""
   },
   "backend/app/core/database.py": {
-    "mtime": 1791802243.8707862,
-    "seen": 1791802792.8614452,
-    "ast_hash": "fdf8329d57538667da9f5867b9ab7498",
+    "mtime": 1791805108.746413,
+    "seen": 1791805450.9401371,
+    "ast_hash": "d614982ee73296424a123460e68aa7cd",
     "semantic_hash": ""
   },
   "backend/app/core/deps.py": {
@@ -378,9 +378,9 @@
     "semantic_hash": "1b290ce540750a9d08281a43f0d09693"
   },
   "btn_factory/lib/features/departments/presentation/department_update_page.dart": {
-    "mtime": 1791804238.1137452,
-    "seen": 1791804467.2612803,
-    "ast_hash": "3c298d7fa6357044fd77be259e2bd0ad",
+    "mtime": 1791804634.852288,
+    "seen": 1791804669.5735521,
+    "ast_hash": "4a292688f87cf28e8af4ecdf28c1af46",
     "semantic_hash": ""
   },
   "btn_factory/lib/features/orders/presentation/order_details_page.dart": {
@@ -993,6 +993,24 @@
     "mtime": 1791804433.9837365,
     "seen": 1791804467.2612424,
     "ast_hash": "385983b424ca7d464193bcd8c0a9d065",
+    "semantic_hash": ""
+  },
+  "backend/app/api/routes/diagnostics.py": {
+    "mtime": 1791805378.0421855,
+    "seen": 1791805450.9401286,
+    "ast_hash": "f74d69d6615fbd87cbb1a46395e2be6d",
+    "semantic_hash": ""
+  },
+  "backend/scripts/test_db_connections.py": {
+    "mtime": 1791805369.1290112,
+    "seen": 1791805450.940185,
+    "ast_hash": "7bd94a390f07bf08b213c17186f8ee17",
+    "semantic_hash": ""
+  },
+  "backend/tests/test_db_diagnostics.py": {
+    "mtime": 1791805391.2560427,
+    "seen": 1791805450.940188,
+    "ast_hash": "89c046d94c1240a793061564d2b01795",
     "semantic_hash": ""
   }
 }

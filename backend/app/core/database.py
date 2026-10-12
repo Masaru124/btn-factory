@@ -6,13 +6,29 @@ from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from app.core.config import get_settings
 
-settings = get_settings()
+def normalize_database_url(url: str) -> str:
+    """Normalize PostgreSQL connection URLs to work with whichever driver is installed (psycopg2 or psycopg 3)."""
+    if url.startswith('postgresql://') or url.startswith('postgres://'):
+        try:
+            import psycopg2  # type: ignore # noqa: F401
+            return url.replace('postgres://', 'postgresql://', 1)
+        except ImportError:
+            try:
+                import psycopg  # type: ignore # noqa: F401
+                return url.replace('postgresql://', 'postgresql+psycopg://', 1).replace('postgres://', 'postgresql+psycopg://', 1)
+            except ImportError:
+                return url
+    return url
 
-is_sqlite = settings.database_url.startswith('sqlite')
+
+settings = get_settings()
+raw_url = settings.get_effective_database_url() if hasattr(settings, 'get_effective_database_url') else settings.database_url
+db_url = normalize_database_url(raw_url)
+is_sqlite = db_url.startswith('sqlite')
 
 # Ensure SQLite storage directory exists if using SQLite file path
-if is_sqlite and settings.database_url.startswith('sqlite:///'):
-    sqlite_path = settings.database_url[len('sqlite:///'):]
+if is_sqlite and db_url.startswith('sqlite:///'):
+    sqlite_path = db_url[len('sqlite:///'):]
     if sqlite_path and not sqlite_path.startswith(':memory:'):
         db_dir = os.path.dirname(os.path.abspath(sqlite_path))
         if db_dir:
@@ -20,7 +36,7 @@ if is_sqlite and settings.database_url.startswith('sqlite:///'):
 
 if is_sqlite:
     engine = create_engine(
-        settings.database_url,
+        db_url,
         future=True,
         echo=False,
         connect_args={'check_same_thread': False, 'timeout': 15},
@@ -36,9 +52,9 @@ if is_sqlite:
         cursor.close()
 
 else:
-    # Production PostgreSQL connection pool tuning
+    # Production PostgreSQL connection pool tuning (Local PostgreSQL or Cloud Neon DB)
     engine = create_engine(
-        settings.database_url,
+        db_url,
         future=True,
         echo=False,
         pool_size=20,

@@ -2,15 +2,26 @@
 title Button Factory MES Launcher
 color 0A
 
+:: Automatically detect backend folder (relative to this script, whether in root or inside backend)
+set "BACKEND_DIR=%~dp0backend"
+if not exist "%BACKEND_DIR%" (
+    if exist "%~dp0app\main.py" (
+        set "BACKEND_DIR=%~dp0"
+    ) else (
+        set "BACKEND_DIR=%CD%"
+    )
+)
+
 echo ====================================================================
 echo             BUTTON FACTORY MES - DUAL TERMINAL LAUNCHER
 echo ====================================================================
+echo Backend Directory: %BACKEND_DIR%
 echo.
-echo Starting Terminal 1: FastAPI Backend (uvicorn on port 8000)...
-start "Button Factory - Backend Server (:8000)" cmd /k "title Backend Server [FastAPI :8000] && color 0B && cd /d C:\Users\User\Desktop\button_factory\backend && call venv\Scripts\activate.bat && python -m uvicorn app.main:app --port 8000 --reload"
+echo Starting Terminal 1: FastAPI Backend (Direct Python - no venv)...
+start "Button Factory - Backend Server (:8000)" cmd /k "title Backend Server [FastAPI :8000] && color 0B && cd /d "%BACKEND_DIR%" && python -m uvicorn app.main:app --port 8000 --reload"
 
 echo Starting Terminal 2: ngrok Tunnel (port 8000)...
-start "Button Factory - ngrok Tunnel (:8000)" cmd /k "title ngrok Tunnel [:8000] && color 0E && ngrok http 8000"
+start "Button Factory - ngrok Tunnel (:8000)" cmd /k "title ngrok Tunnel [:8000] && color 0E && cd /d "%BACKEND_DIR%" && ngrok http 8000"
 
 echo.
 echo ====================================================================
