@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:btn_factory/core/constants/app_constants.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -162,26 +163,14 @@ class AppImagePreview extends StatelessWidget {
       src = '${AppConstants.mediaBaseUrl}${src.substring(staticIdx)}';
     }
 
-    // 2. HTTP / HTTPS Network URL (including resolved local/LAN media URLs)
+    // 2. HTTP / HTTPS Network URL (loads bytes via Dio with ngrok headers to prevent HTML warning intercepts)
     if (src.startsWith('http://') || src.startsWith('https://')) {
-      return Image.network(
-        src,
+      return _NetworkImageLoader(
+        url: src,
         fit: fit,
         width: width,
         height: height,
-        headers: const <String, String>{
-          'ngrok-skip-browser-warning': 'true',
-        },
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Container(
-            color: const Color(0xFF1F2937),
-            child: const Center(
-              child: CircularProgressIndicator(color: Color(0xFF14B8A6), strokeWidth: 2),
-            ),
-          );
-        },
-        errorBuilder: (context, error, stackTrace) => _buildFallbackGraphic(context, label: src),
+        fallback: _buildFallbackGraphic(context, label: src),
       );
     }
 
@@ -594,5 +583,120 @@ class AppImageUploadCard extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// Helper stateful widget that fetches remote images via Dio (adding ngrok-skip headers)
+/// to bypass ngrok browser interstitial warning pages and caches the raw bytes in memory.
+class _NetworkImageLoader extends StatefulWidget {
+  const _NetworkImageLoader({
+    required this.url,
+    required this.fit,
+    this.width,
+    this.height,
+    required this.fallback,
+  });
+
+  final String url;
+  final BoxFit fit;
+  final double? width;
+  final double? height;
+  final Widget fallback;
+
+  @override
+  State<_NetworkImageLoader> createState() => _NetworkImageLoaderState();
+}
+
+class _NetworkImageLoaderState extends State<_NetworkImageLoader> {
+  static final Map<String, Uint8List> _cache = {};
+  Uint8List? _bytes;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadImage();
+  }
+
+  @override
+  void didUpdateWidget(covariant _NetworkImageLoader oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.url != widget.url) {
+      _loadImage();
+    }
+  }
+
+  Future<void> _loadImage() async {
+    final cached = _cache[widget.url];
+    if (cached != null) {
+      if (mounted) {
+        setState(() => _bytes = cached);
+      }
+      return;
+    }
+
+    if (mounted) {
+      setState(() => _loading = true);
+    }
+
+    try {
+      final dio = Dio();
+      final res = await dio.get<List<int>>(
+        widget.url,
+        options: Options(
+          responseType: ResponseType.bytes,
+          headers: const <String, String>{
+            'ngrok-skip-browser-warning': 'true',
+          },
+          sendTimeout: const Duration(seconds: 10),
+          receiveTimeout: const Duration(seconds: 20),
+        ),
+      );
+      if (res.data != null && res.data!.isNotEmpty) {
+        final bytes = Uint8List.fromList(res.data!);
+        _cache[widget.url] = bytes;
+        if (mounted) {
+          setState(() {
+            _bytes = bytes;
+            _loading = false;
+          });
+        }
+        return;
+      }
+    } catch (_) {}
+
+    if (mounted) {
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_bytes != null) {
+      return Image.memory(
+        _bytes!,
+        fit: widget.fit,
+        width: widget.width,
+        height: widget.height,
+        errorBuilder: (context, error, stackTrace) => widget.fallback,
+      );
+    }
+    if (_loading) {
+      return Container(
+        width: widget.width,
+        height: widget.height,
+        color: const Color(0xFF1F2937),
+        child: const Center(
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(color: Color(0xFF14B8A6), strokeWidth: 2),
+          ),
+        ),
+      );
+    }
+    return widget.fallback;
   }
 }

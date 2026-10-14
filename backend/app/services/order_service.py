@@ -298,3 +298,11 @@ class OrderService:
         self.session.commit()
         self.session.refresh(mat)
         return mat
+
+    def delete_universal_raw_material(self, material_id: int) -> bool:
+        mat = self.session.get(UniversalRawMaterial, material_id)
+        if mat is None:
+            return False
+        self.session.delete(mat)
+        self.session.commit()
+        return True

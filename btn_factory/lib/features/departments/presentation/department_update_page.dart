@@ -657,6 +657,65 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                 ),
               ),
               actions: [
+                if (isEdit && existingMaterial?['id'] != null)
+                  TextButton.icon(
+                    style: TextButton.styleFrom(foregroundColor: const Color(0xFFFCA5A5)),
+                    onPressed: isSaving
+                        ? null
+                        : () async {
+                            final confirm = await showDialog<bool>(
+                              context: dialogContext,
+                              builder: (confirmCtx) => AlertDialog(
+                                backgroundColor: const Color(0xFF1E293B),
+                                title: const Text('Delete Universal Material', style: TextStyle(color: Colors.white)),
+                                content: Text(
+                                  'Are you sure you want to delete "${existingMaterial!['material_name']}" from universal stock? This cannot be undone.',
+                                  style: const TextStyle(color: Color(0xFF94A3B8)),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.of(confirmCtx).pop(false),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  FilledButton(
+                                    style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
+                                    onPressed: () => Navigator.of(confirmCtx).pop(true),
+                                    child: const Text('Delete'),
+                                  ),
+                                ],
+                              ),
+                            );
+                            if (confirm != true) return;
+                            setDialogState(() {
+                              isSaving = true;
+                              errorMessage = null;
+                            });
+                            try {
+                              final dio = ref.read(dioProvider);
+                              await dio.delete('/department/raw-material/universal/${existingMaterial!['id']}');
+                              if (dialogContext.mounted) {
+                                Navigator.of(dialogContext).pop();
+                              }
+                              if (mounted) {
+                                messenger.showSnackBar(
+                                  SnackBar(
+                                    content: Text("Universal material '${existingMaterial!['material_name']}' deleted."),
+                                    backgroundColor: Colors.redAccent,
+                                  ),
+                                );
+                                _fetchUniversalMaterials();
+                              }
+                            } catch (e) {
+                              setDialogState(() {
+                                isSaving = false;
+                                errorMessage = 'Failed to delete: $e';
+                              });
+                            }
+                          },
+                    icon: const Icon(Icons.delete_outline, size: 18),
+                    label: const Text('Delete Material'),
+                  ),
+                const Spacer(),
                 TextButton(
                   onPressed: isSaving ? null : () => Navigator.of(dialogContext).pop(),
                   child: const Text('Cancel'),
@@ -846,6 +905,15 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                             ),
                             const SizedBox(width: 6),
                             const Icon(Icons.edit_outlined, size: 14, color: Color(0xFF64748B)),
+                            const SizedBox(width: 8),
+                            InkWell(
+                              borderRadius: BorderRadius.circular(4),
+                              onTap: () => _confirmDeleteUniversalMaterialDirect(m['id'] as int, name),
+                              child: const Padding(
+                                padding: EdgeInsets.all(2),
+                                child: Icon(Icons.delete_outline, size: 15, color: Color(0xFFFCA5A5)),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -857,6 +925,54 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
         ),
       ),
     );
+  }
+
+  Future<void> _confirmDeleteUniversalMaterialDirect(int id, String name) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (confirmCtx) => AlertDialog(
+        backgroundColor: const Color(0xFF1E293B),
+        title: const Text('Delete Universal Material', style: TextStyle(color: Colors.white)),
+        content: Text(
+          'Are you sure you want to delete "$name" from universal stock? This cannot be undone.',
+          style: const TextStyle(color: Color(0xFF94A3B8)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(confirmCtx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
+            onPressed: () => Navigator.of(confirmCtx).pop(true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirm != true) return;
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.delete('/department/raw-material/universal/$id');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Universal material '$name' deleted."),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+        _fetchUniversalMaterials();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Failed to delete '$name': $e"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Widget _buildRawMaterialRow(int index, RawMaterialInputRow row) {

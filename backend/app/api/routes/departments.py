@@ -33,6 +33,15 @@ def upsert_universal_raw_material(payload: UniversalRawMaterialCreate, db: Sessi
     return service.upsert_universal_raw_material(payload)
 
 
+@router.delete('/raw-material/universal/{material_id}', dependencies=[Depends(require_roles('super_admin', 'raw_material'))])
+def delete_universal_raw_material(material_id: int, db: Session = Depends(get_db)) -> dict:
+    service = OrderService(db)
+    success = service.delete_universal_raw_material(material_id)
+    if not success:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Universal raw material not found')
+    return {'success': True, 'message': 'Universal raw material deleted successfully'}
+
+
 @router.post('/raw-material/add', dependencies=[Depends(require_roles('super_admin', 'raw_material'))])
 def add_raw_material(payload: RawMaterialBatchCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> dict:
     service = OrderService(db)

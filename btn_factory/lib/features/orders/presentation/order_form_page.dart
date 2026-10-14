@@ -205,18 +205,23 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
       return;
     }
 
-    // Set immediate memory bytes for instant preview
+    // Encode image bytes as self-contained Base64 Data URI
+    final ext = platformFile.name.contains('.') ? platformFile.name.split('.').last.toLowerCase() : 'png';
+    final mime = (ext == 'jpg' || ext == 'jpeg') ? 'image/jpeg' : (ext == 'webp' ? 'image/webp' : 'image/png');
+    final base64Val = 'data:$mime;base64,${base64Encode(bytes)}';
+
+    // Set immediate memory bytes and base64 string for 100% reliable local/remote display
     setState(() {
       if (isPoImage) {
         _poImageBytes = bytes;
-        _poImageName = platformFile.name;
+        _poImageName = base64Val;
       } else {
         _buttonImageBytes = bytes;
-        _buttonImageName = platformFile.name;
+        _buttonImageName = base64Val;
       }
     });
 
-    // Upload to local on-premise media server
+    // Also upload to media server in background for physical archival if available
     try {
       final dio = ref.read(dioProvider);
       final formData = FormData.fromMap({
@@ -225,33 +230,9 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
           filename: platformFile.name,
         ),
       });
-      final res = await dio.post('/media/upload', data: formData);
-      if (res.data is Map && res.data['file_url'] != null) {
-        final String uploadedUrl = res.data['file_url'] as String;
-        if (mounted) {
-          setState(() {
-            if (isPoImage) {
-              _poImageName = uploadedUrl;
-            } else {
-              _buttonImageName = uploadedUrl;
-            }
-          });
-        }
-      }
-    } catch (e) {
-      // In case of local upload error, fall back to base64 data URI so form can still proceed
-      if (mounted) {
-        final ext = platformFile.name.contains('.') ? platformFile.name.split('.').last.toLowerCase() : 'png';
-        final mime = (ext == 'jpg' || ext == 'jpeg') ? 'image/jpeg' : (ext == 'webp' ? 'image/webp' : 'image/png');
-        final fallbackVal = 'data:$mime;base64,${base64Encode(bytes)}';
-        setState(() {
-          if (isPoImage) {
-            _poImageName = fallbackVal;
-          } else {
-            _buttonImageName = fallbackVal;
-          }
-        });
-      }
+      await dio.post('/media/upload', data: formData);
+    } catch (_) {
+      // Background media upload failure is non-fatal because base64 is already safely stored
     }
   }
 
