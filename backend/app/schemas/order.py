@@ -177,17 +177,23 @@ class PackingUpdate(BaseModel):
     tool_no: str | None = None
     art_no: str | None = None
     inward_weight: float | None = None
+    inward_weight_unit: str | None = 'kg'
     weight: float | None = None
     outward_weight: float | None = None
+    outward_weight_unit: str | None = 'kg'
     one_gross_weight: float | None = None
+    one_gross_weight_unit: str | None = 'g'
     in_gross: int | None = None
     finishing: str | None = None
     packed_qty: int | None = None
     rejected_qty: int | None = None
+    rejection_weight: float | None = None
+    rejection_unit: str | None = 'g'
     short_qty: int | None = None
     excess_qty: int | None = None
     operator: str | None = None
     remarks: str | None = None
+
 
 
 class RawMaterialRead(BaseModel):
@@ -290,17 +296,23 @@ class PackingRead(BaseModel):
     tool_no: str | None = None
     art_no: str | None = None
     inward_weight: float | None = None
+    inward_weight_unit: str | None = 'kg'
     weight: float | None = None
     outward_weight: float | None = None
+    outward_weight_unit: str | None = 'kg'
     one_gross_weight: float | None = None
+    one_gross_weight_unit: str | None = 'g'
     in_gross: int | None = None
     finishing: str | None = None
     packed_qty: int | None = None
     rejected_qty: int | None = None
+    rejection_weight: float | None = None
+    rejection_unit: str | None = 'g'
     short_qty: int | None = None
     excess_qty: int | None = None
     operator: str | None = None
     remarks: str | None = None
+
 
 
 class OrderRead(OrderBase):

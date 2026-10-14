@@ -263,27 +263,56 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                       separatorBuilder: (context, index) => const Divider(color: Color(0xFF1F2937), height: 24),
                       itemBuilder: (context, idx) {
                         final m = rawMaterials[idx] as Map<String, dynamic>;
-                        return ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          leading: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF0D9488).withValues(alpha: 0.15),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(Icons.layers_outlined, color: Color(0xFF0D9488)),
-                          ),
-                          title: Text(m['material_name'] as String? ?? 'N/A', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFF8FAFC))),
-                          subtitle: Text('Recorded on ${_formatDate(m['created_at'] as String?)}', style: const TextStyle(color: Color(0xFF64748B), fontSize: 12)),
-                          trailing: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisAlignment: MainAxisAlignment.center,
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Row(
                             children: [
-                              Text('Order: ${m['quantity'] ?? 'N/A'} ${m['unit'] ?? ''}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFF8FAFC), fontSize: 14)),
-                              if (m['total_available_quantity'] != null)
-                                Text('Avail: ${m['total_available_quantity']} ${m['unit'] ?? ''}', style: const TextStyle(color: Color(0xFF10B981), fontSize: 12, fontWeight: FontWeight.w600)),
-                              const SizedBox(height: 2),
-                              Text('₹${m['price'] ?? 'N/A'}', style: const TextStyle(color: Color(0xFF64748B), fontSize: 12)),
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF0D9488).withValues(alpha: 0.15),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.layers_outlined, color: Color(0xFF0D9488)),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      m['material_name'] as String? ?? 'N/A',
+                                      style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFF8FAFC)),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'Recorded on ${_formatDate(m['created_at'] as String?)}',
+                                      style: const TextStyle(color: Color(0xFF64748B), fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Order: ${m['quantity'] ?? 'N/A'} ${m['unit'] ?? ''}',
+                                    style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFF8FAFC), fontSize: 14),
+                                  ),
+                                  if (m['total_available_quantity'] != null)
+                                    Text(
+                                      'Avail: ${m['total_available_quantity']} ${m['unit'] ?? ''}',
+                                      style: const TextStyle(color: Color(0xFF10B981), fontSize: 12, fontWeight: FontWeight.w600),
+                                    ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    '₹${m['price'] ?? 'N/A'}',
+                                    style: const TextStyle(color: Color(0xFF64748B), fontSize: 12),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         );

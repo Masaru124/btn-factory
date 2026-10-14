@@ -384,9 +384,9 @@
     "semantic_hash": ""
   },
   "btn_factory/lib/features/orders/presentation/order_details_page.dart": {
-    "mtime": 1791972966.4245386,
-    "seen": 1791972992.395434,
-    "ast_hash": "96e922dd30885b1ff4a75a7ead97067f",
+    "mtime": 1791973301.0969293,
+    "seen": 1791973334.4222436,
+    "ast_hash": "270d4b20cab05521085f94abfd183366",
     "semantic_hash": ""
   },
   "btn_factory/lib/features/orders/presentation/order_form_page.dart": {
