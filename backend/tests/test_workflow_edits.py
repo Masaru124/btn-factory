@@ -265,3 +265,68 @@ def test_reports_summary_with_universal_materials():
     assert u['price'] == 150.0
     assert u['total_value'] == 880.0 * 150.0
 
+    # 5. Check order_reports
+    assert 'order_reports' in summary
+    assert len(summary['order_reports']) >= 1
+    ord_rep = summary['order_reports'][0]
+    assert ord_rep['token'] == order.token
+    assert ord_rep['company_name'] == 'Report Test Co'
+    assert len(ord_rep['raw_materials']) == 1
+
+
+def test_packing_grams_and_excess_shortage():
+    session = setup_test_db()
+    service = OrderService(session)
+
+    order = service.create_order(
+        OrderCreate(
+            company_name='Packing Test Co',
+            po_date=datetime.now().date(),
+            quantity=500,
+        )
+    )
+
+    # Test packing with grams units, rejection weight in grams, and only excess (no short_qty)
+    packing_in = PackingUpdate(
+        order_token=order.token,
+        inward_weight=1500.0,
+        inward_weight_unit='g',
+        outward_weight=1480.0,
+        outward_weight_unit='g',
+        one_gross_weight=350.0,
+        one_gross_weight_unit='g',
+        in_gross=5,
+        packed_qty=4,
+        excess_qty=2,
+        short_qty=None,
+        rejection_weight=20.0,
+        rejection_unit='g',
+        rejected_qty=None,
+        operator='Operator P',
+    )
+    packing = service.update_packing(packing_in)
+    assert packing is not None
+    assert packing.inward_weight == 1500.0
+    assert packing.inward_weight_unit == 'g'
+    assert packing.outward_weight == 1480.0
+    assert packing.outward_weight_unit == 'g'
+    assert packing.one_gross_weight == 350.0
+    assert packing.one_gross_weight_unit == 'g'
+    assert packing.rejection_weight == 20.0
+    assert packing.rejection_unit == 'g'
+    assert packing.excess_qty == 2
+    assert packing.short_qty is None
+
+    # Verify through report_service
+    from app.services.report_service import ReportService
+    rep = ReportService(session).reports_summary()
+    assert len(rep['order_reports']) == 1
+    p = rep['order_reports'][0]['packing_process']
+    assert p is not None
+    assert p['rejection_weight'] == 20.0
+    assert p['rejection_unit'] == 'g'
+    assert p['one_gross_weight_unit'] == 'g'
+    assert p['excess_qty'] == 2
+    assert p['short_qty'] is None
+
+

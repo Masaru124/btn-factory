@@ -594,16 +594,23 @@ class PdfExportService {
                 _buildSectionHeader('Packing Log'),
                 pw.SizedBox(height: 4),
                 pw.TableHelper.fromTextArray(
-                  headers: ['Receiving Date', 'Inward Wt (kg)', 'Outward Wt (kg)', '1 Gross Wt (kg)', 'In Gross', 'Packed Qty', 'Rejection', 'Operator'],
+                  headers: ['Receiving Date', 'Inward Wt', 'Outward Wt', 'Gross Wt', 'In Gross', 'Packed Qty', 'Rejection', 'Excess/Short', 'Operator'],
                   data: [
                     [
                       packing['receiving_date'] != null ? packing['receiving_date'].toString().split('T').first : 'N/A',
-                      '${packing['inward_weight'] ?? packing['weight'] ?? 'N/A'}',
-                      '${packing['outward_weight'] ?? 'N/A'}',
-                      '${packing['one_gross_weight'] ?? 'N/A'}',
+                      '${packing['inward_weight'] ?? packing['weight'] ?? 'N/A'} ${packing['inward_weight_unit'] ?? 'kg'}',
+                      '${packing['outward_weight'] ?? 'N/A'} ${packing['outward_weight_unit'] ?? 'kg'}',
+                      '${packing['one_gross_weight'] ?? 'N/A'} ${packing['one_gross_weight_unit'] ?? 'g'}',
                       '${packing['in_gross'] ?? 'N/A'}',
                       '${packing['packed_qty'] ?? 'N/A'}',
-                      '${packing['rejected_qty'] ?? 'N/A'}',
+                      packing['rejection_weight'] != null
+                          ? '${packing['rejection_weight']} ${packing['rejection_unit'] ?? 'g'}'
+                          : '${packing['rejected_qty'] ?? '0'}',
+                      (packing['excess_qty'] != null && (packing['excess_qty'] as num) > 0)
+                          ? '+${packing['excess_qty']} (Exc)'
+                          : ((packing['short_qty'] != null && (packing['short_qty'] as num) > 0)
+                              ? '-${packing['short_qty']} (Short)'
+                              : '0'),
                       '${packing['operator'] ?? 'N/A'}',
                     ]
                   ],
@@ -611,6 +618,7 @@ class PdfExportService {
                   headerDecoration: const pw.BoxDecoration(color: PdfColors.grey700),
                   cellHeight: 18,
                 ),
+
               ],
             ],
           );

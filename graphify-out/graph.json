@@ -164,6 +164,19 @@
       "source_location": "L59"
     },
     {
+      "id": "backend_app_services_auth_service_authservice",
+      "label": "AuthService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "main.py",
+      "file_type": "code",
+      "norm_label": "authservice",
+      "source_file": "backend/app/services/auth_service.py",
+      "source_location": "L8"
+    },
+    {
       "id": "backend_app_core_redis_client_inmemoryfallbackcache",
       "label": "InMemoryFallbackCache",
       "_callable": true,
@@ -333,6 +346,19 @@
       "source_location": "L72"
     },
     {
+      "id": "backend_app_models_user_userrole",
+      "label": "UserRole",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "userrole",
+      "source_file": "backend/app/models/user.py",
+      "source_location": "L10"
+    },
+    {
       "id": "backend_app_repositories_order_orderrepository",
       "label": "OrderRepository",
       "_callable": true,
@@ -434,7 +460,7 @@
       "file_type": "code",
       "norm_label": "blankingread",
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L229"
+      "source_location": "L235"
     },
     {
       "id": "backend_app_schemas_order_blankingupdate",
@@ -460,7 +486,7 @@
       "file_type": "code",
       "norm_label": "castingread",
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L205"
+      "source_location": "L211"
     },
     {
       "id": "backend_app_schemas_order_castingupdate",
@@ -512,7 +538,7 @@
       "file_type": "code",
       "norm_label": "orderlistitem",
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L324"
+      "source_location": "L336"
     },
     {
       "id": "backend_app_schemas_order_orderstatusresponse",
@@ -525,7 +551,7 @@
       "file_type": "code",
       "norm_label": "orderstatusresponse",
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L335"
+      "source_location": "L347"
     },
     {
       "id": "backend_app_schemas_order_orderupdate",
@@ -551,7 +577,7 @@
       "file_type": "code",
       "norm_label": "packingread",
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L285"
+      "source_location": "L291"
     },
     {
       "id": "backend_app_schemas_order_packingupdate",
@@ -577,7 +603,7 @@
       "file_type": "code",
       "norm_label": "polishingread",
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L267"
+      "source_location": "L273"
     },
     {
       "id": "backend_app_schemas_order_polishingupdate",
@@ -642,7 +668,7 @@
       "file_type": "code",
       "norm_label": "rawmaterialread",
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L193"
+      "source_location": "L199"
     },
     {
       "id": "backend_app_schemas_order_turningread",
@@ -655,7 +681,7 @@
       "file_type": "code",
       "norm_label": "turningread",
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L244"
+      "source_location": "L250"
     },
     {
       "id": "backend_app_schemas_order_turningupdate",
@@ -827,19 +853,6 @@
       "source_location": "L8"
     },
     {
-      "id": "backend_app_services_auth_service_authservice",
-      "label": "AuthService",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "User",
-      "file_type": "code",
-      "norm_label": "authservice",
-      "source_file": "backend/app/services/auth_service.py",
-      "source_location": "L8"
-    },
-    {
       "id": "btn_factory_ios_runner_appdelegate_appdelegate",
       "label": "AppDelegate",
       "_callable": true,
@@ -924,11 +937,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 50,
-      "community_name": "HTTPException",
+      "community_name": "orders.py",
       "file_type": "code",
       "norm_label": "orderread",
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L306"
+      "source_location": "L318"
     },
     {
       "id": "backend_app_core_config_settings",
@@ -994,19 +1007,6 @@
       "norm_label": "reportsummary",
       "source_file": "backend/app/schemas/reports.py",
       "source_location": "L17"
-    },
-    {
-      "id": "backend_app_models_user_userrole",
-      "label": "UserRole",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 57,
-      "community_name": "models/user.py",
-      "file_type": "code",
-      "norm_label": "userrole",
-      "source_file": "backend/app/models/user.py",
-      "source_location": "L10"
     },
     {
       "id": "backend_app_schemas_user_userbase",
@@ -1278,16 +1278,52 @@
       "source_location": "L61"
     },
     {
-      "id": "backend_app_main_custom_http_exception_handler",
-      "label": "custom_http_exception_handler()",
+      "id": "backend_app_core_security_create_access_token",
+      "label": "create_access_token()",
       "_callable": true,
       "_origin": "ast",
       "community": 12,
       "community_name": "main.py",
       "file_type": "code",
-      "norm_label": "custom_http_exception_handler()",
-      "source_file": "backend/app/main.py",
-      "source_location": "L64"
+      "norm_label": "create_access_token()",
+      "source_file": "backend/app/core/security.py",
+      "source_location": "L23"
+    },
+    {
+      "id": "backend_app_core_security_create_refresh_token",
+      "label": "create_refresh_token()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "main.py",
+      "file_type": "code",
+      "norm_label": "create_refresh_token()",
+      "source_file": "backend/app/core/security.py",
+      "source_location": "L29"
+    },
+    {
+      "id": "backend_app_core_security_get_password_hash",
+      "label": "get_password_hash()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "main.py",
+      "file_type": "code",
+      "norm_label": "get_password_hash()",
+      "source_file": "backend/app/core/security.py",
+      "source_location": "L19"
+    },
+    {
+      "id": "backend_app_core_security_verify_password",
+      "label": "verify_password()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "main.py",
+      "file_type": "code",
+      "norm_label": "verify_password()",
+      "source_file": "backend/app/core/security.py",
+      "source_location": "L15"
     },
     {
       "id": "backend_app_main_health_check",
@@ -1314,28 +1350,40 @@
       "source_location": "L103"
     },
     {
-      "id": "backend_app_main_trace_and_timing_middleware",
-      "label": "trace_and_timing_middleware()",
+      "id": "backend_app_services_auth_service_authservice_authenticate",
+      "label": ".authenticate()",
       "_callable": true,
       "_origin": "ast",
       "community": 12,
       "community_name": "main.py",
       "file_type": "code",
-      "norm_label": "trace_and_timing_middleware()",
-      "source_file": "backend/app/main.py",
-      "source_location": "L50"
+      "norm_label": ".authenticate()",
+      "source_file": "backend/app/services/auth_service.py",
+      "source_location": "L13"
     },
     {
-      "id": "backend_app_main_unhandled_exception_handler",
-      "label": "unhandled_exception_handler()",
+      "id": "backend_app_services_auth_service_authservice_ensure_seed_admin",
+      "label": ".ensure_seed_admin()",
       "_callable": true,
       "_origin": "ast",
       "community": 12,
       "community_name": "main.py",
       "file_type": "code",
-      "norm_label": "unhandled_exception_handler()",
-      "source_file": "backend/app/main.py",
-      "source_location": "L78"
+      "norm_label": ".ensure_seed_admin()",
+      "source_file": "backend/app/services/auth_service.py",
+      "source_location": "L25"
+    },
+    {
+      "id": "backend_app_services_auth_service_authservice_issue_tokens",
+      "label": ".issue_tokens()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "main.py",
+      "file_type": "code",
+      "norm_label": ".issue_tokens()",
+      "source_file": "backend/app/services/auth_service.py",
+      "source_location": "L21"
     },
     {
       "id": "backend_app_services_backup_service_run_background_backup",
@@ -1566,112 +1614,28 @@
       "source_location": "L107"
     },
     {
-      "id": "backend_app_api_routes_departments_add_raw_material",
-      "label": "add_raw_material()",
+      "id": "backend_alembic_env_run_migrations_offline",
+      "label": "run_migrations_offline()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
       "community_name": "OrderService",
       "file_type": "code",
-      "norm_label": "add_raw_material()",
-      "source_file": "backend/app/api/routes/departments.py",
-      "source_location": "L46"
+      "norm_label": "run_migrations_offline()",
+      "source_file": "backend/alembic/env.py",
+      "source_location": "L19"
     },
     {
-      "id": "backend_app_api_routes_departments_delete_universal_raw_material",
-      "label": "delete_universal_raw_material()",
+      "id": "backend_alembic_env_run_migrations_online",
+      "label": "run_migrations_online()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
       "community_name": "OrderService",
       "file_type": "code",
-      "norm_label": "delete_universal_raw_material()",
-      "source_file": "backend/app/api/routes/departments.py",
-      "source_location": "L37"
-    },
-    {
-      "id": "backend_app_api_routes_departments_get_universal_raw_materials",
-      "label": "get_universal_raw_materials()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "OrderService",
-      "file_type": "code",
-      "norm_label": "get_universal_raw_materials()",
-      "source_file": "backend/app/api/routes/departments.py",
-      "source_location": "L25"
-    },
-    {
-      "id": "backend_app_api_routes_departments_update_blanking",
-      "label": "update_blanking()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "OrderService",
-      "file_type": "code",
-      "norm_label": "update_blanking()",
-      "source_file": "backend/app/api/routes/departments.py",
-      "source_location": "L76"
-    },
-    {
-      "id": "backend_app_api_routes_departments_update_casting",
-      "label": "update_casting()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "OrderService",
-      "file_type": "code",
-      "norm_label": "update_casting()",
-      "source_file": "backend/app/api/routes/departments.py",
-      "source_location": "L66"
-    },
-    {
-      "id": "backend_app_api_routes_departments_update_packing",
-      "label": "update_packing()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "OrderService",
-      "file_type": "code",
-      "norm_label": "update_packing()",
-      "source_file": "backend/app/api/routes/departments.py",
-      "source_location": "L106"
-    },
-    {
-      "id": "backend_app_api_routes_departments_update_polish",
-      "label": "update_polish()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "OrderService",
-      "file_type": "code",
-      "norm_label": "update_polish()",
-      "source_file": "backend/app/api/routes/departments.py",
-      "source_location": "L96"
-    },
-    {
-      "id": "backend_app_api_routes_departments_update_turning",
-      "label": "update_turning()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "OrderService",
-      "file_type": "code",
-      "norm_label": "update_turning()",
-      "source_file": "backend/app/api/routes/departments.py",
-      "source_location": "L86"
-    },
-    {
-      "id": "backend_app_api_routes_departments_upsert_universal_raw_material",
-      "label": "upsert_universal_raw_material()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "OrderService",
-      "file_type": "code",
-      "norm_label": "upsert_universal_raw_material()",
-      "source_file": "backend/app/api/routes/departments.py",
-      "source_location": "L31"
+      "norm_label": "run_migrations_online()",
+      "source_file": "backend/alembic/env.py",
+      "source_location": "L28"
     },
     {
       "id": "backend_app_repositories_order_orderrepository_add_raw_material",
@@ -2022,18 +1986,6 @@
       "source_location": "L22"
     },
     {
-      "id": "backend_app_services_report_service_reportservice_reports_summary",
-      "label": ".reports_summary()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "OrderService",
-      "file_type": "code",
-      "norm_label": ".reports_summary()",
-      "source_file": "backend/app/services/report_service.py",
-      "source_location": "L48"
-    },
-    {
       "id": "backend_app_services_report_service_reportservice_revenue_summary",
       "label": ".revenue_summary()",
       "_callable": true,
@@ -2298,6 +2250,18 @@
       "source_location": "L36"
     },
     {
+      "id": "backend_tests_test_workflow_edits_test_packing_grams_and_excess_shortage",
+      "label": "test_packing_grams_and_excess_shortage()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "test_packing_grams_and_excess_shortage()",
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L277"
+    },
+    {
       "id": "backend_tests_test_workflow_edits_test_reports_summary_with_universal_materials",
       "label": "test_reports_summary_with_universal_materials()",
       "_callable": true,
@@ -2308,6 +2272,114 @@
       "norm_label": "test_reports_summary_with_universal_materials()",
       "source_file": "backend/tests/test_workflow_edits.py",
       "source_location": "L217"
+    },
+    {
+      "id": "backend_app_api_routes_departments_add_raw_material",
+      "label": "add_raw_material()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 22,
+      "community_name": "departments.py",
+      "file_type": "code",
+      "norm_label": "add_raw_material()",
+      "source_file": "backend/app/api/routes/departments.py",
+      "source_location": "L46"
+    },
+    {
+      "id": "backend_app_api_routes_departments_delete_universal_raw_material",
+      "label": "delete_universal_raw_material()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 22,
+      "community_name": "departments.py",
+      "file_type": "code",
+      "norm_label": "delete_universal_raw_material()",
+      "source_file": "backend/app/api/routes/departments.py",
+      "source_location": "L37"
+    },
+    {
+      "id": "backend_app_api_routes_departments_get_universal_raw_materials",
+      "label": "get_universal_raw_materials()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 22,
+      "community_name": "departments.py",
+      "file_type": "code",
+      "norm_label": "get_universal_raw_materials()",
+      "source_file": "backend/app/api/routes/departments.py",
+      "source_location": "L25"
+    },
+    {
+      "id": "backend_app_api_routes_departments_update_blanking",
+      "label": "update_blanking()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 22,
+      "community_name": "departments.py",
+      "file_type": "code",
+      "norm_label": "update_blanking()",
+      "source_file": "backend/app/api/routes/departments.py",
+      "source_location": "L76"
+    },
+    {
+      "id": "backend_app_api_routes_departments_update_casting",
+      "label": "update_casting()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 22,
+      "community_name": "departments.py",
+      "file_type": "code",
+      "norm_label": "update_casting()",
+      "source_file": "backend/app/api/routes/departments.py",
+      "source_location": "L66"
+    },
+    {
+      "id": "backend_app_api_routes_departments_update_packing",
+      "label": "update_packing()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 22,
+      "community_name": "departments.py",
+      "file_type": "code",
+      "norm_label": "update_packing()",
+      "source_file": "backend/app/api/routes/departments.py",
+      "source_location": "L106"
+    },
+    {
+      "id": "backend_app_api_routes_departments_update_polish",
+      "label": "update_polish()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 22,
+      "community_name": "departments.py",
+      "file_type": "code",
+      "norm_label": "update_polish()",
+      "source_file": "backend/app/api/routes/departments.py",
+      "source_location": "L96"
+    },
+    {
+      "id": "backend_app_api_routes_departments_update_turning",
+      "label": "update_turning()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 22,
+      "community_name": "departments.py",
+      "file_type": "code",
+      "norm_label": "update_turning()",
+      "source_file": "backend/app/api/routes/departments.py",
+      "source_location": "L86"
+    },
+    {
+      "id": "backend_app_api_routes_departments_upsert_universal_raw_material",
+      "label": "upsert_universal_raw_material()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 22,
+      "community_name": "departments.py",
+      "file_type": "code",
+      "norm_label": "upsert_universal_raw_material()",
+      "source_file": "backend/app/api/routes/departments.py",
+      "source_location": "L31"
     },
     {
       "id": "btn_factory_windows_runner_main_wwinmain",
@@ -2366,6 +2438,42 @@
       "norm_label": "utf8fromutf16()",
       "source_file": "btn_factory/windows/runner/utils.cpp",
       "source_location": "L44"
+    },
+    {
+      "id": "backend_app_main_custom_http_exception_handler",
+      "label": "custom_http_exception_handler()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 29,
+      "community_name": "custom_http_exception_handler",
+      "file_type": "code",
+      "norm_label": "custom_http_exception_handler()",
+      "source_file": "backend/app/main.py",
+      "source_location": "L64"
+    },
+    {
+      "id": "backend_app_main_trace_and_timing_middleware",
+      "label": "trace_and_timing_middleware()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 29,
+      "community_name": "custom_http_exception_handler",
+      "file_type": "code",
+      "norm_label": "trace_and_timing_middleware()",
+      "source_file": "backend/app/main.py",
+      "source_location": "L50"
+    },
+    {
+      "id": "backend_app_main_unhandled_exception_handler",
+      "label": "unhandled_exception_handler()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 29,
+      "community_name": "custom_http_exception_handler",
+      "file_type": "code",
+      "norm_label": "unhandled_exception_handler()",
+      "source_file": "backend/app/main.py",
+      "source_location": "L78"
     },
     {
       "id": "backend_app_core_database_normalize_database_url",
@@ -2620,54 +2728,6 @@
       "source_location": "L18"
     },
     {
-      "id": "backend_app_core_security_create_access_token",
-      "label": "create_access_token()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "User",
-      "file_type": "code",
-      "norm_label": "create_access_token()",
-      "source_file": "backend/app/core/security.py",
-      "source_location": "L23"
-    },
-    {
-      "id": "backend_app_core_security_create_refresh_token",
-      "label": "create_refresh_token()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "User",
-      "file_type": "code",
-      "norm_label": "create_refresh_token()",
-      "source_file": "backend/app/core/security.py",
-      "source_location": "L29"
-    },
-    {
-      "id": "backend_app_core_security_get_password_hash",
-      "label": "get_password_hash()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "User",
-      "file_type": "code",
-      "norm_label": "get_password_hash()",
-      "source_file": "backend/app/core/security.py",
-      "source_location": "L19"
-    },
-    {
-      "id": "backend_app_core_security_verify_password",
-      "label": "verify_password()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "User",
-      "file_type": "code",
-      "norm_label": "verify_password()",
-      "source_file": "backend/app/core/security.py",
-      "source_location": "L15"
-    },
-    {
       "id": "backend_app_repositories_base_baserepository_init",
       "label": ".__init__()",
       "_callable": true,
@@ -2728,30 +2788,6 @@
       "source_location": "L9"
     },
     {
-      "id": "backend_app_services_auth_service_authservice_authenticate",
-      "label": ".authenticate()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "User",
-      "file_type": "code",
-      "norm_label": ".authenticate()",
-      "source_file": "backend/app/services/auth_service.py",
-      "source_location": "L13"
-    },
-    {
-      "id": "backend_app_services_auth_service_authservice_ensure_seed_admin",
-      "label": ".ensure_seed_admin()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "User",
-      "file_type": "code",
-      "norm_label": ".ensure_seed_admin()",
-      "source_file": "backend/app/services/auth_service.py",
-      "source_location": "L25"
-    },
-    {
       "id": "backend_app_services_auth_service_authservice_init",
       "label": ".__init__()",
       "_callable": true,
@@ -2762,18 +2798,6 @@
       "norm_label": ".__init__()",
       "source_file": "backend/app/services/auth_service.py",
       "source_location": "L9"
-    },
-    {
-      "id": "backend_app_services_auth_service_authservice_issue_tokens",
-      "label": ".issue_tokens()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "User",
-      "file_type": "code",
-      "norm_label": ".issue_tokens()",
-      "source_file": "backend/app/services/auth_service.py",
-      "source_location": "L21"
     },
     {
       "id": "btn_factory_ios_runner_appdelegate_appdelegate_application",
@@ -2921,7 +2945,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 50,
-      "community_name": "HTTPException",
+      "community_name": "orders.py",
       "file_type": "code",
       "norm_label": "create_order()",
       "source_file": "backend/app/api/routes/orders.py",
@@ -2933,7 +2957,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 50,
-      "community_name": "HTTPException",
+      "community_name": "orders.py",
       "file_type": "code",
       "norm_label": "delete_order()",
       "source_file": "backend/app/api/routes/orders.py",
@@ -2945,7 +2969,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 50,
-      "community_name": "HTTPException",
+      "community_name": "orders.py",
       "file_type": "code",
       "norm_label": "dispatch_order()",
       "source_file": "backend/app/api/routes/orders.py",
@@ -2957,7 +2981,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 50,
-      "community_name": "HTTPException",
+      "community_name": "orders.py",
       "file_type": "code",
       "norm_label": "get_next_token()",
       "source_file": "backend/app/api/routes/orders.py",
@@ -2969,7 +2993,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 50,
-      "community_name": "HTTPException",
+      "community_name": "orders.py",
       "file_type": "code",
       "norm_label": "get_order()",
       "source_file": "backend/app/api/routes/orders.py",
@@ -2981,7 +3005,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 50,
-      "community_name": "HTTPException",
+      "community_name": "orders.py",
       "file_type": "code",
       "norm_label": "list_orders()",
       "source_file": "backend/app/api/routes/orders.py",
@@ -2993,7 +3017,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 50,
-      "community_name": "HTTPException",
+      "community_name": "orders.py",
       "file_type": "code",
       "norm_label": "scrub_order_by_role()",
       "source_file": "backend/app/api/routes/orders.py",
@@ -3005,35 +3029,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 50,
-      "community_name": "HTTPException",
+      "community_name": "orders.py",
       "file_type": "code",
       "norm_label": "update_order()",
       "source_file": "backend/app/api/routes/orders.py",
       "source_location": "L72"
     },
     {
-      "id": "backend_alembic_env_run_migrations_offline",
-      "label": "run_migrations_offline()",
+      "id": "backend_app_services_report_service_reportservice_reports_summary",
+      "label": ".reports_summary()",
       "_callable": true,
       "_origin": "ast",
-      "community": 55,
-      "community_name": "get_settings",
+      "community": 50,
+      "community_name": "orders.py",
       "file_type": "code",
-      "norm_label": "run_migrations_offline()",
-      "source_file": "backend/alembic/env.py",
-      "source_location": "L19"
-    },
-    {
-      "id": "backend_alembic_env_run_migrations_online",
-      "label": "run_migrations_online()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 55,
-      "community_name": "get_settings",
-      "file_type": "code",
-      "norm_label": "run_migrations_online()",
-      "source_file": "backend/alembic/env.py",
-      "source_location": "L28"
+      "norm_label": ".reports_summary()",
+      "source_file": "backend/app/services/report_service.py",
+      "source_location": "L48"
     },
     {
       "id": "backend_app_api_routes_diagnostics_get_database_diagnostics",
@@ -4623,25 +4635,14 @@
       "source_location": null
     },
     {
-      "id": "backend_app_api_router",
-      "label": "router.py",
+      "id": "backend_app_core_security",
+      "label": "security.py",
       "_origin": "ast",
       "community": 12,
       "community_name": "main.py",
       "file_type": "code",
-      "norm_label": "router.py",
-      "source_file": "backend/app/api/router.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_app_api_routes_init",
-      "label": "routes/__init__.py",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "main.py",
-      "file_type": "code",
-      "norm_label": "routes/__init__.py",
-      "source_file": "backend/app/api/routes/__init__.py",
+      "norm_label": "security.py",
+      "source_file": "backend/app/core/security.py",
       "source_location": "L1"
     },
     {
@@ -4667,15 +4668,15 @@
       "source_location": ""
     },
     {
-      "id": "backend_app_main_py_request",
-      "label": "Request",
+      "id": "backend_app_services_auth_service",
+      "label": "auth_service.py",
       "_origin": "ast",
       "community": 12,
       "community_name": "main.py",
       "file_type": "code",
-      "norm_label": "request",
-      "source_file": "",
-      "source_location": ""
+      "norm_label": "auth_service.py",
+      "source_file": "backend/app/services/auth_service.py",
+      "source_location": "L1"
     },
     {
       "id": "backend_tests_test_media_and_redis",
@@ -4689,50 +4690,6 @@
       "source_location": "L1"
     },
     {
-      "id": "exception",
-      "label": "Exception",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "main.py",
-      "file_type": "code",
-      "norm_label": "exception",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "exception_handler",
-      "label": "exception_handler",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "main.py",
-      "file_type": "code",
-      "norm_label": "exception_handler",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "jsonresponse",
-      "label": "JSONResponse",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "main.py",
-      "file_type": "code",
-      "norm_label": "jsonresponse",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "middleware",
-      "label": "middleware",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "main.py",
-      "file_type": "code",
-      "norm_label": "middleware",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
       "id": "on_event",
       "label": "on_event",
       "_origin": "ast",
@@ -4744,13 +4701,13 @@
       "source_location": ""
     },
     {
-      "id": "response",
-      "label": "Response",
+      "id": "timedelta",
+      "label": "timedelta",
       "_origin": "ast",
       "community": 12,
       "community_name": "main.py",
       "file_type": "code",
-      "norm_label": "response",
+      "norm_label": "timedelta",
       "source_file": "",
       "source_location": ""
     },
@@ -4843,14 +4800,47 @@
       "source_location": "L52"
     },
     {
-      "id": "btn_factory_lib_features_auth_presentation_profile_page_profilepage",
-      "label": "ProfilePage",
+      "id": "asyncvalue",
+      "label": "AsyncValue",
       "_origin": "ast",
       "community": 14,
       "community_name": "app_scaffold.dart",
       "file_type": "code",
-      "norm_label": "profilepage",
-      "source_file": "btn_factory/lib/features/auth/presentation/profile_page.dart",
+      "norm_label": "asyncvalue",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_auth_presentation_splash_page",
+      "label": "splash_page.dart",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "app_scaffold.dart",
+      "file_type": "code",
+      "norm_label": "splash_page.dart",
+      "source_file": "btn_factory/lib/features/auth/presentation/splash_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_auth_presentation_splash_page_createstate",
+      "label": "createState",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "app_scaffold.dart",
+      "file_type": "code",
+      "norm_label": "createstate",
+      "source_file": "btn_factory/lib/features/auth/presentation/splash_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_auth_presentation_splash_page_navigated",
+      "label": "_navigated",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "app_scaffold.dart",
+      "file_type": "code",
+      "norm_label": "_navigated",
+      "source_file": "btn_factory/lib/features/auth/presentation/splash_page.dart",
       "source_location": null
     },
     {
@@ -4872,17 +4862,6 @@
       "community_name": "app_scaffold.dart",
       "file_type": "code",
       "norm_label": "activecolor",
-      "source_file": "btn_factory/lib/shared/widgets/app_scaffold.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_app_scaffold_appscaffold",
-      "label": "AppScaffold",
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "app_scaffold.dart",
-      "file_type": "code",
-      "norm_label": "appscaffold",
       "source_file": "btn_factory/lib/shared/widgets/app_scaffold.dart",
       "source_location": null
     },
@@ -5008,13 +4987,24 @@
       "source_location": null
     },
     {
-      "id": "consumerwidget",
-      "label": "ConsumerWidget",
+      "id": "color",
+      "label": "Color",
       "_origin": "ast",
       "community": 14,
       "community_name": "app_scaffold.dart",
       "file_type": "code",
-      "norm_label": "consumerwidget",
+      "norm_label": "color",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "package_btn_factory_features_auth_application_auth_controller_dart",
+      "label": "package:btn_factory/features/auth/application/auth_controller.dart",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "app_scaffold.dart",
+      "file_type": "code",
+      "norm_label": "package:btn_factory/features/auth/application/auth_controller.dart",
       "source_file": null,
       "source_location": null
     },
@@ -5228,6 +5218,17 @@
       "source_location": null
     },
     {
+      "id": "list",
+      "label": "List",
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "order_list_page.dart",
+      "file_type": "code",
+      "norm_label": "list",
+      "source_file": null,
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_features_auth_presentation_splash_page_splashpage",
       "label": "SplashPage",
       "_origin": "ast",
@@ -5404,17 +5405,6 @@
       "source_location": null
     },
     {
-      "id": "asyncvalue",
-      "label": "AsyncValue",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "profile_page.dart",
-      "file_type": "code",
-      "norm_label": "asyncvalue",
-      "source_file": null,
-      "source_location": null
-    },
-    {
       "id": "btn_factory_lib_features_auth_presentation_profile_page",
       "label": "profile_page.dart",
       "_origin": "ast",
@@ -5489,50 +5479,6 @@
       "file_type": "code",
       "norm_label": "value",
       "source_file": "btn_factory/lib/features/auth/presentation/profile_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_auth_presentation_splash_page",
-      "label": "splash_page.dart",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "profile_page.dart",
-      "file_type": "code",
-      "norm_label": "splash_page.dart",
-      "source_file": "btn_factory/lib/features/auth/presentation/splash_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_auth_presentation_splash_page_createstate",
-      "label": "createState",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "profile_page.dart",
-      "file_type": "code",
-      "norm_label": "createstate",
-      "source_file": "btn_factory/lib/features/auth/presentation/splash_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_auth_presentation_splash_page_navigated",
-      "label": "_navigated",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "profile_page.dart",
-      "file_type": "code",
-      "norm_label": "_navigated",
-      "source_file": "btn_factory/lib/features/auth/presentation/splash_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "package_btn_factory_features_auth_application_auth_controller_dart",
-      "label": "package:btn_factory/features/auth/application/auth_controller.dart",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "profile_page.dart",
-      "file_type": "code",
-      "norm_label": "package:btn_factory/features/auth/application/auth_controller.dart",
-      "source_file": null,
       "source_location": null
     },
     {
@@ -5624,6 +5570,39 @@
       "source_location": null
     },
     {
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_department",
+      "label": "department",
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "reports_page.dart",
+      "file_type": "code",
+      "norm_label": "department",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_details",
+      "label": "details",
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "reports_page.dart",
+      "file_type": "code",
+      "norm_label": "details",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_dispose",
+      "label": "dispose",
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "reports_page.dart",
+      "file_type": "code",
+      "norm_label": "dispose",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_features_reports_presentation_reports_page_error",
       "label": "_error",
       "_origin": "ast",
@@ -5635,13 +5614,13 @@
       "source_location": null
     },
     {
-      "id": "btn_factory_lib_features_reports_presentation_reports_page_fetchreport",
-      "label": "_fetchReport",
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_expandedordertokens",
+      "label": "_expandedOrderTokens",
       "_origin": "ast",
       "community": 18,
       "community_name": "reports_page.dart",
       "file_type": "code",
-      "norm_label": "_fetchreport",
+      "norm_label": "_expandedordertokens",
       "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
       "source_location": null
     },
@@ -5668,6 +5647,28 @@
       "source_location": null
     },
     {
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_getstatuscolor",
+      "label": "_getStatusColor",
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "reports_page.dart",
+      "file_type": "code",
+      "norm_label": "_getstatuscolor",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_individualordercard",
+      "label": "_IndividualOrderCard",
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "reports_page.dart",
+      "file_type": "code",
+      "norm_label": "_individualordercard",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_features_reports_presentation_reports_page_infobadge",
       "label": "_InfoBadge",
       "_origin": "ast",
@@ -5690,6 +5691,17 @@
       "source_location": null
     },
     {
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_isexpanded",
+      "label": "isExpanded",
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "reports_page.dart",
+      "file_type": "code",
+      "norm_label": "isexpanded",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_features_reports_presentation_reports_page_isloading",
       "label": "_isLoading",
       "_origin": "ast",
@@ -5708,6 +5720,61 @@
       "community_name": "reports_page.dart",
       "file_type": "code",
       "norm_label": "label",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_logdetailrow",
+      "label": "_LogDetailRow",
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "reports_page.dart",
+      "file_type": "code",
+      "norm_label": "_logdetailrow",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_metricchip",
+      "label": "_MetricChip",
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "reports_page.dart",
+      "file_type": "code",
+      "norm_label": "_metricchip",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_ontoggleexpand",
+      "label": "onToggleExpand",
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "reports_page.dart",
+      "file_type": "code",
+      "norm_label": "ontoggleexpand",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_order",
+      "label": "order",
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "reports_page.dart",
+      "file_type": "code",
+      "norm_label": "order",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_ordersearchcontroller",
+      "label": "_orderSearchController",
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "reports_page.dart",
+      "file_type": "code",
+      "norm_label": "_ordersearchcontroller",
       "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
       "source_location": null
     },
@@ -5752,6 +5819,17 @@
       "community_name": "reports_page.dart",
       "file_type": "code",
       "norm_label": "rows",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_selectedstatusfilter",
+      "label": "_selectedStatusFilter",
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "reports_page.dart",
+      "file_type": "code",
+      "norm_label": "_selectedstatusfilter",
       "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
       "source_location": null
     },
@@ -5833,13 +5911,13 @@
       "source_location": null
     },
     {
-      "id": "list",
-      "label": "List",
+      "id": "set",
+      "label": "Set",
       "_origin": "ast",
       "community": 18,
       "community_name": "reports_page.dart",
       "file_type": "code",
-      "norm_label": "list",
+      "norm_label": "set",
       "source_file": null,
       "source_location": null
     },
@@ -6020,48 +6098,15 @@
       "source_location": null
     },
     {
-      "id": "backend_app_api_routes_departments",
-      "label": "departments.py",
+      "id": "backend_alembic_env",
+      "label": "env.py",
       "_origin": "ast",
       "community": 2,
       "community_name": "OrderService",
       "file_type": "code",
-      "norm_label": "departments.py",
-      "source_file": "backend/app/api/routes/departments.py",
+      "norm_label": "env.py",
+      "source_file": "backend/alembic/env.py",
       "source_location": "L1"
-    },
-    {
-      "id": "backend_app_api_routes_departments_py_get",
-      "label": "get",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "OrderService",
-      "file_type": "code",
-      "norm_label": "get",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_app_api_routes_departments_py_post",
-      "label": "post",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "OrderService",
-      "file_type": "code",
-      "norm_label": "post",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_app_api_routes_departments_py_session",
-      "label": "Session",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "OrderService",
-      "file_type": "code",
-      "norm_label": "session",
-      "source_file": "",
-      "source_location": ""
     },
     {
       "id": "backend_app_models_base",
@@ -6098,6 +6143,17 @@
     },
     {
       "id": "backend_app_models_order_py_str",
+      "label": "str",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "str",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_app_models_user_py_str",
       "label": "str",
       "_origin": "ast",
       "community": 2,
@@ -6346,6 +6402,17 @@
       "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "declarativebase",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "enum",
+      "label": "Enum",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "enum",
       "source_file": "",
       "source_location": ""
     },
@@ -6669,6 +6736,17 @@
       "source_location": null
     },
     {
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_fetchreport",
+      "label": "_fetchReport",
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "dioProvider",
+      "file_type": "code",
+      "norm_label": "_fetchreport",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_features_staff_presentation_staff_page_fetchstaff",
       "label": "_fetchStaff",
       "_origin": "ast",
@@ -6702,92 +6780,59 @@
       "source_location": null
     },
     {
-      "id": "btn_factory_lib_core_router_app_router_approuterprovider",
-      "label": "appRouterProvider",
+      "id": "backend_app_api_routes_departments",
+      "label": "departments.py",
       "_origin": "ast",
       "community": 22,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
+      "community_name": "departments.py",
       "file_type": "code",
-      "norm_label": "approuterprovider",
-      "source_file": "btn_factory/lib/core/router/app_router.dart",
-      "source_location": null
+      "norm_label": "departments.py",
+      "source_file": "backend/app/api/routes/departments.py",
+      "source_location": "L1"
     },
     {
-      "id": "btn_factory_lib_main",
-      "label": "main.dart",
+      "id": "backend_app_api_routes_departments_py_get",
+      "label": "get",
       "_origin": "ast",
       "community": 22,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
+      "community_name": "departments.py",
       "file_type": "code",
-      "norm_label": "main.dart",
-      "source_file": "btn_factory/lib/main.dart",
-      "source_location": null
+      "norm_label": "get",
+      "source_file": "",
+      "source_location": ""
     },
     {
-      "id": "btn_factory_lib_main_build",
-      "label": "build",
+      "id": "backend_app_api_routes_departments_py_post",
+      "label": "post",
       "_origin": "ast",
       "community": 22,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
+      "community_name": "departments.py",
       "file_type": "code",
-      "norm_label": "build",
-      "source_file": "btn_factory/lib/main.dart",
-      "source_location": null
+      "norm_label": "post",
+      "source_file": "",
+      "source_location": ""
     },
     {
-      "id": "btn_factory_lib_main_buttonfactoryapp",
-      "label": "ButtonFactoryApp",
+      "id": "backend_app_api_routes_departments_py_session",
+      "label": "Session",
       "_origin": "ast",
       "community": 22,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
+      "community_name": "departments.py",
       "file_type": "code",
-      "norm_label": "buttonfactoryapp",
-      "source_file": "btn_factory/lib/main.dart",
-      "source_location": null
+      "norm_label": "session",
+      "source_file": "",
+      "source_location": ""
     },
     {
-      "id": "btn_factory_lib_main_main",
-      "label": "main",
+      "id": "httpexception",
+      "label": "HTTPException",
       "_origin": "ast",
       "community": 22,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
+      "community_name": "departments.py",
       "file_type": "code",
-      "norm_label": "main",
-      "source_file": "btn_factory/lib/main.dart",
-      "source_location": null
-    },
-    {
-      "id": "package_btn_factory_core_router_app_router_dart",
-      "label": "package:btn_factory/core/router/app_router.dart",
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
-      "file_type": "code",
-      "norm_label": "package:btn_factory/core/router/app_router.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "package_btn_factory_core_theme_app_theme_dart",
-      "label": "package:btn_factory/core/theme/app_theme.dart",
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
-      "file_type": "code",
-      "norm_label": "package:btn_factory/core/theme/app_theme.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "package_flutter_riverpod_flutter_riverpod_dart",
-      "label": "package:flutter_riverpod/flutter_riverpod.dart",
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
-      "file_type": "code",
-      "norm_label": "package:flutter_riverpod/flutter_riverpod.dart",
-      "source_file": null,
-      "source_location": null
+      "norm_label": "httpexception",
+      "source_file": "",
+      "source_location": ""
     },
     {
       "id": "btn_factory_lib_features_auth_presentation_login_page",
@@ -6966,6 +7011,17 @@
       "source_location": null
     },
     {
+      "id": "btn_factory_lib_features_auth_presentation_profile_page_profilepage",
+      "label": "ProfilePage",
+      "_origin": "ast",
+      "community": 24,
+      "community_name": "authControllerProvider",
+      "file_type": "code",
+      "norm_label": "profilepage",
+      "source_file": "btn_factory/lib/features/auth/presentation/profile_page.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_features_auth_presentation_splash_page_build",
       "label": "build",
       "_origin": "ast",
@@ -7032,6 +7088,17 @@
       "source_location": null
     },
     {
+      "id": "btn_factory_lib_shared_widgets_app_scaffold_appscaffold",
+      "label": "AppScaffold",
+      "_origin": "ast",
+      "community": 24,
+      "community_name": "authControllerProvider",
+      "file_type": "code",
+      "norm_label": "appscaffold",
+      "source_file": "btn_factory/lib/shared/widgets/app_scaffold.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_shared_widgets_app_scaffold_build",
       "label": "build",
       "_origin": "ast",
@@ -7040,6 +7107,17 @@
       "file_type": "code",
       "norm_label": "build",
       "source_file": "btn_factory/lib/shared/widgets/app_scaffold.dart",
+      "source_location": null
+    },
+    {
+      "id": "consumerwidget",
+      "label": "ConsumerWidget",
+      "_origin": "ast",
+      "community": 24,
+      "community_name": "authControllerProvider",
+      "file_type": "code",
+      "norm_label": "consumerwidget",
+      "source_file": null,
       "source_location": null
     },
     {
@@ -7780,70 +7858,70 @@
       "source_location": null
     },
     {
-      "id": "btn_factory_lib_features_dashboard_presentation_dashboard_page_actioncard",
-      "label": "_ActionCard",
+      "id": "backend_app_main_py_request",
+      "label": "Request",
       "_origin": "ast",
       "community": 29,
-      "community_name": "_ActionCard",
+      "community_name": "custom_http_exception_handler",
       "file_type": "code",
-      "norm_label": "_actioncard",
-      "source_file": "btn_factory/lib/features/dashboard/presentation/dashboard_page.dart",
-      "source_location": null
+      "norm_label": "request",
+      "source_file": "",
+      "source_location": ""
     },
     {
-      "id": "btn_factory_lib_features_dashboard_presentation_dashboard_page_actioncardstate",
-      "label": "_ActionCardState",
+      "id": "exception",
+      "label": "Exception",
       "_origin": "ast",
       "community": 29,
-      "community_name": "_ActionCard",
+      "community_name": "custom_http_exception_handler",
       "file_type": "code",
-      "norm_label": "_actioncardstate",
-      "source_file": "btn_factory/lib/features/dashboard/presentation/dashboard_page.dart",
-      "source_location": null
+      "norm_label": "exception",
+      "source_file": "",
+      "source_location": ""
     },
     {
-      "id": "btn_factory_lib_shared_widgets_app_image_preview_networkimageloader",
-      "label": "_NetworkImageLoader",
+      "id": "exception_handler",
+      "label": "exception_handler",
       "_origin": "ast",
       "community": 29,
-      "community_name": "_ActionCard",
+      "community_name": "custom_http_exception_handler",
       "file_type": "code",
-      "norm_label": "_networkimageloader",
-      "source_file": "btn_factory/lib/shared/widgets/app_image_preview.dart",
-      "source_location": null
+      "norm_label": "exception_handler",
+      "source_file": "",
+      "source_location": ""
     },
     {
-      "id": "btn_factory_lib_shared_widgets_app_image_preview_networkimageloaderstate",
-      "label": "_NetworkImageLoaderState",
+      "id": "jsonresponse",
+      "label": "JSONResponse",
       "_origin": "ast",
       "community": 29,
-      "community_name": "_ActionCard",
+      "community_name": "custom_http_exception_handler",
       "file_type": "code",
-      "norm_label": "_networkimageloaderstate",
-      "source_file": "btn_factory/lib/shared/widgets/app_image_preview.dart",
-      "source_location": null
+      "norm_label": "jsonresponse",
+      "source_file": "",
+      "source_location": ""
     },
     {
-      "id": "state",
-      "label": "State",
+      "id": "middleware",
+      "label": "middleware",
       "_origin": "ast",
       "community": 29,
-      "community_name": "_ActionCard",
+      "community_name": "custom_http_exception_handler",
       "file_type": "code",
-      "norm_label": "state",
-      "source_file": null,
-      "source_location": null
+      "norm_label": "middleware",
+      "source_file": "",
+      "source_location": ""
     },
     {
-      "id": "statefulwidget",
-      "label": "StatefulWidget",
+      "id": "response",
+      "label": "Response",
       "_origin": "ast",
       "community": 29,
-      "community_name": "_ActionCard",
+      "community_name": "custom_http_exception_handler",
       "file_type": "code",
-      "norm_label": "statefulwidget",
-      "source_file": null,
-      "source_location": null
+      "norm_label": "response",
+      "source_file": "",
+      "source_location": ""
     },
     {
       "id": "backend_app_core_database",
@@ -8099,11 +8177,44 @@
       "source_location": "L85"
     },
     {
+      "id": "btn_factory_lib_core_theme_app_theme",
+      "label": "app_theme.dart",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "app_theme.dart",
+      "source_file": "btn_factory/lib/core/theme/app_theme.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_theme_app_theme_apptheme",
+      "label": "AppTheme",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "apptheme",
+      "source_file": "btn_factory/lib/core/theme/app_theme.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_theme_app_theme_light",
+      "label": "light",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "light",
+      "source_file": "btn_factory/lib/core/theme/app_theme.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_shared_widgets_feature_placeholder_page",
       "label": "feature_placeholder_page.dart",
       "_origin": "ast",
       "community": 30,
-      "community_name": "feature_placeholder_page.dart",
+      "community_name": "package:flutter/material.dart",
       "file_type": "code",
       "norm_label": "feature_placeholder_page.dart",
       "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
@@ -8114,7 +8225,7 @@
       "label": "build",
       "_origin": "ast",
       "community": 30,
-      "community_name": "feature_placeholder_page.dart",
+      "community_name": "package:flutter/material.dart",
       "file_type": "code",
       "norm_label": "build",
       "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
@@ -8125,7 +8236,7 @@
       "label": "FeaturePlaceholderPage",
       "_origin": "ast",
       "community": 30,
-      "community_name": "feature_placeholder_page.dart",
+      "community_name": "package:flutter/material.dart",
       "file_type": "code",
       "norm_label": "featureplaceholderpage",
       "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
@@ -8136,7 +8247,7 @@
       "label": "icon",
       "_origin": "ast",
       "community": 30,
-      "community_name": "feature_placeholder_page.dart",
+      "community_name": "package:flutter/material.dart",
       "file_type": "code",
       "norm_label": "icon",
       "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
@@ -8147,7 +8258,7 @@
       "label": "selectedIndex",
       "_origin": "ast",
       "community": 30,
-      "community_name": "feature_placeholder_page.dart",
+      "community_name": "package:flutter/material.dart",
       "file_type": "code",
       "norm_label": "selectedindex",
       "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
@@ -8158,7 +8269,7 @@
       "label": "subtitle",
       "_origin": "ast",
       "community": 30,
-      "community_name": "feature_placeholder_page.dart",
+      "community_name": "package:flutter/material.dart",
       "file_type": "code",
       "norm_label": "subtitle",
       "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
@@ -8169,10 +8280,87 @@
       "label": "title",
       "_origin": "ast",
       "community": 30,
-      "community_name": "feature_placeholder_page.dart",
+      "community_name": "package:flutter/material.dart",
       "file_type": "code",
       "norm_label": "title",
       "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_shared_widgets_metric_card",
+      "label": "metric_card.dart",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "metric_card.dart",
+      "source_file": "btn_factory/lib/shared/widgets/metric_card.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_shared_widgets_metric_card_build",
+      "label": "build",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "build",
+      "source_file": "btn_factory/lib/shared/widgets/metric_card.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_shared_widgets_metric_card_icon",
+      "label": "icon",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "icon",
+      "source_file": "btn_factory/lib/shared/widgets/metric_card.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_shared_widgets_metric_card_metriccard",
+      "label": "MetricCard",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "metriccard",
+      "source_file": "btn_factory/lib/shared/widgets/metric_card.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_shared_widgets_metric_card_tint",
+      "label": "tint",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "tint",
+      "source_file": "btn_factory/lib/shared/widgets/metric_card.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_shared_widgets_metric_card_title",
+      "label": "title",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "title",
+      "source_file": "btn_factory/lib/shared/widgets/metric_card.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_shared_widgets_metric_card_value",
+      "label": "value",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "value",
+      "source_file": "btn_factory/lib/shared/widgets/metric_card.dart",
       "source_location": null
     },
     {
@@ -8180,7 +8368,7 @@
       "label": "IconData",
       "_origin": "ast",
       "community": 30,
-      "community_name": "feature_placeholder_page.dart",
+      "community_name": "package:flutter/material.dart",
       "file_type": "code",
       "norm_label": "icondata",
       "source_file": null,
@@ -8191,9 +8379,20 @@
       "label": "package:btn_factory/shared/widgets/app_scaffold.dart",
       "_origin": "ast",
       "community": 30,
-      "community_name": "feature_placeholder_page.dart",
+      "community_name": "package:flutter/material.dart",
       "file_type": "code",
       "norm_label": "package:btn_factory/shared/widgets/app_scaffold.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "package_flutter_material_dart",
+      "label": "package:flutter/material.dart",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "package:flutter/material.dart",
       "source_file": null,
       "source_location": null
     },
@@ -8319,6 +8518,127 @@
       "source_location": "L1"
     },
     {
+      "id": "btn_factory_lib_core_constants_app_constants",
+      "label": "app_constants.dart",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "app_constants.dart",
+      "source_file": "btn_factory/lib/core/constants/app_constants.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_constants_app_constants_accesstoken",
+      "label": "accessToken",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "accesstoken",
+      "source_file": "btn_factory/lib/core/constants/app_constants.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_constants_app_constants_appconstants",
+      "label": "AppConstants",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "appconstants",
+      "source_file": "btn_factory/lib/core/constants/app_constants.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_constants_app_constants_appname",
+      "label": "appName",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "appname",
+      "source_file": "btn_factory/lib/core/constants/app_constants.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_constants_app_constants_appstoragekeys",
+      "label": "AppStorageKeys",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "appstoragekeys",
+      "source_file": "btn_factory/lib/core/constants/app_constants.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_constants_app_constants_refreshtoken",
+      "label": "refreshToken",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "refreshtoken",
+      "source_file": "btn_factory/lib/core/constants/app_constants.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_constants_app_constants_userdepartment",
+      "label": "userDepartment",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "userdepartment",
+      "source_file": "btn_factory/lib/core/constants/app_constants.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_constants_app_constants_useremail",
+      "label": "userEmail",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "useremail",
+      "source_file": "btn_factory/lib/core/constants/app_constants.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_constants_app_constants_username",
+      "label": "userName",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "username",
+      "source_file": "btn_factory/lib/core/constants/app_constants.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_constants_app_constants_userrole",
+      "label": "userRole",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "userrole",
+      "source_file": "btn_factory/lib/core/constants/app_constants.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_router_app_router_approuterprovider",
+      "label": "appRouterProvider",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "approuterprovider",
+      "source_file": "btn_factory/lib/core/router/app_router.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_core_storage_secure_storage",
       "label": "secure_storage.dart",
       "_origin": "ast",
@@ -8326,17 +8646,6 @@
       "community_name": "secure_storage.dart",
       "file_type": "code",
       "norm_label": "secure_storage.dart",
-      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_storage_secure_storage_delete",
-      "label": "delete",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "secure_storage.dart",
-      "file_type": "code",
-      "norm_label": "delete",
       "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
       "source_location": null
     },
@@ -8440,6 +8749,50 @@
       "source_location": null
     },
     {
+      "id": "btn_factory_lib_main",
+      "label": "main.dart",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "main.dart",
+      "source_file": "btn_factory/lib/main.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_main_build",
+      "label": "build",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "build",
+      "source_file": "btn_factory/lib/main.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_main_buttonfactoryapp",
+      "label": "ButtonFactoryApp",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "buttonfactoryapp",
+      "source_file": "btn_factory/lib/main.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_main_main",
+      "label": "main",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "main",
+      "source_file": "btn_factory/lib/main.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_test_widget_test_delayedinmemorysecurestorage",
       "label": "DelayedInMemorySecureStorage",
       "_origin": "ast",
@@ -8473,6 +8826,39 @@
       "source_location": null
     },
     {
+      "id": "package_btn_factory_core_router_app_router_dart",
+      "label": "package:btn_factory/core/router/app_router.dart",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "package:btn_factory/core/router/app_router.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "package_btn_factory_core_theme_app_theme_dart",
+      "label": "package:btn_factory/core/theme/app_theme.dart",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "package:btn_factory/core/theme/app_theme.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "package_flutter_foundation_dart",
+      "label": "package:flutter/foundation.dart",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "package:flutter/foundation.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
       "id": "package_flutter_secure_storage_flutter_secure_storage_dart",
       "label": "package:flutter_secure_storage/flutter_secure_storage.dart",
       "_origin": "ast",
@@ -8491,6 +8877,17 @@
       "community_name": "secure_storage.dart",
       "file_type": "code",
       "norm_label": "package:shared_preferences/shared_preferences.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "static_const_string",
+      "label": "static const String",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "static const string",
       "source_file": null,
       "source_location": null
     },
@@ -8707,17 +9104,6 @@
       "source_location": "L1"
     },
     {
-      "id": "backend_app_core_security",
-      "label": "security.py",
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "User",
-      "file_type": "code",
-      "norm_label": "security.py",
-      "source_file": "backend/app/core/security.py",
-      "source_location": "L1"
-    },
-    {
       "id": "backend_app_repositories_base",
       "label": "repositories/base.py",
       "_origin": "ast",
@@ -8773,17 +9159,6 @@
       "source_location": ""
     },
     {
-      "id": "backend_app_services_auth_service",
-      "label": "auth_service.py",
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "User",
-      "file_type": "code",
-      "norm_label": "auth_service.py",
-      "source_file": "backend/app/services/auth_service.py",
-      "source_location": "L1"
-    },
-    {
       "id": "backend_app_services_auth_service_py_session",
       "label": "Session",
       "_origin": "ast",
@@ -8791,17 +9166,6 @@
       "community_name": "User",
       "file_type": "code",
       "norm_label": "session",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "timedelta",
-      "label": "timedelta",
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "User",
-      "file_type": "code",
-      "norm_label": "timedelta",
       "source_file": "",
       "source_location": ""
     },
@@ -9150,7 +9514,7 @@
       "label": "orders.py",
       "_origin": "ast",
       "community": 50,
-      "community_name": "HTTPException",
+      "community_name": "orders.py",
       "file_type": "code",
       "norm_label": "orders.py",
       "source_file": "backend/app/api/routes/orders.py",
@@ -9161,7 +9525,7 @@
       "label": "get",
       "_origin": "ast",
       "community": 50,
-      "community_name": "HTTPException",
+      "community_name": "orders.py",
       "file_type": "code",
       "norm_label": "get",
       "source_file": "",
@@ -9172,7 +9536,7 @@
       "label": "post",
       "_origin": "ast",
       "community": 50,
-      "community_name": "HTTPException",
+      "community_name": "orders.py",
       "file_type": "code",
       "norm_label": "post",
       "source_file": "",
@@ -9183,7 +9547,7 @@
       "label": "put",
       "_origin": "ast",
       "community": 50,
-      "community_name": "HTTPException",
+      "community_name": "orders.py",
       "file_type": "code",
       "norm_label": "put",
       "source_file": "",
@@ -9194,7 +9558,7 @@
       "label": "Request",
       "_origin": "ast",
       "community": 50,
-      "community_name": "HTTPException",
+      "community_name": "orders.py",
       "file_type": "code",
       "norm_label": "request",
       "source_file": "",
@@ -9205,230 +9569,21 @@
       "label": "Session",
       "_origin": "ast",
       "community": 50,
-      "community_name": "HTTPException",
+      "community_name": "orders.py",
       "file_type": "code",
       "norm_label": "session",
       "source_file": "",
       "source_location": ""
     },
     {
-      "id": "httpexception",
-      "label": "HTTPException",
+      "id": "btn_factory_lib_core_storage_secure_storage_delete",
+      "label": "delete",
       "_origin": "ast",
       "community": 50,
-      "community_name": "HTTPException",
+      "community_name": "orders.py",
       "file_type": "code",
-      "norm_label": "httpexception",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_metric_card",
-      "label": "metric_card.dart",
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "metric_card.dart",
-      "file_type": "code",
-      "norm_label": "metric_card.dart",
-      "source_file": "btn_factory/lib/shared/widgets/metric_card.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_metric_card_build",
-      "label": "build",
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "metric_card.dart",
-      "file_type": "code",
-      "norm_label": "build",
-      "source_file": "btn_factory/lib/shared/widgets/metric_card.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_metric_card_icon",
-      "label": "icon",
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "metric_card.dart",
-      "file_type": "code",
-      "norm_label": "icon",
-      "source_file": "btn_factory/lib/shared/widgets/metric_card.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_metric_card_metriccard",
-      "label": "MetricCard",
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "metric_card.dart",
-      "file_type": "code",
-      "norm_label": "metriccard",
-      "source_file": "btn_factory/lib/shared/widgets/metric_card.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_metric_card_tint",
-      "label": "tint",
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "metric_card.dart",
-      "file_type": "code",
-      "norm_label": "tint",
-      "source_file": "btn_factory/lib/shared/widgets/metric_card.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_metric_card_title",
-      "label": "title",
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "metric_card.dart",
-      "file_type": "code",
-      "norm_label": "title",
-      "source_file": "btn_factory/lib/shared/widgets/metric_card.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_metric_card_value",
-      "label": "value",
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "metric_card.dart",
-      "file_type": "code",
-      "norm_label": "value",
-      "source_file": "btn_factory/lib/shared/widgets/metric_card.dart",
-      "source_location": null
-    },
-    {
-      "id": "color",
-      "label": "Color",
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "metric_card.dart",
-      "file_type": "code",
-      "norm_label": "color",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_theme_app_theme",
-      "label": "app_theme.dart",
-      "_origin": "ast",
-      "community": 52,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "app_theme.dart",
-      "source_file": "btn_factory/lib/core/theme/app_theme.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_theme_app_theme_apptheme",
-      "label": "AppTheme",
-      "_origin": "ast",
-      "community": 52,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "apptheme",
-      "source_file": "btn_factory/lib/core/theme/app_theme.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_theme_app_theme_light",
-      "label": "light",
-      "_origin": "ast",
-      "community": 52,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "light",
-      "source_file": "btn_factory/lib/core/theme/app_theme.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_section_card",
-      "label": "section_card.dart",
-      "_origin": "ast",
-      "community": 52,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "section_card.dart",
-      "source_file": "btn_factory/lib/shared/widgets/section_card.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_section_card_build",
-      "label": "build",
-      "_origin": "ast",
-      "community": 52,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "build",
-      "source_file": "btn_factory/lib/shared/widgets/section_card.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_section_card_child",
-      "label": "child",
-      "_origin": "ast",
-      "community": 52,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "child",
-      "source_file": "btn_factory/lib/shared/widgets/section_card.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_section_card_sectioncard",
-      "label": "SectionCard",
-      "_origin": "ast",
-      "community": 52,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "sectioncard",
-      "source_file": "btn_factory/lib/shared/widgets/section_card.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_section_card_title",
-      "label": "title",
-      "_origin": "ast",
-      "community": 52,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "title",
-      "source_file": "btn_factory/lib/shared/widgets/section_card.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_section_card_trailing",
-      "label": "trailing",
-      "_origin": "ast",
-      "community": 52,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "trailing",
-      "source_file": "btn_factory/lib/shared/widgets/section_card.dart",
-      "source_location": null
-    },
-    {
-      "id": "package_flutter_material_dart",
-      "label": "package:flutter/material.dart",
-      "_origin": "ast",
-      "community": 52,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "package:flutter/material.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "widget",
-      "label": "Widget",
-      "_origin": "ast",
-      "community": 52,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "widget",
-      "source_file": null,
+      "norm_label": "delete",
+      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
       "source_location": null
     },
     {
@@ -9619,6 +9774,17 @@
       "source_location": null
     },
     {
+      "id": "package_btn_factory_core_storage_secure_storage_dart",
+      "label": "package:btn_factory/core/storage/secure_storage.dart",
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "api_client.dart",
+      "file_type": "code",
+      "norm_label": "package:btn_factory/core/storage/secure_storage.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
       "id": "package_dio_dio_dart",
       "label": "package:dio/dio.dart",
       "_origin": "ast",
@@ -9639,17 +9805,6 @@
       "norm_label": "return",
       "source_file": null,
       "source_location": null
-    },
-    {
-      "id": "backend_alembic_env",
-      "label": "env.py",
-      "_origin": "ast",
-      "community": 55,
-      "community_name": "get_settings",
-      "file_type": "code",
-      "norm_label": "env.py",
-      "source_file": "backend/alembic/env.py",
-      "source_location": "L1"
     },
     {
       "id": "backend_app_api_routes_diagnostics",
@@ -9751,116 +9906,6 @@
       "source_location": ""
     },
     {
-      "id": "btn_factory_lib_core_constants_app_constants",
-      "label": "app_constants.dart",
-      "_origin": "ast",
-      "community": 55,
-      "community_name": "get_settings",
-      "file_type": "code",
-      "norm_label": "app_constants.dart",
-      "source_file": "btn_factory/lib/core/constants/app_constants.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_constants_app_constants_accesstoken",
-      "label": "accessToken",
-      "_origin": "ast",
-      "community": 55,
-      "community_name": "get_settings",
-      "file_type": "code",
-      "norm_label": "accesstoken",
-      "source_file": "btn_factory/lib/core/constants/app_constants.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_constants_app_constants_appconstants",
-      "label": "AppConstants",
-      "_origin": "ast",
-      "community": 55,
-      "community_name": "get_settings",
-      "file_type": "code",
-      "norm_label": "appconstants",
-      "source_file": "btn_factory/lib/core/constants/app_constants.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_constants_app_constants_appname",
-      "label": "appName",
-      "_origin": "ast",
-      "community": 55,
-      "community_name": "get_settings",
-      "file_type": "code",
-      "norm_label": "appname",
-      "source_file": "btn_factory/lib/core/constants/app_constants.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_constants_app_constants_appstoragekeys",
-      "label": "AppStorageKeys",
-      "_origin": "ast",
-      "community": 55,
-      "community_name": "get_settings",
-      "file_type": "code",
-      "norm_label": "appstoragekeys",
-      "source_file": "btn_factory/lib/core/constants/app_constants.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_constants_app_constants_refreshtoken",
-      "label": "refreshToken",
-      "_origin": "ast",
-      "community": 55,
-      "community_name": "get_settings",
-      "file_type": "code",
-      "norm_label": "refreshtoken",
-      "source_file": "btn_factory/lib/core/constants/app_constants.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_constants_app_constants_userdepartment",
-      "label": "userDepartment",
-      "_origin": "ast",
-      "community": 55,
-      "community_name": "get_settings",
-      "file_type": "code",
-      "norm_label": "userdepartment",
-      "source_file": "btn_factory/lib/core/constants/app_constants.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_constants_app_constants_useremail",
-      "label": "userEmail",
-      "_origin": "ast",
-      "community": 55,
-      "community_name": "get_settings",
-      "file_type": "code",
-      "norm_label": "useremail",
-      "source_file": "btn_factory/lib/core/constants/app_constants.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_constants_app_constants_username",
-      "label": "userName",
-      "_origin": "ast",
-      "community": 55,
-      "community_name": "get_settings",
-      "file_type": "code",
-      "norm_label": "username",
-      "source_file": "btn_factory/lib/core/constants/app_constants.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_constants_app_constants_userrole",
-      "label": "userRole",
-      "_origin": "ast",
-      "community": 55,
-      "community_name": "get_settings",
-      "file_type": "code",
-      "norm_label": "userrole",
-      "source_file": "btn_factory/lib/core/constants/app_constants.dart",
-      "source_location": null
-    },
-    {
       "id": "field_validator",
       "label": "field_validator",
       "_origin": "ast",
@@ -9870,28 +9915,6 @@
       "norm_label": "field_validator",
       "source_file": "",
       "source_location": ""
-    },
-    {
-      "id": "package_flutter_foundation_dart",
-      "label": "package:flutter/foundation.dart",
-      "_origin": "ast",
-      "community": 55,
-      "community_name": "get_settings",
-      "file_type": "code",
-      "norm_label": "package:flutter/foundation.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "static_const_string",
-      "label": "static const String",
-      "_origin": "ast",
-      "community": 55,
-      "community_name": "get_settings",
-      "file_type": "code",
-      "norm_label": "static const string",
-      "source_file": null,
-      "source_location": null
     },
     {
       "id": "uploadfile",
@@ -10048,6 +10071,17 @@
       "source_location": ""
     },
     {
+      "id": "backend_app_api_router",
+      "label": "router.py",
+      "_origin": "ast",
+      "community": 57,
+      "community_name": "models/user.py",
+      "file_type": "code",
+      "norm_label": "router.py",
+      "source_file": "backend/app/api/router.py",
+      "source_location": "L1"
+    },
+    {
       "id": "backend_app_api_routes_analytics",
       "label": "routes/analytics.py",
       "_origin": "ast",
@@ -10079,6 +10113,17 @@
       "norm_label": "session",
       "source_file": "",
       "source_location": ""
+    },
+    {
+      "id": "backend_app_api_routes_init",
+      "label": "routes/__init__.py",
+      "_origin": "ast",
+      "community": 57,
+      "community_name": "models/user.py",
+      "file_type": "code",
+      "norm_label": "routes/__init__.py",
+      "source_file": "backend/app/api/routes/__init__.py",
+      "source_location": "L1"
     },
     {
       "id": "backend_app_core_database_py_session",
@@ -10123,28 +10168,6 @@
       "norm_label": "models/user.py",
       "source_file": "backend/app/models/user.py",
       "source_location": "L1"
-    },
-    {
-      "id": "backend_app_models_user_py_str",
-      "label": "str",
-      "_origin": "ast",
-      "community": 57,
-      "community_name": "models/user.py",
-      "file_type": "code",
-      "norm_label": "str",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "enum",
-      "label": "Enum",
-      "_origin": "ast",
-      "community": 57,
-      "community_name": "models/user.py",
-      "file_type": "code",
-      "norm_label": "enum",
-      "source_file": "",
-      "source_location": ""
     },
     {
       "id": "backend_app_api_routes_analytics_rationale_15",
@@ -10232,6 +10255,28 @@
       "file_type": "code",
       "norm_label": "boxfit",
       "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_dashboard_presentation_dashboard_page_actioncard",
+      "label": "_ActionCard",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "app_image_preview.dart",
+      "file_type": "code",
+      "norm_label": "_actioncard",
+      "source_file": "btn_factory/lib/features/dashboard/presentation/dashboard_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_dashboard_presentation_dashboard_page_actioncardstate",
+      "label": "_ActionCardState",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "app_image_preview.dart",
+      "file_type": "code",
+      "norm_label": "_actioncardstate",
+      "source_file": "btn_factory/lib/features/dashboard/presentation/dashboard_page.dart",
       "source_location": null
     },
     {
@@ -10433,6 +10478,28 @@
       "source_location": null
     },
     {
+      "id": "btn_factory_lib_shared_widgets_app_image_preview_networkimageloader",
+      "label": "_NetworkImageLoader",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "app_image_preview.dart",
+      "file_type": "code",
+      "norm_label": "_networkimageloader",
+      "source_file": "btn_factory/lib/shared/widgets/app_image_preview.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_shared_widgets_app_image_preview_networkimageloaderstate",
+      "label": "_NetworkImageLoaderState",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "app_image_preview.dart",
+      "file_type": "code",
+      "norm_label": "_networkimageloaderstate",
+      "source_file": "btn_factory/lib/shared/widgets/app_image_preview.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_shared_widgets_app_image_preview_onclearimage",
       "label": "onClearImage",
       "_origin": "ast",
@@ -10499,6 +10566,72 @@
       "source_location": null
     },
     {
+      "id": "btn_factory_lib_shared_widgets_section_card",
+      "label": "section_card.dart",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "app_image_preview.dart",
+      "file_type": "code",
+      "norm_label": "section_card.dart",
+      "source_file": "btn_factory/lib/shared/widgets/section_card.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_shared_widgets_section_card_build",
+      "label": "build",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "app_image_preview.dart",
+      "file_type": "code",
+      "norm_label": "build",
+      "source_file": "btn_factory/lib/shared/widgets/section_card.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_shared_widgets_section_card_child",
+      "label": "child",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "app_image_preview.dart",
+      "file_type": "code",
+      "norm_label": "child",
+      "source_file": "btn_factory/lib/shared/widgets/section_card.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_shared_widgets_section_card_sectioncard",
+      "label": "SectionCard",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "app_image_preview.dart",
+      "file_type": "code",
+      "norm_label": "sectioncard",
+      "source_file": "btn_factory/lib/shared/widgets/section_card.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_shared_widgets_section_card_title",
+      "label": "title",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "app_image_preview.dart",
+      "file_type": "code",
+      "norm_label": "title",
+      "source_file": "btn_factory/lib/shared/widgets/section_card.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_shared_widgets_section_card_trailing",
+      "label": "trailing",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "app_image_preview.dart",
+      "file_type": "code",
+      "norm_label": "trailing",
+      "source_file": "btn_factory/lib/shared/widgets/section_card.dart",
+      "source_location": null
+    },
+    {
       "id": "dart_io",
       "label": "dart:io",
       "_origin": "ast",
@@ -10517,6 +10650,28 @@
       "community_name": "app_image_preview.dart",
       "file_type": "code",
       "norm_label": "double?",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "state",
+      "label": "State",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "app_image_preview.dart",
+      "file_type": "code",
+      "norm_label": "state",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "statefulwidget",
+      "label": "StatefulWidget",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "app_image_preview.dart",
+      "file_type": "code",
+      "norm_label": "statefulwidget",
       "source_file": null,
       "source_location": null
     },
@@ -10543,11 +10698,22 @@
       "source_location": null
     },
     {
+      "id": "widget",
+      "label": "Widget",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "app_image_preview.dart",
+      "file_type": "code",
+      "norm_label": "widget",
+      "source_file": null,
+      "source_location": null
+    },
+    {
       "id": "btn_factory_test_widget_test",
       "label": "widget_test.dart",
       "_origin": "ast",
       "community": 60,
-      "community_name": "widget_test.dart",
+      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
       "file_type": "code",
       "norm_label": "widget_test.dart",
       "source_file": "btn_factory/test/widget_test.dart",
@@ -10558,7 +10724,7 @@
       "label": "main",
       "_origin": "ast",
       "community": 60,
-      "community_name": "widget_test.dart",
+      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
       "file_type": "code",
       "norm_label": "main",
       "source_file": "btn_factory/test/widget_test.dart",
@@ -10569,21 +10735,10 @@
       "label": "read",
       "_origin": "ast",
       "community": 60,
-      "community_name": "widget_test.dart",
+      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
       "file_type": "code",
       "norm_label": "read",
       "source_file": "btn_factory/test/widget_test.dart",
-      "source_location": null
-    },
-    {
-      "id": "package_btn_factory_core_storage_secure_storage_dart",
-      "label": "package:btn_factory/core/storage/secure_storage.dart",
-      "_origin": "ast",
-      "community": 60,
-      "community_name": "widget_test.dart",
-      "file_type": "code",
-      "norm_label": "package:btn_factory/core/storage/secure_storage.dart",
-      "source_file": null,
       "source_location": null
     },
     {
@@ -10591,9 +10746,20 @@
       "label": "package:btn_factory/main.dart",
       "_origin": "ast",
       "community": 60,
-      "community_name": "widget_test.dart",
+      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
       "file_type": "code",
       "norm_label": "package:btn_factory/main.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "package_flutter_riverpod_flutter_riverpod_dart",
+      "label": "package:flutter_riverpod/flutter_riverpod.dart",
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
+      "file_type": "code",
+      "norm_label": "package:flutter_riverpod/flutter_riverpod.dart",
       "source_file": null,
       "source_location": null
     },
@@ -10602,7 +10768,7 @@
       "label": "package:flutter_test/flutter_test.dart",
       "_origin": "ast",
       "community": 60,
-      "community_name": "widget_test.dart",
+      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
       "file_type": "code",
       "norm_label": "package:flutter_test/flutter_test.dart",
       "source_file": null,
@@ -10682,6 +10848,17 @@
       "community_name": "department_update_page.dart",
       "file_type": "code",
       "norm_label": "currentstatuslabel",
+      "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_departments_presentation_department_update_page_defaultunit",
+      "label": "defaultUnit",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "department_update_page.dart",
+      "file_type": "code",
+      "norm_label": "defaultunit",
       "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
       "source_location": null
     },
@@ -10785,6 +10962,17 @@
       "source_location": null
     },
     {
+      "id": "btn_factory_lib_features_departments_presentation_department_update_page_hasunitoption",
+      "label": "hasUnitOption",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "department_update_page.dart",
+      "file_type": "code",
+      "norm_label": "hasunitoption",
+      "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_features_departments_presentation_department_update_page_initstate",
       "label": "initState",
       "_origin": "ast",
@@ -10814,6 +11002,17 @@
       "community_name": "department_update_page.dart",
       "file_type": "code",
       "norm_label": "_isloadinguniversal",
+      "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_departments_presentation_department_update_page_isoptional",
+      "label": "isOptional",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "department_update_page.dart",
+      "file_type": "code",
+      "norm_label": "isoptional",
       "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
       "source_location": null
     },
@@ -10939,6 +11138,17 @@
       "source_location": null
     },
     {
+      "id": "btn_factory_lib_features_departments_presentation_department_update_page_selectedunits",
+      "label": "_selectedUnits",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "department_update_page.dart",
+      "file_type": "code",
+      "norm_label": "_selectedunits",
+      "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_features_departments_presentation_department_update_page_showcustomunitdialog",
       "label": "_showCustomUnitDialog",
       "_origin": "ast",
@@ -11023,6 +11233,17 @@
       "community_name": "department_update_page.dart",
       "file_type": "code",
       "norm_label": "unitcontroller",
+      "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_departments_presentation_department_update_page_units",
+      "label": "units",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "department_update_page.dart",
+      "file_type": "code",
+      "norm_label": "units",
       "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
       "source_location": null
     },
@@ -11632,13 +11853,58 @@
       "source_location": ""
     },
     {
+      "id": "deployment_guide_render_backend",
+      "label": "Render Backend Deployment",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "render backend deployment",
+      "source_file": "DEPLOYMENT_GUIDE.md",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "deployment_guide_vercel_frontend",
+      "label": "Vercel Frontend Deployment",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "vercel frontend deployment",
+      "source_file": "DEPLOYMENT_GUIDE.md",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "docker_compose_volume_persistence",
+      "label": "Docker Volume backend_data",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "docker volume backend_data",
+      "source_file": "docker-compose.yml",
+      "source_location": null,
+      "source_url": null
+    },
+    {
       "id": "readme_backend_setup",
       "label": "FastAPI Backend Setup",
       "_origin": "semantic",
       "author": null,
       "captured_at": null,
-      "community": 22,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
+      "community": 4,
+      "community_name": "secure_storage.dart",
       "contributor": null,
       "file_type": "concept",
       "norm_label": "fastapi backend setup",
@@ -11652,8 +11918,8 @@
       "_origin": "semantic",
       "author": null,
       "captured_at": null,
-      "community": 22,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
+      "community": 4,
+      "community_name": "secure_storage.dart",
       "contributor": null,
       "file_type": "concept",
       "norm_label": "flutter frontend setup",
@@ -11667,8 +11933,8 @@
       "_origin": "semantic",
       "author": null,
       "captured_at": null,
-      "community": 22,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
+      "community": 4,
+      "community_name": "secure_storage.dart",
       "contributor": null,
       "file_type": "document",
       "norm_label": "button factory mes specifications",
@@ -11682,12 +11948,42 @@
       "_origin": "semantic",
       "author": null,
       "captured_at": null,
-      "community": 22,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
+      "community": 4,
+      "community_name": "secure_storage.dart",
       "contributor": null,
       "file_type": "document",
       "norm_label": "flutter app manifest & assets",
       "source_file": "btn_factory/pubspec.yaml",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "deployment_guide_cloud_architecture",
+      "label": "Cloud Deployment Architecture",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "contributor": null,
+      "file_type": "document",
+      "norm_label": "cloud deployment architecture",
+      "source_file": "DEPLOYMENT_GUIDE.md",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "docker_compose_backend_service",
+      "label": "Docker Compose Backend Container",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "contributor": null,
+      "file_type": "document",
+      "norm_label": "docker compose backend container",
+      "source_file": "docker-compose.yml",
       "source_location": null,
       "source_url": null
     },
@@ -11697,8 +11993,8 @@
       "_origin": "semantic",
       "author": null,
       "captured_at": null,
-      "community": 22,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
+      "community": 4,
+      "community_name": "secure_storage.dart",
       "contributor": null,
       "file_type": "document",
       "norm_label": "github actions release workflow",
@@ -11712,12 +12008,27 @@
       "_origin": "semantic",
       "author": null,
       "captured_at": null,
-      "community": 22,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
+      "community": 4,
+      "community_name": "secure_storage.dart",
       "contributor": null,
       "file_type": "document",
       "norm_label": "button factory mes overview",
       "source_file": "README.md",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "deployment_guide_storage_persistence",
+      "label": "Storage & Database Persistence",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "contributor": null,
+      "file_type": "rationale",
+      "norm_label": "storage & database persistence",
+      "source_file": "DEPLOYMENT_GUIDE.md",
       "source_location": null,
       "source_url": null
     },
@@ -11733,96 +12044,6 @@
       "file_type": "document",
       "norm_label": "fastapi python dependencies",
       "source_file": "backend/requirements.txt",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "deployment_guide_render_backend",
-      "label": "Render Backend Deployment",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 59,
-      "community_name": "Cloud Deployment Architecture",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "render backend deployment",
-      "source_file": "DEPLOYMENT_GUIDE.md",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "deployment_guide_vercel_frontend",
-      "label": "Vercel Frontend Deployment",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 59,
-      "community_name": "Cloud Deployment Architecture",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "vercel frontend deployment",
-      "source_file": "DEPLOYMENT_GUIDE.md",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "docker_compose_volume_persistence",
-      "label": "Docker Volume backend_data",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 59,
-      "community_name": "Cloud Deployment Architecture",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "docker volume backend_data",
-      "source_file": "docker-compose.yml",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "deployment_guide_cloud_architecture",
-      "label": "Cloud Deployment Architecture",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 59,
-      "community_name": "Cloud Deployment Architecture",
-      "contributor": null,
-      "file_type": "document",
-      "norm_label": "cloud deployment architecture",
-      "source_file": "DEPLOYMENT_GUIDE.md",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "docker_compose_backend_service",
-      "label": "Docker Compose Backend Container",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 59,
-      "community_name": "Cloud Deployment Architecture",
-      "contributor": null,
-      "file_type": "document",
-      "norm_label": "docker compose backend container",
-      "source_file": "docker-compose.yml",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "deployment_guide_storage_persistence",
-      "label": "Storage & Database Persistence",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 59,
-      "community_name": "Cloud Deployment Architecture",
-      "contributor": null,
-      "file_type": "rationale",
-      "norm_label": "storage & database persistence",
-      "source_file": "DEPLOYMENT_GUIDE.md",
       "source_location": null,
       "source_url": null
     }
@@ -13365,6 +13586,66 @@
       "weight": 1.0
     },
     {
+      "source": "backend_tests_test_workflow_edits_test_packing_grams_and_excess_shortage",
+      "target": "backend_tests_test_workflow_edits_setup_test_db",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L278",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_tests_test_workflow_edits_test_packing_grams_and_excess_shortage",
+      "target": "backend_app_services_order_service_orderservice",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L279",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_tests_test_workflow_edits_test_packing_grams_and_excess_shortage",
+      "target": "backend_app_schemas_order_ordercreate",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L282",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_tests_test_workflow_edits_test_packing_grams_and_excess_shortage",
+      "target": "backend_app_schemas_order_packingupdate",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L290",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_tests_test_workflow_edits_test_packing_grams_and_excess_shortage",
+      "target": "backend_app_services_report_service_reportservice",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L322",
+      "weight": 1.0
+    },
+    {
       "source": "backend_tests_test_workflow_edits_test_reports_summary_with_universal_materials",
       "target": "backend_tests_test_workflow_edits_setup_test_db",
       "relation": "calls",
@@ -13566,6 +13847,18 @@
       "context": "call",
       "source_file": "btn_factory/windows/runner/win32_window.cpp",
       "source_location": "L167",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_app_services_report_service_reportservice_reports_summary",
+      "target": "backend_app_schemas_order_orderread",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "backend/app/services/report_service.py",
+      "source_location": "L125",
       "weight": 1.0
     },
     {
@@ -16389,6 +16682,18 @@
       "context": "import",
       "source_file": "backend/app/services/order_service.py",
       "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_app_services_report_service",
+      "target": "backend_app_schemas_order_orderread",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "backend/app/services/report_service.py",
+      "source_location": "L123",
       "weight": 1.0
     },
     {
@@ -21429,6 +21734,42 @@
       "weight": 1.0
     },
     {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page",
+      "target": "set",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "variable_type",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page",
+      "target": "texteditingcontroller",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "variable_type",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page",
+      "target": "voidcallback",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "variable_type",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
       "source": "btn_factory_lib_features_staff_presentation_staff_page",
       "target": "globalkey",
       "relation": "references",
@@ -22676,7 +23017,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L193",
+      "source_location": "L199",
       "weight": 1.0
     },
     {
@@ -22687,7 +23028,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L205",
+      "source_location": "L211",
       "weight": 1.0
     },
     {
@@ -22698,7 +23039,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L229",
+      "source_location": "L235",
       "weight": 1.0
     },
     {
@@ -22709,18 +23050,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L244",
-      "weight": 1.0
-    },
-    {
-      "source": "backend_app_schemas_order",
-      "target": "backend_app_schemas_order_polishingread",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "backend/app/schemas/order.py",
-      "source_location": "L267",
+      "source_location": "L250",
       "weight": 1.0
     },
     {
@@ -22736,13 +23066,24 @@
     },
     {
       "source": "backend_app_schemas_order",
+      "target": "backend_app_schemas_order_polishingread",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "backend/app/schemas/order.py",
+      "source_location": "L273",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_app_schemas_order",
       "target": "backend_app_schemas_order_packingread",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L285",
+      "source_location": "L291",
       "weight": 1.0
     },
     {
@@ -22753,7 +23094,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L306",
+      "source_location": "L318",
       "weight": 1.0
     },
     {
@@ -22775,7 +23116,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L324",
+      "source_location": "L336",
       "weight": 1.0
     },
     {
@@ -22786,7 +23127,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L335",
+      "source_location": "L347",
       "weight": 1.0
     },
     {
@@ -23436,6 +23777,17 @@
       "confidence_score": 1.0,
       "source_file": "backend/tests/test_workflow_edits.py",
       "source_location": "L217",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_tests_test_workflow_edits",
+      "target": "backend_tests_test_workflow_edits_test_packing_grams_and_excess_shortage",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L277",
       "weight": 1.0
     },
     {
@@ -25442,6 +25794,17 @@
     },
     {
       "source": "btn_factory_lib_features_departments_presentation_department_update_page",
+      "target": "btn_factory_lib_features_departments_presentation_department_update_page_defaultunit",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_departments_presentation_department_update_page",
       "target": "btn_factory_lib_features_departments_presentation_department_update_page_departmentupdatepage",
       "relation": "defines",
       "_origin": "ast",
@@ -25585,6 +25948,17 @@
     },
     {
       "source": "btn_factory_lib_features_departments_presentation_department_update_page",
+      "target": "btn_factory_lib_features_departments_presentation_department_update_page_hasunitoption",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_departments_presentation_department_update_page",
       "target": "btn_factory_lib_features_departments_presentation_department_update_page_initstate",
       "relation": "defines",
       "_origin": "ast",
@@ -25608,6 +25982,17 @@
     {
       "source": "btn_factory_lib_features_departments_presentation_department_update_page",
       "target": "btn_factory_lib_features_departments_presentation_department_update_page_isloadinguniversal",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_departments_presentation_department_update_page",
+      "target": "btn_factory_lib_features_departments_presentation_department_update_page_isoptional",
       "relation": "defines",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -25739,6 +26124,17 @@
     },
     {
       "source": "btn_factory_lib_features_departments_presentation_department_update_page",
+      "target": "btn_factory_lib_features_departments_presentation_department_update_page_selectedunits",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_departments_presentation_department_update_page",
       "target": "btn_factory_lib_features_departments_presentation_department_update_page_showcustomunitdialog",
       "relation": "defines",
       "_origin": "ast",
@@ -25839,6 +26235,17 @@
     {
       "source": "btn_factory_lib_features_departments_presentation_department_update_page",
       "target": "btn_factory_lib_features_departments_presentation_department_update_page_unitcontroller",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_departments_presentation_department_update_page",
+      "target": "btn_factory_lib_features_departments_presentation_department_update_page_units",
       "relation": "defines",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -26795,7 +27202,51 @@
     },
     {
       "source": "btn_factory_lib_features_reports_presentation_reports_page",
+      "target": "btn_factory_lib_features_reports_presentation_reports_page_department",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page",
+      "target": "btn_factory_lib_features_reports_presentation_reports_page_details",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page",
+      "target": "btn_factory_lib_features_reports_presentation_reports_page_dispose",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page",
       "target": "btn_factory_lib_features_reports_presentation_reports_page_error",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page",
+      "target": "btn_factory_lib_features_reports_presentation_reports_page_expandedordertokens",
       "relation": "defines",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -26839,6 +27290,28 @@
     },
     {
       "source": "btn_factory_lib_features_reports_presentation_reports_page",
+      "target": "btn_factory_lib_features_reports_presentation_reports_page_getstatuscolor",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page",
+      "target": "btn_factory_lib_features_reports_presentation_reports_page_individualordercard",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page",
       "target": "btn_factory_lib_features_reports_presentation_reports_page_infobadge",
       "relation": "defines",
       "_origin": "ast",
@@ -26861,6 +27334,17 @@
     },
     {
       "source": "btn_factory_lib_features_reports_presentation_reports_page",
+      "target": "btn_factory_lib_features_reports_presentation_reports_page_isexpanded",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page",
       "target": "btn_factory_lib_features_reports_presentation_reports_page_isloading",
       "relation": "defines",
       "_origin": "ast",
@@ -26873,6 +27357,61 @@
     {
       "source": "btn_factory_lib_features_reports_presentation_reports_page",
       "target": "btn_factory_lib_features_reports_presentation_reports_page_label",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page",
+      "target": "btn_factory_lib_features_reports_presentation_reports_page_logdetailrow",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page",
+      "target": "btn_factory_lib_features_reports_presentation_reports_page_metricchip",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page",
+      "target": "btn_factory_lib_features_reports_presentation_reports_page_ontoggleexpand",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page",
+      "target": "btn_factory_lib_features_reports_presentation_reports_page_order",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page",
+      "target": "btn_factory_lib_features_reports_presentation_reports_page_ordersearchcontroller",
       "relation": "defines",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -26939,6 +27478,17 @@
     {
       "source": "btn_factory_lib_features_reports_presentation_reports_page",
       "target": "btn_factory_lib_features_reports_presentation_reports_page_rows",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page",
+      "target": "btn_factory_lib_features_reports_presentation_reports_page_selectedstatusfilter",
       "relation": "defines",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -29237,6 +29787,17 @@
     },
     {
       "source": "btn_factory_lib_features_reports_presentation_reports_page",
+      "target": "package_go_router_go_router_dart",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page",
       "target": "package_intl_intl_dart",
       "relation": "imports",
       "_origin": "ast",
@@ -29903,7 +30464,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L229",
+      "source_location": "L235",
       "weight": 1.0
     },
     {
@@ -29925,7 +30486,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L205",
+      "source_location": "L211",
       "weight": 1.0
     },
     {
@@ -29969,7 +30530,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L324",
+      "source_location": "L336",
       "weight": 1.0
     },
     {
@@ -29980,7 +30541,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L306",
+      "source_location": "L318",
       "weight": 1.0
     },
     {
@@ -29991,7 +30552,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L335",
+      "source_location": "L347",
       "weight": 1.0
     },
     {
@@ -30013,7 +30574,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L285",
+      "source_location": "L291",
       "weight": 1.0
     },
     {
@@ -30035,7 +30596,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L267",
+      "source_location": "L273",
       "weight": 1.0
     },
     {
@@ -30090,7 +30651,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L193",
+      "source_location": "L199",
       "weight": 1.0
     },
     {
@@ -30101,7 +30662,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L244",
+      "source_location": "L250",
       "weight": 1.0
     },
     {
@@ -30501,7 +31062,40 @@
       "weight": 1.0
     },
     {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page_individualordercard",
+      "target": "statelesswidget",
+      "relation": "inherits",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
       "source": "btn_factory_lib_features_reports_presentation_reports_page_infobadge",
+      "target": "statelesswidget",
+      "relation": "inherits",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page_logdetailrow",
+      "target": "statelesswidget",
+      "relation": "inherits",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page_metricchip",
       "target": "statelesswidget",
       "relation": "inherits",
       "_origin": "ast",
@@ -33894,6 +34488,17 @@
     },
     {
       "source": "backend_app_services_report_service_reportservice",
+      "target": "backend_app_schemas_order_orderread",
+      "relation": "uses",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "backend/app/services/report_service.py",
+      "source_location": "L125",
+      "weight": 0.8
+    },
+    {
+      "source": "backend_app_services_report_service_reportservice",
       "target": "backend_app_models_order_order",
       "relation": "uses",
       "_origin": "ast",
@@ -34371,5 +34976,5 @@
       "source_file": "DEPLOYMENT_GUIDE.md"
     }
   ],
-  "built_at_commit": "130afa77fe72071d90a5bfdb57a9abf7524daf0c"
+  "built_at_commit": "afadede54088a8662db47126fdf72e836aeb88aa"
 }

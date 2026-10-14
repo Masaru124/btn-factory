@@ -12,9 +12,22 @@ class FieldDefinition {
   final String label;
   final String jsonKey;
   final String type; // 'string', 'double', 'int', 'datetime'
+  final bool hasUnitOption;
+  final List<String> units;
+  final String defaultUnit;
+  final bool isOptional;
 
-  const FieldDefinition(this.label, this.jsonKey, this.type);
+  const FieldDefinition(
+    this.label,
+    this.jsonKey,
+    this.type, {
+    this.hasUnitOption = false,
+    this.units = const ['kg', 'g'],
+    this.defaultUnit = 'kg',
+    this.isOptional = false,
+  });
 }
+
 
 class RawMaterialInputRow {
   final nameController = TextEditingController();
@@ -55,6 +68,8 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
   String? _submitError;
 
   final Map<String, TextEditingController> _fieldControllers = {};
+  final Map<String, String> _selectedUnits = {};
+
   final List<RawMaterialInputRow> _rawMaterialRows = [];
   List<Map<String, dynamic>> _universalMaterials = [];
   bool _isLoadingUniversal = false;
@@ -142,18 +157,20 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
       case 'Packing':
         return const [
           FieldDefinition('Receiving Date (from Polishing)', 'receiving_date', 'datetime'),
-          FieldDefinition('Inward Weight (kg)', 'inward_weight', 'double'),
-          FieldDefinition('Outward Weight (kg)', 'outward_weight', 'double'),
-          FieldDefinition('One Gross Weight (kg)', 'one_gross_weight', 'double'),
+          FieldDefinition('Inward Weight', 'inward_weight', 'double', hasUnitOption: true, units: ['kg', 'g'], defaultUnit: 'kg'),
+          FieldDefinition('Outward Weight', 'outward_weight', 'double', hasUnitOption: true, units: ['kg', 'g'], defaultUnit: 'kg'),
+          FieldDefinition('Packing Gross Weight (One Gross)', 'one_gross_weight', 'double', hasUnitOption: true, units: ['g', 'kg'], defaultUnit: 'g'),
           FieldDefinition('In Gross', 'in_gross', 'int'),
           FieldDefinition('Finishing : Polish / Semi Finish / F/R', 'finishing', 'string'),
           FieldDefinition('Packed in Gross', 'packed_qty', 'int'),
-          FieldDefinition('Excess Qty.', 'excess_qty', 'int'),
-          FieldDefinition('Short Qty.', 'short_qty', 'int'),
-          FieldDefinition('Rejection Qty.', 'rejected_qty', 'int'),
-          FieldDefinition('Reason for Rejection', 'remarks', 'string'),
+          FieldDefinition('Excess Qty. (Optional)', 'excess_qty', 'int', isOptional: true),
+          FieldDefinition('Short Qty. (Optional)', 'short_qty', 'int', isOptional: true),
+          FieldDefinition('Rejection Weight (in Grams / kg)', 'rejection_weight', 'double', hasUnitOption: true, units: ['g', 'kg'], defaultUnit: 'g', isOptional: true),
+          FieldDefinition('Rejection Qty.', 'rejected_qty', 'int', isOptional: true),
+          FieldDefinition('Reason for Rejection', 'remarks', 'string', isOptional: true),
           FieldDefinition('Operator', 'operator', 'string'),
         ];
+
       default:
         return const [];
     }
@@ -295,7 +312,25 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
             _fieldControllers['laser']?.text = laserVal;
           }
         }
+        if (widget.title == 'Packing' && _order != null) {
+          final pack = _order!['packing_process'] as Map<String, dynamic>?;
+          if (pack != null) {
+            if (pack['inward_weight_unit'] != null) {
+              _selectedUnits['inward_weight'] = pack['inward_weight_unit'].toString();
+            }
+            if (pack['outward_weight_unit'] != null) {
+              _selectedUnits['outward_weight'] = pack['outward_weight_unit'].toString();
+            }
+            if (pack['one_gross_weight_unit'] != null) {
+              _selectedUnits['one_gross_weight'] = pack['one_gross_weight_unit'].toString();
+            }
+            if (pack['rejection_unit'] != null) {
+              _selectedUnits['rejection_weight'] = pack['rejection_unit'].toString();
+            }
+          }
+        }
       });
+
     } catch (e) {
       setState(() {
         _isFetching = false;
@@ -379,7 +414,16 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
         } else {
           payload[field.jsonKey] = text;
         }
+        if (field.hasUnitOption) {
+          final unitVal = _selectedUnits[field.jsonKey] ?? field.defaultUnit;
+          if (field.jsonKey == 'rejection_weight') {
+            payload['rejection_unit'] = unitVal;
+          } else {
+            payload['${field.jsonKey}_unit'] = unitVal;
+          }
+        }
       }
+
     }
 
     try {
@@ -1508,7 +1552,7 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                                         );
                                       }
 
-                                      return TextFormField(
+                                      final textFormField = TextFormField(
                                         controller: controller,
                                         decoration: InputDecoration(
                                           labelText: field.label,
@@ -1518,9 +1562,21 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                                             ? const TextInputType.numberWithOptions(decimal: true)
                                             : TextInputType.text,
                                         validator: (value) {
-                                          if (field.jsonKey == 'remarks' || field.jsonKey == 'rejection_weight' || field.jsonKey == 'sheet' || field.jsonKey == 'line') {
-                                            if (value != null && value.trim().isNotEmpty && field.type == 'double' && double.tryParse(value) == null) {
-                                              return 'Enter a valid decimal number';
+                                          if (field.isOptional ||
+                                              field.jsonKey == 'remarks' ||
+                                              field.jsonKey == 'rejection_weight' ||
+                                              field.jsonKey == 'rejected_qty' ||
+                                              field.jsonKey == 'excess_qty' ||
+                                              field.jsonKey == 'short_qty' ||
+                                              field.jsonKey == 'sheet' ||
+                                              field.jsonKey == 'line') {
+                                            if (value != null && value.trim().isNotEmpty) {
+                                              if (field.type == 'double' && double.tryParse(value) == null) {
+                                                return 'Enter a valid decimal number';
+                                              }
+                                              if (field.type == 'int' && int.tryParse(value) == null) {
+                                                return 'Enter a valid integer';
+                                              }
                                             }
                                             return null;
                                           }
@@ -1536,6 +1592,49 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                                           return null;
                                         },
                                       );
+
+                                      if (field.hasUnitOption) {
+                                        final currentUnit = _selectedUnits[field.jsonKey] ?? field.defaultUnit;
+                                        return Row(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(child: textFormField),
+                                            const SizedBox(width: 8),
+                                            Container(
+                                              height: 56,
+                                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(4),
+                                                border: Border.all(color: Colors.white24),
+                                                color: const Color(0xFF1E293B),
+                                              ),
+                                              child: DropdownButtonHideUnderline(
+                                                child: DropdownButton<String>(
+                                                  value: field.units.contains(currentUnit) ? currentUnit : field.defaultUnit,
+                                                  dropdownColor: const Color(0xFF1E293B),
+                                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                                  items: field.units
+                                                      .map((u) => DropdownMenuItem(
+                                                            value: u,
+                                                            child: Text(u, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                                          ))
+                                                      .toList(),
+                                                  onChanged: (val) {
+                                                    if (val != null) {
+                                                      setState(() {
+                                                        _selectedUnits[field.jsonKey] = val;
+                                                      });
+                                                    }
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }
+
+                                      return textFormField;
+
                                     },
                                   );
                                 },
