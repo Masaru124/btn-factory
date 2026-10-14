@@ -12,20 +12,8 @@ router = APIRouter()
 
 
 def scrub_order_by_role(order_read: OrderRead, role: str) -> OrderRead:
-    if role == 'super_admin':
-        return order_read
-
-    if role not in ('raw_material', 'casting'):
-        order_read.raw_materials = []
-    if role != 'casting':
-        order_read.casting_process = None
-    if role != 'turning':
-        order_read.turning_process = None
-    if role != 'polish':
-        order_read.polishing_process = None
-    if role != 'packing':
-        order_read.packing_process = None
-
+    # All authenticated factory departments need full visibility into
+    # process logs for Job Cards, verification, and complete PDF generation.
     return order_read
 
 

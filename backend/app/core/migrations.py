@@ -2,6 +2,8 @@ import logging
 from sqlalchemy import Engine, inspect, text
 
 from app.core.database import Base
+import app.models.order  # noqa: F401
+import app.models.user  # noqa: F401
 
 logger = logging.getLogger(__name__)
 

@@ -103,9 +103,9 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
         (casting != null && (casting['gross_quantity'] != null || casting['rejection_weight'] != null || casting['operator'] != null)
             ? casting
             : null);
-    final turning = order['turning_process'] as Map<String, dynamic>?;
-    final polish = order['polishing_process'] as Map<String, dynamic>?;
-    final packing = order['packing_process'] as Map<String, dynamic>?;
+    final turning = (order['turning_process'] ?? order['turning']) as Map<String, dynamic>?;
+    final polish = (order['polishing_process'] ?? order['polish_process'] ?? order['polish']) as Map<String, dynamic>?;
+    final packing = (order['packing_process'] ?? order['packing']) as Map<String, dynamic>?;
 
     final authState = ref.watch(authControllerProvider).value;
     final userRole = authState?.userRole ?? '';
@@ -241,211 +241,200 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
             ),
           ),
           // Department Statuses & Submissions
-          if (isAdmin || userRole == 'raw_material') ...[
-            const SizedBox(height: 18),
-            SectionCard(
-              title: 'Raw Materials Logs',
-              trailing: TextButton.icon(
-                onPressed: () => PdfExportService.exportRawMaterialsAndImagePdf(order),
-                icon: const Icon(Icons.picture_as_pdf_outlined, size: 16),
-                label: const Text('Export RM & Image PDF'),
-                style: TextButton.styleFrom(foregroundColor: const Color(0xFF14B8A6)),
-              ),
-              child: rawMaterials.isEmpty
-                  ? const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Text('No raw materials recorded.', style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B))),
-                    )
-                  : ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: rawMaterials.length,
-                      separatorBuilder: (context, index) => const Divider(color: Color(0xFF1F2937), height: 24),
-                      itemBuilder: (context, idx) {
-                        final m = rawMaterials[idx] as Map<String, dynamic>;
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF0D9488).withValues(alpha: 0.15),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(Icons.layers_outlined, color: Color(0xFF0D9488)),
+          const SizedBox(height: 18),
+          SectionCard(
+            title: 'Raw Materials Logs',
+            trailing: TextButton.icon(
+              onPressed: () => PdfExportService.exportRawMaterialsAndImagePdf(order),
+              icon: const Icon(Icons.picture_as_pdf_outlined, size: 16),
+              label: const Text('Export RM & Image PDF'),
+              style: TextButton.styleFrom(foregroundColor: const Color(0xFF14B8A6)),
+            ),
+            child: rawMaterials.isEmpty
+                ? const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('No raw materials recorded.', style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B))),
+                  )
+                : ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: rawMaterials.length,
+                    separatorBuilder: (context, index) => const Divider(color: Color(0xFF1F2937), height: 24),
+                    itemBuilder: (context, idx) {
+                      final m = rawMaterials[idx] as Map<String, dynamic>;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF0D9488).withValues(alpha: 0.15),
+                                shape: BoxShape.circle,
                               ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      m['material_name'] as String? ?? 'N/A',
-                                      style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFF8FAFC)),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      'Recorded on ${_formatDate(m['created_at'] as String?)}',
-                                      style: const TextStyle(color: Color(0xFF64748B), fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                mainAxisSize: MainAxisSize.min,
+                              child: const Icon(Icons.layers_outlined, color: Color(0xFF0D9488)),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Order: ${m['quantity'] ?? 'N/A'} ${m['unit'] ?? ''}',
-                                    style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFF8FAFC), fontSize: 14),
+                                    m['material_name'] as String? ?? 'N/A',
+                                    style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFF8FAFC)),
                                   ),
-                                  if (m['total_available_quantity'] != null)
-                                    Text(
-                                      'Avail: ${m['total_available_quantity']} ${m['unit'] ?? ''}',
-                                      style: const TextStyle(color: Color(0xFF10B981), fontSize: 12, fontWeight: FontWeight.w600),
-                                    ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    '₹${m['price'] ?? 'N/A'}',
+                                    'Recorded on ${_formatDate(m['created_at'] as String?)}',
                                     style: const TextStyle(color: Color(0xFF64748B), fontSize: 12),
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-            ),
-          ],
-          if (isAdmin || userRole == 'casting') ...[
-            const SizedBox(height: 18),
-            SectionCard(
-              title: 'Casting Process Logs',
-              child: casting == null
-                  ? const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Text('Casting details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B))),
-                    )
-                  : Builder(
-                      builder: (context) {
-                        final isRod = (casting['casting_type'] as String?)?.toLowerCase() == 'rod';
-                        return Wrap(
-                          spacing: 12,
-                          runSpacing: 12,
-                          children: <Widget>[
-                            _DetailChip(label: 'Casting Type', value: casting['casting_type'] as String? ?? 'N/A'),
-                            _DetailChip(label: 'Date of Casting', value: _formatDateTime(casting['date_of_casting'] as String?)),
-                            if (isRod) ...[
-                              if (casting['sheet'] != null)
-                                _DetailChip(label: 'Sheet', value: casting['sheet'] as String),
-                              if (casting['line'] != null)
-                                _DetailChip(label: 'Line', value: casting['line'] as String),
-                              if (casting['total_resin'] != null)
-                                _DetailChip(label: 'Total (Resin)', value: '${casting['total_resin']} kg'),
-                              _DetailChip(label: 'Blank Thickness', value: (casting['blank_thickness'] ?? casting['thickness']) as String? ?? 'N/A'),
-                              _DetailChip(label: 'No. of ROD', value: '${casting['no_of_rods'] ?? 'N/A'}'),
-                              if (casting['gross_quantity'] != null)
-                                _DetailChip(label: 'Gross (Approx)', value: '${casting['gross_quantity']}'),
-                              if (casting['operator'] != null)
-                                _DetailChip(label: 'Operator', value: casting['operator'] as String),
-                            ] else ...[
-                              _DetailChip(label: 'Total Raw Material', value: '${casting['total_weight'] ?? casting['weight'] ?? 'N/A'} kg'),
-                              _DetailChip(label: 'Number of Sheets', value: '${casting['no_of_sheets'] ?? 'N/A'}'),
-                              _DetailChip(label: 'Blank Thickness', value: (casting['blank_thickness'] ?? casting['thickness']) as String? ?? 'N/A'),
-                            ],
-                            _DetailChip(label: 'Remarks', value: casting['remarks'] as String? ?? 'None'),
+                            ),
+                            const SizedBox(width: 12),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Order: ${m['quantity'] ?? 'N/A'} ${m['unit'] ?? ''}',
+                                  style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFF8FAFC), fontSize: 14),
+                                ),
+                                if (m['total_available_quantity'] != null)
+                                  Text(
+                                    'Avail: ${m['total_available_quantity']} ${m['unit'] ?? ''}',
+                                    style: const TextStyle(color: Color(0xFF10B981), fontSize: 12, fontWeight: FontWeight.w600),
+                                  ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  '₹${m['price'] ?? 'N/A'}',
+                                  style: const TextStyle(color: Color(0xFF64748B), fontSize: 12),
+                                ),
+                              ],
+                            ),
                           ],
-                        );
-                      },
-                    ),
-            ),
-          ],
-          if (isAdmin || userRole == 'blanking') ...[
-            const SizedBox(height: 18),
-            SectionCard(
-              title: 'Blanking Process Logs',
-              child: blanking == null
-                  ? const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Text('Blanking details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B))),
-                    )
-                  : Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children: <Widget>[
-                        _DetailChip(label: 'Weight in kgs', value: '${blanking['weight'] ?? 'N/A'} kg'),
-                        _DetailChip(label: 'In Gross', value: '${blanking['gross_quantity'] ?? 'N/A'}'),
-                        _DetailChip(label: 'Rejection in kgs', value: '${blanking['rejection_weight'] ?? 'N/A'} kg'),
-                        _DetailChip(label: 'Operator', value: blanking['operator'] as String? ?? 'N/A'),
-                        if (blanking['blank_thickness'] != null)
-                          _DetailChip(label: 'Blank Thickness', value: blanking['blank_thickness'] as String? ?? 'N/A'),
-                        _DetailChip(label: 'Remarks', value: blanking['remarks'] as String? ?? 'None'),
-                      ],
-                    ),
-            ),
-          ],
-          if (isAdmin || userRole == 'turning') ...[
-            const SizedBox(height: 18),
-            SectionCard(
-              title: 'Turning Process Logs',
-              child: turning == null
-                  ? const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Text('Turning details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B))),
-                    )
-                  : Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children: <Widget>[
-                        _DetailChip(label: 'Receiving Date', value: _formatDateTime(turning['receiving_date'] as String?)),
-                        _DetailChip(label: 'Date of Turning', value: _formatDateTime(turning['date_of_turning'] as String?)),
-                        _DetailChip(label: 'Tool Number', value: (turning['tool_no'] ?? turning['art_no']) as String? ?? 'N/A'),
-                        _DetailChip(label: 'Machine No', value: turning['machine_no'] as String? ?? 'N/A'),
-                        _DetailChip(label: 'Hole Size', value: turning['hole_size'] as String? ?? 'N/A'),
-                        _DetailChip(label: 'Inwards Weight', value: '${turning['inward_weight'] ?? turning['weight'] ?? 'N/A'} kg'),
-                        _DetailChip(label: 'Outward Weight', value: '${turning['outward_weight'] ?? turning['turned_in_kgs'] ?? 'N/A'} kg'),
-                        _DetailChip(label: 'Gross Quantity', value: '${turning['gross_quantity'] ?? 'N/A'}'),
-                        _DetailChip(label: 'Blank Thickness', value: (turning['blank_thickness'] ?? turning['semi_finish_thickness']) as String? ?? 'N/A'),
-                        _DetailChip(label: 'Finish Thickness', value: turning['finish_thickness'] as String? ?? 'N/A'),
-                        _DetailChip(label: 'Operator', value: turning['operator'] as String? ?? 'N/A'),
-                        _DetailChip(label: 'Remarks', value: turning['remarks'] as String? ?? 'None'),
-                      ],
-                    ),
-            ),
-          ],
-          if (isAdmin || userRole == 'polish') ...[
-            const SizedBox(height: 18),
-            SectionCard(
-              title: 'Polishing Process Logs',
-              child: polish == null
-                  ? const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Text('Polishing details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B))),
-                    )
-                  : Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children: <Widget>[
-                        _DetailChip(label: 'Receiving Date', value: _formatDateTime(polish['receiving_date'] as String?)),
-                        _DetailChip(label: 'Inward Weight', value: '${polish['inward_weight'] ?? polish['weight'] ?? 'N/A'} kg'),
-                        _DetailChip(label: 'Outward Weight', value: '${polish['outward_weight'] ?? 'N/A'} kg'),
-                        _DetailChip(label: 'In Gross', value: '${polish['gross_quantity'] ?? 'N/A'}'),
-                        _DetailChip(label: 'Polish Type', value: polish['polish_type'] as String? ?? 'N/A'),
-                        _DetailChip(label: 'In Time', value: _formatDateTime(polish['feeding_time'] as String?)),
-                        _DetailChip(label: 'Out Time', value: _formatDateTime(polish['out_time'] as String?)),
-                        _DetailChip(label: 'Operator', value: polish['operator'] as String? ?? 'N/A'),
-                        _DetailChip(label: 'Remarks', value: polish['remarks'] as String? ?? 'None'),
-                      ],
-                    ),
-            ),
-          ],
-          if (isAdmin || userRole == 'packing') ...[
-            const SizedBox(height: 18),
-            SectionCard(
-              title: 'Packing Process Logs',
+                        ),
+                      );
+                    },
+                  ),
+          ),
+          const SizedBox(height: 18),
+          SectionCard(
+            title: 'Casting Process Logs',
+            child: casting == null
+                ? const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Casting details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B))),
+                  )
+                : Builder(
+                    builder: (context) {
+                      final isRod = (casting['casting_type'] as String?)?.toLowerCase() == 'rod';
+                      return Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children: <Widget>[
+                          _DetailChip(label: 'Casting Type', value: casting['casting_type'] as String? ?? 'N/A'),
+                          _DetailChip(label: 'Date of Casting', value: _formatDateTime(casting['date_of_casting'] as String?)),
+                          if (isRod) ...[
+                            if (casting['sheet'] != null)
+                              _DetailChip(label: 'Sheet', value: casting['sheet'] as String),
+                            if (casting['line'] != null)
+                              _DetailChip(label: 'Line', value: casting['line'] as String),
+                            if (casting['total_resin'] != null)
+                              _DetailChip(label: 'Total (Resin)', value: '${casting['total_resin']} kg'),
+                            _DetailChip(label: 'Blank Thickness', value: (casting['blank_thickness'] ?? casting['thickness']) as String? ?? 'N/A'),
+                            _DetailChip(label: 'No. of ROD', value: '${casting['no_of_rods'] ?? 'N/A'}'),
+                            if (casting['gross_quantity'] != null)
+                              _DetailChip(label: 'Gross (Approx)', value: '${casting['gross_quantity']}'),
+                            if (casting['operator'] != null)
+                              _DetailChip(label: 'Operator', value: casting['operator'] as String),
+                          ] else ...[
+                            _DetailChip(label: 'Total Raw Material', value: '${casting['total_weight'] ?? casting['weight'] ?? 'N/A'} kg'),
+                            _DetailChip(label: 'Number of Sheets', value: '${casting['no_of_sheets'] ?? 'N/A'}'),
+                            _DetailChip(label: 'Blank Thickness', value: (casting['blank_thickness'] ?? casting['thickness']) as String? ?? 'N/A'),
+                          ],
+                          _DetailChip(label: 'Remarks', value: casting['remarks'] as String? ?? 'None'),
+                        ],
+                      );
+                    },
+                  ),
+          ),
+          const SizedBox(height: 18),
+          SectionCard(
+            title: 'Blanking Process Logs',
+            child: blanking == null
+                ? const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Blanking details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B))),
+                  )
+                : Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: <Widget>[
+                      _DetailChip(label: 'Weight in kgs', value: '${blanking['weight'] ?? 'N/A'} kg'),
+                      _DetailChip(label: 'In Gross', value: '${blanking['gross_quantity'] ?? 'N/A'}'),
+                      _DetailChip(label: 'Rejection in kgs', value: '${blanking['rejection_weight'] ?? 'N/A'} kg'),
+                      _DetailChip(label: 'Operator', value: blanking['operator'] as String? ?? 'N/A'),
+                      if (blanking['blank_thickness'] != null)
+                        _DetailChip(label: 'Blank Thickness', value: blanking['blank_thickness'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Remarks', value: blanking['remarks'] as String? ?? 'None'),
+                    ],
+                  ),
+          ),
+          const SizedBox(height: 18),
+          SectionCard(
+            title: 'Turning Process Logs',
+            child: turning == null
+                ? const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Turning details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B))),
+                  )
+                : Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: <Widget>[
+                      _DetailChip(label: 'Receiving Date', value: _formatDateTime(turning['receiving_date'] as String?)),
+                      _DetailChip(label: 'Date of Turning', value: _formatDateTime(turning['date_of_turning'] as String?)),
+                      _DetailChip(label: 'Tool Number', value: (turning['tool_no'] ?? turning['art_no']) as String? ?? 'N/A'),
+                      _DetailChip(label: 'Machine No', value: turning['machine_no'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Hole Size', value: turning['hole_size'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Inwards Weight', value: '${turning['inward_weight'] ?? turning['weight'] ?? 'N/A'} kg'),
+                      _DetailChip(label: 'Outward Weight', value: '${turning['outward_weight'] ?? turning['turned_in_kgs'] ?? 'N/A'} kg'),
+                      _DetailChip(label: 'Gross Quantity', value: '${turning['gross_quantity'] ?? 'N/A'}'),
+                      _DetailChip(label: 'Blank Thickness', value: (turning['blank_thickness'] ?? turning['semi_finish_thickness']) as String? ?? 'N/A'),
+                      _DetailChip(label: 'Finish Thickness', value: turning['finish_thickness'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Operator', value: turning['operator'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Remarks', value: turning['remarks'] as String? ?? 'None'),
+                    ],
+                  ),
+          ),
+          const SizedBox(height: 18),
+          SectionCard(
+            title: 'Polishing Process Logs',
+            child: polish == null
+                ? const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Polishing details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B))),
+                  )
+                : Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: <Widget>[
+                      _DetailChip(label: 'Receiving Date', value: _formatDateTime(polish['receiving_date'] as String?)),
+                      _DetailChip(label: 'Inward Weight', value: '${polish['inward_weight'] ?? polish['weight'] ?? 'N/A'} kg'),
+                      _DetailChip(label: 'Outward Weight', value: '${polish['outward_weight'] ?? 'N/A'} kg'),
+                      _DetailChip(label: 'In Gross', value: '${polish['gross_quantity'] ?? 'N/A'}'),
+                      _DetailChip(label: 'Polish Type', value: polish['polish_type'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'In Time', value: _formatDateTime(polish['feeding_time'] as String?)),
+                      _DetailChip(label: 'Out Time', value: _formatDateTime(polish['out_time'] as String?)),
+                      _DetailChip(label: 'Operator', value: polish['operator'] as String? ?? 'N/A'),
+                      _DetailChip(label: 'Remarks', value: polish['remarks'] as String? ?? 'None'),
+                    ],
+                  ),
+          ),
+          const SizedBox(height: 18),
+          SectionCard(
+            title: 'Packing Process Logs',
               child: packing == null
                   ? const Padding(
                       padding: EdgeInsets.symmetric(vertical: 12),
@@ -470,11 +459,9 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                         _DetailChip(label: 'Operator', value: packing['operator'] as String? ?? 'N/A'),
                         _DetailChip(label: 'Remarks (Rejection Reason)', value: packing['remarks'] as String? ?? 'None'),
                       ],
-
                     ),
             ),
           ],
-        ],
       ),
     );
   }

@@ -693,9 +693,10 @@ class _IndividualOrderCard extends StatelessWidget {
     final unit = order['unit'] as String? ?? 'Gross';
     final rate = order['rate'];
     final casting = order['casting_process'] as Map<String, dynamic>?;
-    final turning = order['turning_process'] as Map<String, dynamic>?;
-    final polish = order['polishing_process'] as Map<String, dynamic>?;
-    final packing = order['packing_process'] as Map<String, dynamic>?;
+    final blanking = order['blanking_process'] as Map<String, dynamic>?;
+    final turning = (order['turning_process'] ?? order['turning']) as Map<String, dynamic>?;
+    final polish = (order['polishing_process'] ?? order['polish_process'] ?? order['polish']) as Map<String, dynamic>?;
+    final packing = (order['packing_process'] ?? order['packing']) as Map<String, dynamic>?;
     final rawMaterials = order['raw_materials'] as List<dynamic>? ?? [];
 
     final statusColor = _getStatusColor(status);
@@ -793,22 +794,58 @@ class _IndividualOrderCard extends StatelessWidget {
                       _MetricChip(label: 'Rate', value: '₹$rate', color: const Color(0xFF8B5CF6)),
                     _MetricChip(
                       label: 'Casting',
-                      value: casting != null ? '${casting['gross_quantity'] ?? 0} gross' : 'Pending',
+                      value: casting != null
+                          ? (casting['gross_quantity'] != null && (casting['gross_quantity'] as num) > 0
+                              ? '${casting['gross_quantity']} gross'
+                              : (blanking != null && blanking['gross_quantity'] != null
+                                  ? '${blanking['gross_quantity']} gross'
+                                  : (casting['no_of_sheets'] != null
+                                      ? '${casting['no_of_sheets']} sheets'
+                                      : (casting['total_weight'] != null
+                                          ? '${casting['total_weight']} kg'
+                                          : (qty > 0 ? '$qty gross' : 'Done')))))
+                          : 'Pending',
                       color: casting != null ? const Color(0xFF8B5CF6) : const Color(0xFF64748B),
                     ),
+                    if (blanking != null)
+                      _MetricChip(
+                        label: 'Blanking',
+                        value: blanking['gross_quantity'] != null
+                            ? '${blanking['gross_quantity']} gross'
+                            : (blanking['weight'] != null ? '${blanking['weight']} kg' : 'Done'),
+                        color: const Color(0xFF6366F1),
+                      ),
                     _MetricChip(
                       label: 'Turning',
-                      value: turning != null ? '${turning['gross_quantity'] ?? 0} gross' : 'Pending',
+                      value: turning != null
+                          ? (turning['gross_quantity'] != null && (turning['gross_quantity'] as num) > 0
+                              ? '${turning['gross_quantity']} gross'
+                              : (turning['outward_weight'] != null
+                                  ? '${turning['outward_weight']} kg'
+                                  : (qty > 0 ? '$qty gross' : 'Done')))
+                          : 'Pending',
                       color: turning != null ? const Color(0xFFF59E0B) : const Color(0xFF64748B),
                     ),
                     _MetricChip(
                       label: 'Polishing',
-                      value: polish != null ? '${polish['gross_quantity'] ?? 0} gross' : 'Pending',
+                      value: polish != null
+                          ? (polish['gross_quantity'] != null && (polish['gross_quantity'] as num) > 0
+                              ? '${polish['gross_quantity']} gross'
+                              : (polish['outward_weight'] != null
+                                  ? '${polish['outward_weight']} kg'
+                                  : (qty > 0 ? '$qty gross' : 'Done')))
+                          : 'Pending',
                       color: polish != null ? const Color(0xFF3B82F6) : const Color(0xFF64748B),
                     ),
                     _MetricChip(
                       label: 'Packed',
-                      value: packing != null ? '${packing['packed_qty'] ?? 0} packed' : 'Pending',
+                      value: packing != null
+                          ? (packing['packed_qty'] != null && (packing['packed_qty'] as num) > 0
+                              ? '${packing['packed_qty']} packed'
+                              : (packing['in_gross'] != null && (packing['in_gross'] as num) > 0
+                                  ? '${packing['in_gross']} gross'
+                                  : (qty > 0 ? '$qty packed' : 'Done')))
+                          : 'Pending',
                       color: packing != null ? const Color(0xFF10B981) : const Color(0xFF64748B),
                     ),
                     if (packing != null) ...[
@@ -886,6 +923,11 @@ class _IndividualOrderCard extends StatelessWidget {
                     _LogDetailRow(
                       department: 'Casting',
                       details: 'Type: ${casting['casting_type'] ?? 'Sheet'} • RM Total: ${casting['total_weight'] ?? 'N/A'} kg • Sheets: ${casting['no_of_sheets'] ?? casting['no_of_rods'] ?? 'N/A'} • Thickness: ${casting['blank_thickness'] ?? 'N/A'} • Op: ${casting['operator'] ?? 'N/A'}',
+                    ),
+                  if (blanking != null)
+                    _LogDetailRow(
+                      department: 'Blanking',
+                      details: 'Gross: ${blanking['gross_quantity'] ?? 'N/A'} • Wt: ${blanking['weight'] ?? 'N/A'} kg • Rej: ${blanking['rejection_weight'] ?? 'N/A'} kg • Op: ${blanking['operator'] ?? 'N/A'}',
                     ),
                   if (turning != null)
                     _LogDetailRow(

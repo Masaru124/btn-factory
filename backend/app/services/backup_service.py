@@ -17,9 +17,10 @@ import shutil
 import sqlite3
 import threading
 import time
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
+from decimal import Decimal
 import logging
-from sqlalchemy import create_engine, inspect, text
+from sqlalchemy import BigInteger, Date, DateTime, Float, Integer, Numeric, String, Text, create_engine, inspect, text
 from sqlalchemy.orm import sessionmaker
 
 from app.core.config import get_settings
@@ -37,6 +38,57 @@ class BackupService:
         self.backend_dir = backend_dir
         self.backups_dir = os.path.join(self.backend_dir, 'backups')
         os.makedirs(self.backups_dir, exist_ok=True)
+
+    @staticmethod
+    def _sanitize_val_for_postgres(col, val):
+        if val is None:
+            return None
+        try:
+            py_type = col.type.python_type
+        except Exception:
+            py_type = None
+
+        if py_type is bool or col.name.startswith('is_'):
+            return bool(val)
+
+        if py_type in (float, Decimal) or isinstance(col.type, (Float, Numeric)):
+            try:
+                return float(val)
+            except (ValueError, TypeError):
+                return 0.0
+
+        if py_type is int or isinstance(col.type, (Integer, BigInteger)):
+            try:
+                return int(val)
+            except (ValueError, TypeError):
+                return 0
+
+        if py_type is datetime or isinstance(col.type, DateTime):
+            if isinstance(val, datetime):
+                return val
+            if isinstance(val, (int, float)):
+                return datetime.now(timezone.utc)
+            if isinstance(val, str):
+                try:
+                    return datetime.fromisoformat(val.replace('Z', '+00:00'))
+                except Exception:
+                    return datetime.now(timezone.utc)
+            return datetime.now(timezone.utc)
+
+        if py_type is date or isinstance(col.type, Date):
+            if isinstance(val, date):
+                return val
+            if isinstance(val, str):
+                try:
+                    return date.fromisoformat(val.split('T')[0].split(' ')[0])
+                except Exception:
+                    return date.today()
+            return date.today()
+
+        if py_type is str or isinstance(col.type, (String, Text)):
+            return str(val)
+
+        return val
 
     def create_local_snapshot(self) -> dict:
         """Create a safe timestamped copy of the local SQLite database."""
@@ -82,10 +134,12 @@ class BackupService:
     def _prune_old_snapshots(self, keep: int = 20) -> None:
         """Keep only the latest N snapshot files."""
         try:
+            # Exclude golden baseline or pre-repair files from pruning
             files = [
                 os.path.join(self.backups_dir, f)
                 for f in os.listdir(self.backups_dir)
                 if f.startswith('btn_factory_') and f.endswith('.db')
+                and '161121' not in f and 'pre_repair' not in f and 'master' not in f
             ]
             files.sort(key=os.path.getctime, reverse=True)
             for old_file in files[keep:]:
@@ -151,8 +205,13 @@ class BackupService:
                             synced_counts[table] = 0
                             continue
 
-                        # Inspect columns
-                        cols = rows[0].keys()
+                        table_obj = Base.metadata.tables.get(table)
+                        if table_obj is None:
+                            continue
+
+                        # Inspect columns matching model schema
+                        target_col_names = [c.name for c in table_obj.columns]
+                        cols = [c for c in rows[0].keys() if c in target_col_names]
                         col_names = ', '.join([f'"{c}"' for c in cols])
                         placeholders = ', '.join([f':{c}' for c in cols])
 
@@ -168,29 +227,26 @@ class BackupService:
                         else:
                             sql = f'INSERT INTO "{table}" ({col_names}) VALUES ({placeholders}) ON CONFLICT DO NOTHING'
 
-                        # Sanitize data types (e.g. SQLite integer booleans to python bool)
-                        table_obj = Base.metadata.tables.get(table)
+                        # Sanitize data types strictly for PostgreSQL types
                         data = []
                         for r in rows:
                             row_dict = dict(r)
-                            for k, v in row_dict.items():
-                                if v is None:
-                                    continue
-                                is_bool = False
-                                if table_obj is not None and k in table_obj.columns:
-                                    try:
-                                        is_bool = table_obj.columns[k].type.python_type is bool
-                                    except Exception:
-                                        is_bool = k.startswith('is_')
-                                else:
-                                    is_bool = k.startswith('is_')
-                                if is_bool:
-                                    row_dict[k] = bool(v)
-                            data.append(row_dict)
+                            clean_row = {}
+                            for c in cols:
+                                col_obj = table_obj.columns[c]
+                                clean_row[c] = self._sanitize_val_for_postgres(col_obj, row_dict.get(c))
+                            data.append(clean_row)
 
                         # Execute batch upsert in dedicated transaction
                         with remote_conn.begin():
                             remote_conn.execute(text(sql), data)
+                            if pk == 'id':
+                                try:
+                                    remote_conn.execute(text(
+                                        f'SELECT setval(pg_get_serial_sequence(\'"{table}"\', \'id\'), COALESCE(MAX("id"), 1)) FROM "{table}";'
+                                    ))
+                                except Exception:
+                                    pass
                         synced_counts[table] = len(data)
                     except Exception as tbl_err:
                         logger.warning('Could not sync table %s to %s: %s', table, target_name, tbl_err)

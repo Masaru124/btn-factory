@@ -20,148 +20,166 @@ class PdfExportService {
     final formattedDate = DateFormat('dd MMM yyyy, hh:mm a').format(DateTime.now());
 
     pdf.addPage(
-      pw.Page(
+      pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
-        margin: const pw.EdgeInsets.all(32),
-        build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              // Title Header
-              pw.Container(
-                padding: const pw.EdgeInsets.all(16),
-                decoration: pw.BoxDecoration(
-                  color: PdfColors.teal800,
-                  borderRadius: pw.BorderRadius.circular(8),
-                ),
-                child: pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+        margin: const pw.EdgeInsets.all(28),
+        header: (pw.Context context) {
+          if (context.pageNumber > 1) {
+            return pw.Container(
+              alignment: pw.Alignment.centerRight,
+              margin: const pw.EdgeInsets.only(bottom: 8),
+              child: pw.Text(
+                'Production Report - Page ${context.pageNumber} of ${context.pagesCount}',
+                style: const pw.TextStyle(color: PdfColors.grey600, fontSize: 9),
+              ),
+            );
+          }
+          return pw.SizedBox();
+        },
+        footer: (pw.Context context) {
+          return pw.Container(
+            alignment: pw.Alignment.centerRight,
+            margin: const pw.EdgeInsets.only(top: 8),
+            child: pw.Text(
+              'Page ${context.pageNumber} of ${context.pagesCount}',
+              style: const pw.TextStyle(color: PdfColors.grey600, fontSize: 9),
+            ),
+          );
+        },
+        build: (pw.Context context) => [
+          // Title Header
+          pw.Container(
+            padding: const pw.EdgeInsets.all(16),
+            decoration: pw.BoxDecoration(
+              color: PdfColors.teal800,
+              borderRadius: pw.BorderRadius.circular(8),
+            ),
+            child: pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
-                    pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text(
-                          'BUTTON FACTORY',
-                          style: pw.TextStyle(
-                            color: PdfColors.white,
-                            fontSize: 20,
-                            fontWeight: pw.FontWeight.bold,
-                          ),
-                        ),
-                        pw.SizedBox(height: 4),
-                        pw.Text(
-                          'Production & Analytics Report',
-                          style: const pw.TextStyle(
-                            color: PdfColors.white,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
                     pw.Text(
-                      'Generated: $formattedDate',
-                      style: const pw.TextStyle(color: PdfColors.white, fontSize: 10),
+                      'BUTTON FACTORY',
+                      style: pw.TextStyle(
+                        color: PdfColors.white,
+                        fontSize: 20,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                    pw.SizedBox(height: 4),
+                    pw.Text(
+                      'Production & Analytics Report',
+                      style: const pw.TextStyle(
+                        color: PdfColors.white,
+                        fontSize: 12,
+                      ),
                     ),
                   ],
                 ),
-              ),
-              pw.SizedBox(height: 20),
+                pw.Text(
+                  'Generated: $formattedDate',
+                  style: const pw.TextStyle(color: PdfColors.white, fontSize: 10),
+                ),
+              ],
+            ),
+          ),
+          pw.SizedBox(height: 16),
 
-              // Production Report Section
-              _buildSectionHeader('Production Summary'),
-              pw.SizedBox(height: 8),
-              pw.TableHelper.fromTextArray(
-                headers: ['Metric', 'Output / Value'],
-                data: [
-                  ['Completed Orders', '${production['completed_orders'] ?? 0}'],
-                  ['Casting Output', '${production['casting_output'] ?? 0} gross qty'],
-                  ['Turning Output', '${production['turning_output'] ?? 0} gross qty'],
-                  ['Packing Output', '${production['packing_output'] ?? 0} packed qty'],
-                ],
-                headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
-                headerDecoration: const pw.BoxDecoration(color: PdfColors.teal700),
-                cellHeight: 24,
-                cellAlignments: {
-                  0: pw.Alignment.centerLeft,
-                  1: pw.Alignment.centerLeft,
-                },
-              ),
-              pw.SizedBox(height: 16),
+          // Production Report Section
+          _buildSectionHeader('Production Summary'),
+          pw.SizedBox(height: 6),
+          pw.TableHelper.fromTextArray(
+            headers: ['Metric', 'Output / Value'],
+            data: [
+              ['Completed Orders', '${production['completed_orders'] ?? 0}'],
+              ['Casting Output', '${production['casting_output'] ?? 0} gross qty'],
+              ['Turning Output', '${production['turning_output'] ?? 0} gross qty'],
+              ['Packing Output', '${production['packing_output'] ?? 0} packed qty'],
+            ],
+            headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+            headerDecoration: const pw.BoxDecoration(color: PdfColors.teal700),
+            cellHeight: 22,
+            cellAlignments: {
+              0: pw.Alignment.centerLeft,
+              1: pw.Alignment.centerLeft,
+            },
+          ),
+          pw.SizedBox(height: 14),
 
-              // Universal Materials Section
-              if (universalMaterials.isNotEmpty) ...[
-                _buildSectionHeader('Universal Raw Material Stock & Balance'),
-                pw.SizedBox(height: 8),
-                pw.TableHelper.fromTextArray(
-                  headers: ['Material Name', 'Remaining', 'Consumed', 'Rate (INR)', 'Valuation (INR)'],
-                  data: universalMaterials
+          // Universal Materials Section
+          if (universalMaterials.isNotEmpty) ...[
+            _buildSectionHeader('Universal Raw Material Stock & Balance'),
+            pw.SizedBox(height: 6),
+            pw.TableHelper.fromTextArray(
+              headers: ['Material Name', 'Remaining', 'Consumed', 'Rate (INR)', 'Valuation (INR)'],
+              data: universalMaterials
+                  .map((item) => [
+                        item['name'] as String? ?? 'N/A',
+                        '${item['remaining_quantity'] ?? 0} ${item['unit'] as String? ?? ''}',
+                        '${item['consumed_quantity'] ?? 0} ${item['unit'] as String? ?? ''}',
+                        'INR ${item['price'] ?? 0}',
+                        'INR ${item['total_value'] ?? 0}',
+                      ])
+                  .toList(),
+              headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+              headerDecoration: const pw.BoxDecoration(color: PdfColors.teal700),
+              cellHeight: 22,
+            ),
+            pw.SizedBox(height: 14),
+          ],
+
+          // Material Consumption Section
+          _buildSectionHeader('Order Material Consumption'),
+          pw.SizedBox(height: 6),
+          materials.isEmpty
+              ? pw.Text('No material consumption recorded.', style: const pw.TextStyle(color: PdfColors.grey700))
+              : pw.TableHelper.fromTextArray(
+                  headers: ['Material Name', 'Quantity Consumed'],
+                  data: materials
                       .map((item) => [
                             item['name'] as String? ?? 'N/A',
-                            '${item['remaining_quantity'] ?? 0} ${item['unit'] as String? ?? ''}',
-                            '${item['consumed_quantity'] ?? 0} ${item['unit'] as String? ?? ''}',
-                            'INR ${item['price'] ?? 0}',
-                            'INR ${item['total_value'] ?? 0}',
+                            '${item['quantity'] ?? 0} ${item['unit'] as String? ?? ''}',
                           ])
                       .toList(),
                   headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
                   headerDecoration: const pw.BoxDecoration(color: PdfColors.teal700),
-                  cellHeight: 24,
+                  cellHeight: 22,
                 ),
-                pw.SizedBox(height: 16),
-              ],
+          pw.SizedBox(height: 14),
 
-              // Material Consumption Section
-              _buildSectionHeader('Order Material Consumption'),
-              pw.SizedBox(height: 8),
-              materials.isEmpty
-                  ? pw.Text('No material consumption recorded.', style: const pw.TextStyle(color: PdfColors.grey700))
-                  : pw.TableHelper.fromTextArray(
-                      headers: ['Material Name', 'Quantity Consumed'],
-                      data: materials
-                          .map((item) => [
-                                item['name'] as String? ?? 'N/A',
-                                '${item['quantity'] ?? 0} ${item['unit'] as String? ?? ''}',
-                              ])
-                          .toList(),
-                      headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
-                      headerDecoration: const pw.BoxDecoration(color: PdfColors.teal700),
-                      cellHeight: 24,
-                    ),
-              pw.SizedBox(height: 16),
-
-              // Rejection Section
-              _buildSectionHeader('Rejection Analysis'),
-              pw.SizedBox(height: 8),
-              pw.TableHelper.fromTextArray(
-                headers: ['Metric', 'Value'],
-                data: [
-                  ['Rejection Rate', '${rejection['rejection_rate'] ?? 0.0}%'],
-                  ['Total Output (Packed + Rejected)', '${(rejection['total_packed'] ?? 0) + (rejection['total_rejected'] ?? 0)}'],
-                  ['Total Rejected Qty', '${rejection['total_rejected'] ?? 0}'],
-                ],
-                headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
-                headerDecoration: const pw.BoxDecoration(color: PdfColors.teal700),
-                cellHeight: 24,
-              ),
-              pw.SizedBox(height: 16),
-
-              // Revenue Section
-              _buildSectionHeader('Revenue Overview'),
-              pw.SizedBox(height: 8),
-              pw.TableHelper.fromTextArray(
-                headers: ['Financial Metric', 'Amount (INR) / Count'],
-                data: [
-                  ['Total Order Value', 'INR ${revenue['total_revenue'] ?? 0.0}'],
-                  ['Completed Orders Count', '${revenue['completed_count'] ?? 0}'],
-                  ['Pending Revenue Value', 'INR ${revenue['pending_revenue'] ?? 0.0}'],
-                ],
-                headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
-                headerDecoration: const pw.BoxDecoration(color: PdfColors.teal700),
-                cellHeight: 24,
-              ),
+          // Rejection Section
+          _buildSectionHeader('Rejection Analysis'),
+          pw.SizedBox(height: 6),
+          pw.TableHelper.fromTextArray(
+            headers: ['Metric', 'Value'],
+            data: [
+              ['Rejection Rate', '${rejection['rejection_rate'] ?? 0.0}%'],
+              ['Total Output (Packed + Rejected)', '${(rejection['total_packed'] ?? 0) + (rejection['total_rejected'] ?? 0)}'],
+              ['Total Rejected Qty', '${rejection['total_rejected'] ?? 0}'],
             ],
-          );
-        },
+            headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+            headerDecoration: const pw.BoxDecoration(color: PdfColors.teal700),
+            cellHeight: 22,
+          ),
+          pw.SizedBox(height: 14),
+
+          // Revenue Section
+          _buildSectionHeader('Revenue Overview'),
+          pw.SizedBox(height: 6),
+          pw.TableHelper.fromTextArray(
+            headers: ['Financial Metric', 'Amount (INR) / Count'],
+            data: [
+              ['Total Order Value', 'INR ${revenue['total_revenue'] ?? 0.0}'],
+              ['Completed Orders Count', '${revenue['completed_count'] ?? 0}'],
+              ['Pending Revenue Value', 'INR ${revenue['pending_revenue'] ?? 0.0}'],
+            ],
+            headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+            headerDecoration: const pw.BoxDecoration(color: PdfColors.teal700),
+            cellHeight: 22,
+          ),
+        ],
       ),
     );
 
@@ -386,9 +404,9 @@ class PdfExportService {
         (casting != null && (casting['gross_quantity'] != null || casting['rejection_weight'] != null || casting['operator'] != null)
             ? casting
             : null);
-    final turning = order['turning_process'] as Map<String, dynamic>?;
-    final polish = order['polishing_process'] as Map<String, dynamic>?;
-    final packing = order['packing_process'] as Map<String, dynamic>?;
+    final turning = (order['turning_process'] ?? order['turning']) as Map<String, dynamic>?;
+    final polish = (order['polishing_process'] ?? order['polish_process'] ?? order['polish']) as Map<String, dynamic>?;
+    final packing = (order['packing_process'] ?? order['packing']) as Map<String, dynamic>?;
 
     Uint8List? buttonImageBytes;
     final buttonImageSrc = order['button_image'] as String?;
@@ -397,232 +415,275 @@ class PdfExportService {
     }
 
     pdf.addPage(
-      pw.Page(
+      pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
-        margin: const pw.EdgeInsets.all(32),
-        build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              // Header Card
-              pw.Container(
-                padding: const pw.EdgeInsets.all(16),
-                decoration: pw.BoxDecoration(
-                  color: PdfColors.teal800,
-                  borderRadius: pw.BorderRadius.circular(6),
-                ),
-                child: pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text(
-                          'PRODUCTION JOB CARD',
-                          style: pw.TextStyle(
-                            color: PdfColors.white,
-                            fontSize: 18,
-                            fontWeight: pw.FontWeight.bold,
-                          ),
-                        ),
-                        pw.SizedBox(height: 4),
-                        pw.Text(
-                          'Company: $companyName',
-                          style: const pw.TextStyle(color: PdfColors.white, fontSize: 12),
-                        ),
-                        pw.SizedBox(height: 2),
-                        pw.Text(
-                          'Order Type: ${order['order_type'] ?? 'Production'}',
-                          style: const pw.TextStyle(color: PdfColors.teal100, fontSize: 11),
-                        ),
-                      ],
-                    ),
-                    pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.end,
-                      children: [
-                        pw.Text(
-                          'TOKEN: $token',
-                          style: pw.TextStyle(color: PdfColors.white, fontSize: 14, fontWeight: pw.FontWeight.bold),
-                        ),
-                        pw.SizedBox(height: 4),
-                        pw.Text(
-                          'Status: $status',
-                          style: const pw.TextStyle(color: PdfColors.yellow300, fontSize: 11),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+        margin: const pw.EdgeInsets.all(28),
+        header: (pw.Context context) {
+          if (context.pageNumber > 1) {
+            return pw.Container(
+              alignment: pw.Alignment.centerRight,
+              margin: const pw.EdgeInsets.only(bottom: 8),
+              child: pw.Text(
+                'Job Card: Token #$token - Page ${context.pageNumber} of ${context.pagesCount}',
+                style: const pw.TextStyle(color: PdfColors.grey600, fontSize: 9),
               ),
-              pw.SizedBox(height: 16),
-
-              // Product Specifications Table
-              _buildSectionHeader('Product Specifications'),
-              pw.SizedBox(height: 6),
-              pw.Row(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  pw.Expanded(
-                    flex: buttonImageBytes != null ? 3 : 1,
-                    child: pw.TableHelper.fromTextArray(
-                      headers: ['Parameter', 'Specification', 'Parameter', 'Specification'],
-                      data: [
-                        ['PO Date', '${order['po_date'] ?? 'N/A'}', 'Dispatch Date', '${order['dispatch_date'] ?? 'N/A'}'],
-                        ['Order Type', '${order['order_type'] ?? 'Production'}', 'Casting Type', '${order['casting_type'] ?? 'N/A'}'],
-                        ['Sample', '${order['sample'] ?? 'N/A'}', 'Thickness', '${order['thickness'] ?? 'N/A'}'],
-                        ['Holes', '${order['holes'] ?? 'N/A'}', 'Box Type', '${order['box_type'] ?? 'N/A'}'],
-                        ['Rate', 'INR ${order['rate'] ?? 'N/A'}', 'Quantity', '${order['quantity'] ?? 'N/A'}'],
-                        ['Linings', '${order['linings'] ?? 'N/A'}', 'Laser', '${order['laser'] ?? 'N/A'}'],
-                        ['Polish Type', '${order['polish_type'] ?? 'N/A'}', 'Packing Option', '${order['packing_option'] ?? 'N/A'}'],
-                        ['Status', status, '', ''],
-                      ],
-                      headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
-                      headerDecoration: const pw.BoxDecoration(color: PdfColors.teal700),
-                      cellHeight: 20,
-                    ),
-                  ),
-                  if (buttonImageBytes != null) ...[
-                    pw.SizedBox(width: 10),
-                    pw.Container(
-                      width: 90,
-                      height: 110,
-                      padding: const pw.EdgeInsets.all(4),
-                      decoration: pw.BoxDecoration(
-                        border: pw.Border.all(color: PdfColors.teal700, width: 1),
-                        borderRadius: pw.BorderRadius.circular(6),
-                      ),
-                      child: pw.Column(
-                        children: [
-                          pw.Text('Button Image', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8, color: PdfColors.teal800)),
-                          pw.SizedBox(height: 4),
-                          pw.Expanded(
-                            child: pw.Image(pw.MemoryImage(buttonImageBytes), fit: pw.BoxFit.contain),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-              pw.SizedBox(height: 14),
-
-              // Department Process Updates
-              if (rawMaterials.isNotEmpty) ...[
-                _buildSectionHeader('Raw Material Logs'),
-                pw.SizedBox(height: 4),
-                pw.TableHelper.fromTextArray(
-                  headers: ['Material Name', 'Order Qty', 'Total Available', 'Unit', 'Price (INR)'],
-                  data: rawMaterials
-                      .map((m) => [
-                            '${m['material_name'] ?? 'N/A'}',
-                            '${m['quantity'] ?? 'N/A'}',
-                            '${m['total_available_quantity'] ?? 'N/A'}',
-                            '${m['unit'] ?? ''}',
-                            'INR ${m['price'] ?? 'N/A'}',
-                          ])
-                      .toList(),
-                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
-                  headerDecoration: const pw.BoxDecoration(color: PdfColors.grey700),
-                  cellHeight: 18,
-                ),
-                pw.SizedBox(height: 10),
-              ],
-
-              if (casting != null) ...[
-                _buildSectionHeader('Casting Log'),
-                pw.SizedBox(height: 4),
-                _buildCastingTable(casting),
-                pw.SizedBox(height: 10),
-              ],
-
-              if (blanking != null) ...[
-                _buildSectionHeader('Blanking Log'),
-                pw.SizedBox(height: 4),
-                _buildBlankingTable(blanking),
-                pw.SizedBox(height: 10),
-              ],
-
-              if (turning != null) ...[
-                _buildSectionHeader('Turning Log'),
-                pw.SizedBox(height: 4),
-                pw.TableHelper.fromTextArray(
-                  headers: ['Tool No', 'Inwards Wt (kg)', 'Outward Wt (kg)', 'Gross Qty', 'Blank Thickness', 'M/C No', 'Operator', 'Laser'],
-                  data: [
-                    [
-                      '${turning['tool_no'] ?? turning['art_no'] ?? 'N/A'}',
-                      '${turning['inward_weight'] ?? turning['weight'] ?? 'N/A'}',
-                      '${turning['outward_weight'] ?? turning['turned_in_kgs'] ?? 'N/A'}',
-                      '${turning['gross_quantity'] ?? 'N/A'}',
-                      '${turning['blank_thickness'] ?? turning['semi_finish_thickness'] ?? 'N/A'}',
-                      '${turning['machine_no'] ?? 'N/A'}',
-                      '${turning['operator'] ?? 'N/A'}',
-                      '${turning['laser'] ?? 'N/A'}',
-                    ]
-                  ],
-                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
-                  headerDecoration: const pw.BoxDecoration(color: PdfColors.grey700),
-                  cellHeight: 18,
-                ),
-                pw.SizedBox(height: 10),
-              ],
-
-              if (polish != null) ...[
-                _buildSectionHeader('Polishing Log'),
-                pw.SizedBox(height: 4),
-                pw.TableHelper.fromTextArray(
-                  headers: ['Receiving Date', 'Inward Wt (kg)', 'Outward Wt (kg)', 'Gross Qty', 'In Time', 'Out Time', 'Operator', 'Polish Type'],
-                  data: [
-                    [
-                      polish['receiving_date'] != null ? polish['receiving_date'].toString().split('T').first : 'N/A',
-                      '${polish['inward_weight'] ?? polish['weight'] ?? 'N/A'}',
-                      '${polish['outward_weight'] ?? 'N/A'}',
-                      '${polish['gross_quantity'] ?? 'N/A'}',
-                      polish['feeding_time'] != null ? polish['feeding_time'].toString().split('T').last.split('.').first : 'N/A',
-                      polish['out_time'] != null ? polish['out_time'].toString().split('T').last.split('.').first : 'N/A',
-                      '${polish['operator'] ?? 'N/A'}',
-                      '${polish['polish_type'] ?? 'N/A'}',
-                    ]
-                  ],
-                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
-                  headerDecoration: const pw.BoxDecoration(color: PdfColors.grey700),
-                  cellHeight: 18,
-                ),
-                pw.SizedBox(height: 10),
-              ],
-
-              if (packing != null) ...[
-                _buildSectionHeader('Packing Log'),
-                pw.SizedBox(height: 4),
-                pw.TableHelper.fromTextArray(
-                  headers: ['Receiving Date', 'Inward Wt', 'Outward Wt', 'Gross Wt', 'In Gross', 'Packed Qty', 'Rejection', 'Excess/Short', 'Operator'],
-                  data: [
-                    [
-                      packing['receiving_date'] != null ? packing['receiving_date'].toString().split('T').first : 'N/A',
-                      '${packing['inward_weight'] ?? packing['weight'] ?? 'N/A'} ${packing['inward_weight_unit'] ?? 'kg'}',
-                      '${packing['outward_weight'] ?? 'N/A'} ${packing['outward_weight_unit'] ?? 'kg'}',
-                      '${packing['one_gross_weight'] ?? 'N/A'} ${packing['one_gross_weight_unit'] ?? 'g'}',
-                      '${packing['in_gross'] ?? 'N/A'}',
-                      '${packing['packed_qty'] ?? 'N/A'}',
-                      packing['rejection_weight'] != null
-                          ? '${packing['rejection_weight']} ${packing['rejection_unit'] ?? 'g'}'
-                          : '${packing['rejected_qty'] ?? '0'}',
-                      (packing['excess_qty'] != null && (packing['excess_qty'] as num) > 0)
-                          ? '+${packing['excess_qty']} (Exc)'
-                          : ((packing['short_qty'] != null && (packing['short_qty'] as num) > 0)
-                              ? '-${packing['short_qty']} (Short)'
-                              : '0'),
-                      '${packing['operator'] ?? 'N/A'}',
-                    ]
-                  ],
-                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
-                  headerDecoration: const pw.BoxDecoration(color: PdfColors.grey700),
-                  cellHeight: 18,
-                ),
-
-              ],
-            ],
+            );
+          }
+          return pw.SizedBox();
+        },
+        footer: (pw.Context context) {
+          return pw.Container(
+            alignment: pw.Alignment.centerRight,
+            margin: const pw.EdgeInsets.only(top: 8),
+            child: pw.Text(
+              'Page ${context.pageNumber} of ${context.pagesCount}',
+              style: const pw.TextStyle(color: PdfColors.grey600, fontSize: 9),
+            ),
           );
         },
+        build: (pw.Context context) => [
+          // Header Card
+          pw.Container(
+            padding: const pw.EdgeInsets.all(14),
+            decoration: pw.BoxDecoration(
+              color: PdfColors.teal800,
+              borderRadius: pw.BorderRadius.circular(6),
+            ),
+            child: pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text(
+                      'PRODUCTION JOB CARD',
+                      style: pw.TextStyle(
+                        color: PdfColors.white,
+                        fontSize: 18,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                    pw.SizedBox(height: 4),
+                    pw.Text(
+                      'Company: $companyName',
+                      style: const pw.TextStyle(color: PdfColors.white, fontSize: 12),
+                    ),
+                    pw.SizedBox(height: 2),
+                    pw.Text(
+                      'Order Type: ${order['order_type'] ?? 'Production'}',
+                      style: const pw.TextStyle(color: PdfColors.teal100, fontSize: 11),
+                    ),
+                  ],
+                ),
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.end,
+                  children: [
+                    pw.Text(
+                      'TOKEN: $token',
+                      style: pw.TextStyle(color: PdfColors.white, fontSize: 14, fontWeight: pw.FontWeight.bold),
+                    ),
+                    pw.SizedBox(height: 4),
+                    pw.Text(
+                      'Status: $status',
+                      style: const pw.TextStyle(color: PdfColors.yellow300, fontSize: 11),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          pw.SizedBox(height: 14),
+
+          // Product Specifications Table
+          _buildSectionHeader('Product Specifications'),
+          pw.SizedBox(height: 6),
+          pw.Row(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Expanded(
+                flex: buttonImageBytes != null ? 3 : 1,
+                child: pw.TableHelper.fromTextArray(
+                  headers: ['Parameter', 'Specification', 'Parameter', 'Specification'],
+                  data: [
+                    ['PO Date', '${order['po_date'] ?? 'N/A'}', 'Dispatch Date', '${order['dispatch_date'] ?? 'N/A'}'],
+                    ['Order Type', '${order['order_type'] ?? 'Production'}', 'Casting Type', '${order['casting_type'] ?? 'N/A'}'],
+                    ['Sample', '${order['sample'] ?? 'N/A'}', 'Thickness', '${order['thickness'] ?? 'N/A'}'],
+                    ['Holes', '${order['holes'] ?? 'N/A'}', 'Box Type', '${order['box_type'] ?? 'N/A'}'],
+                    ['Rate', 'INR ${order['rate'] ?? 'N/A'}', 'Quantity', '${order['quantity'] ?? 'N/A'}'],
+                    ['Linings', '${order['linings'] ?? 'N/A'}', 'Laser', '${order['laser'] ?? 'N/A'}'],
+                    ['Polish Type', '${order['polish_type'] ?? 'N/A'}', 'Packing Option', '${order['packing_option'] ?? 'N/A'}'],
+                    ['Status', status, '', ''],
+                  ],
+                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+                  headerDecoration: const pw.BoxDecoration(color: PdfColors.teal700),
+                  cellHeight: 20,
+                ),
+              ),
+              if (buttonImageBytes != null) ...[
+                pw.SizedBox(width: 10),
+                pw.Container(
+                  width: 90,
+                  height: 110,
+                  padding: const pw.EdgeInsets.all(4),
+                  decoration: pw.BoxDecoration(
+                    border: pw.Border.all(color: PdfColors.teal700, width: 1),
+                    borderRadius: pw.BorderRadius.circular(6),
+                  ),
+                  child: pw.Column(
+                    children: [
+                      pw.Text('Button Image', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8, color: PdfColors.teal800)),
+                      pw.SizedBox(height: 4),
+                      pw.Expanded(
+                        child: pw.Image(pw.MemoryImage(buttonImageBytes), fit: pw.BoxFit.contain),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+          pw.SizedBox(height: 12),
+
+          // Department Process Updates
+          if (rawMaterials.isNotEmpty) ...[
+            _buildSectionHeader('Raw Material Logs'),
+            pw.SizedBox(height: 4),
+            pw.TableHelper.fromTextArray(
+              headers: ['Material Name', 'Order Qty', 'Total Available', 'Unit', 'Price (INR)'],
+              data: rawMaterials
+                  .map((m) => [
+                        '${m['material_name'] ?? 'N/A'}',
+                        '${m['quantity'] ?? 'N/A'}',
+                        '${m['total_available_quantity'] ?? 'N/A'}',
+                        '${m['unit'] ?? ''}',
+                        'INR ${m['price'] ?? 'N/A'}',
+                      ])
+                  .toList(),
+              headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+              headerDecoration: const pw.BoxDecoration(color: PdfColors.grey700),
+              cellHeight: 18,
+            ),
+            pw.SizedBox(height: 10),
+          ],
+
+          if (casting != null) ...[
+            _buildSectionHeader('Casting Log'),
+            pw.SizedBox(height: 4),
+            _buildCastingTable(casting),
+            pw.SizedBox(height: 10),
+          ],
+
+          if (blanking != null) ...[
+            _buildSectionHeader('Blanking Log'),
+            pw.SizedBox(height: 4),
+            _buildBlankingTable(blanking),
+            pw.SizedBox(height: 10),
+          ],
+
+          if (turning != null) ...[
+            _buildSectionHeader('Turning Log'),
+            pw.SizedBox(height: 4),
+            pw.TableHelper.fromTextArray(
+              headers: ['Tool No', 'Inward Wt (kg)', 'Outward Wt (kg)', 'Gross Qty', 'Blank Thickness', 'M/C No', 'Operator', 'Laser'],
+              data: [
+                [
+                  '${turning['tool_no'] ?? turning['art_no'] ?? 'N/A'}',
+                  '${turning['inward_weight'] ?? turning['weight'] ?? 'N/A'}',
+                  '${turning['outward_weight'] ?? turning['turned_in_kgs'] ?? 'N/A'}',
+                  '${turning['gross_quantity'] ?? 'N/A'}',
+                  '${turning['blank_thickness'] ?? turning['semi_finish_thickness'] ?? 'N/A'}',
+                  '${turning['machine_no'] ?? 'N/A'}',
+                  '${turning['operator'] ?? 'N/A'}',
+                  '${turning['laser'] ?? 'N/A'}',
+                ]
+              ],
+              headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+              headerDecoration: const pw.BoxDecoration(color: PdfColors.grey700),
+              cellHeight: 18,
+            ),
+            pw.SizedBox(height: 10),
+          ],
+
+          // Polishing Section (Always present)
+          _buildSectionHeader('Polishing Log'),
+          pw.SizedBox(height: 4),
+          if (polish != null)
+            pw.TableHelper.fromTextArray(
+              headers: ['Receiving Date', 'Inward Wt (kg)', 'Outward Wt (kg)', 'Gross Qty', 'In Time', 'Out Time', 'Operator', 'Polish Type'],
+              data: [
+                [
+                  polish['receiving_date'] != null ? polish['receiving_date'].toString().split('T').first : 'N/A',
+                  '${polish['inward_weight'] ?? polish['weight'] ?? 'N/A'}',
+                  '${polish['outward_weight'] ?? 'N/A'}',
+                  '${polish['gross_quantity'] ?? 'N/A'}',
+                  polish['feeding_time'] != null ? polish['feeding_time'].toString().split('T').last.split('.').first : 'N/A',
+                  polish['out_time'] != null ? polish['out_time'].toString().split('T').last.split('.').first : 'N/A',
+                  '${polish['operator'] ?? 'N/A'}',
+                  '${polish['polish_type'] ?? 'N/A'}',
+                ]
+              ],
+              headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+              headerDecoration: const pw.BoxDecoration(color: PdfColors.grey700),
+              cellHeight: 18,
+            )
+          else
+            pw.Container(
+              width: double.infinity,
+              padding: const pw.EdgeInsets.all(6),
+              decoration: pw.BoxDecoration(
+                border: pw.Border.all(color: PdfColors.grey300),
+                borderRadius: pw.BorderRadius.circular(4),
+              ),
+              child: pw.Text(
+                'Polishing process pending or not yet submitted.',
+                style: pw.TextStyle(color: PdfColors.grey600, fontSize: 9, fontStyle: pw.FontStyle.italic),
+              ),
+            ),
+          pw.SizedBox(height: 10),
+
+          // Packing Section (Always present)
+          _buildSectionHeader('Packing Log'),
+          pw.SizedBox(height: 4),
+          if (packing != null)
+            pw.TableHelper.fromTextArray(
+              headers: ['Receiving Date', 'Inward Wt', 'Outward Wt', 'Gross Wt', 'In Gross', 'Packed Qty', 'Rejection', 'Excess/Short', 'Operator'],
+              data: [
+                [
+                  packing['receiving_date'] != null ? packing['receiving_date'].toString().split('T').first : 'N/A',
+                  '${packing['inward_weight'] ?? packing['weight'] ?? 'N/A'} ${packing['inward_weight_unit'] ?? 'kg'}',
+                  '${packing['outward_weight'] ?? 'N/A'} ${packing['outward_weight_unit'] ?? 'kg'}',
+                  '${packing['one_gross_weight'] ?? 'N/A'} ${packing['one_gross_weight_unit'] ?? 'g'}',
+                  '${packing['in_gross'] ?? 'N/A'}',
+                  '${packing['packed_qty'] ?? 'N/A'}',
+                  packing['rejection_weight'] != null
+                      ? '${packing['rejection_weight']} ${packing['rejection_unit'] ?? 'g'}'
+                      : '${packing['rejected_qty'] ?? '0'}',
+                  (packing['excess_qty'] != null && (packing['excess_qty'] as num) > 0)
+                      ? '+${packing['excess_qty']} (Exc)'
+                      : ((packing['short_qty'] != null && (packing['short_qty'] as num) > 0)
+                          ? '-${packing['short_qty']} (Short)'
+                          : '0'),
+                  '${packing['operator'] ?? 'N/A'}',
+                ]
+              ],
+              headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+              headerDecoration: const pw.BoxDecoration(color: PdfColors.grey700),
+              cellHeight: 18,
+            )
+          else
+            pw.Container(
+              width: double.infinity,
+              padding: const pw.EdgeInsets.all(6),
+              decoration: pw.BoxDecoration(
+                border: pw.Border.all(color: PdfColors.grey300),
+                borderRadius: pw.BorderRadius.circular(4),
+              ),
+              child: pw.Text(
+                'Packing process pending or not yet submitted.',
+                style: pw.TextStyle(color: PdfColors.grey600, fontSize: 9, fontStyle: pw.FontStyle.italic),
+              ),
+            ),
+        ],
       ),
     );
 

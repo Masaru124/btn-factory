@@ -4,6 +4,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.models.order import (
+    BlankingProcess,
     CastingProcess,
     Order,
     OrderStatus,
@@ -13,6 +14,7 @@ from app.models.order import (
     TurningProcess,
     UniversalRawMaterial,
 )
+from app.services.status_engine import determine_order_status
 
 
 class ReportService:
@@ -22,7 +24,12 @@ class ReportService:
     def production_summary(self, start_date: date, end_date: date) -> dict:
         completed_orders = (
             self.db.query(func.count(Order.id))
-            .filter(Order.created_at >= start_date, Order.created_at <= end_date, Order.status == OrderStatus.DISPATCHED.value)
+            .filter(
+                Order.created_at >= start_date,
+                Order.created_at <= end_date,
+                (Order.status.in_([OrderStatus.PACKING_COMPLETED.value, OrderStatus.READY_TO_DISPATCH.value, OrderStatus.DISPATCHED.value]))
+                | (Order.packing_process != None),  # noqa: E711
+            )
             .scalar()
         ) or 0
 
@@ -35,8 +42,22 @@ class ReportService:
         }
 
     def revenue_summary(self) -> dict:
-        pending_count = self.db.query(func.count(Order.id)).filter(Order.status != OrderStatus.DISPATCHED.value).scalar() or 0
-        completed_count = self.db.query(func.count(Order.id)).filter(Order.status == OrderStatus.DISPATCHED.value).scalar() or 0
+        completed_count = (
+            self.db.query(func.count(Order.id))
+            .filter(
+                (Order.status.in_([OrderStatus.PACKING_COMPLETED.value, OrderStatus.READY_TO_DISPATCH.value, OrderStatus.DISPATCHED.value]))
+                | (Order.packing_process != None),  # noqa: E711
+            )
+            .scalar()
+        ) or 0
+        pending_count = (
+            self.db.query(func.count(Order.id))
+            .filter(
+                ~Order.status.in_([OrderStatus.PACKING_COMPLETED.value, OrderStatus.READY_TO_DISPATCH.value, OrderStatus.DISPATCHED.value]),
+                Order.packing_process == None,  # noqa: E711
+            )
+            .scalar()
+        ) or 0
         return {
             'title': 'Revenue Report',
             'metrics': [
@@ -46,16 +67,89 @@ class ReportService:
         }
 
     def reports_summary(self) -> dict:
+        # Auto-repair order statuses so orders never get stuck at Raw Material Updated
+        all_orders = self.db.query(Order).order_by(Order.id.desc()).all()
+        status_updated = False
+        for o in all_orders:
+            calculated_status = determine_order_status(o)
+            if o.status != calculated_status:
+                o.status = calculated_status
+                status_updated = True
+        if status_updated:
+            self.db.commit()
+
         completed_orders = (
             self.db.query(func.count(Order.id))
-            .filter(Order.status.in_([OrderStatus.READY_TO_DISPATCH.value, OrderStatus.DISPATCHED.value]))
+            .filter(
+                (Order.status.in_([OrderStatus.PACKING_COMPLETED.value, OrderStatus.READY_TO_DISPATCH.value, OrderStatus.DISPATCHED.value]))
+                | (Order.packing_process != None),  # noqa: E711
+            )
             .scalar()
         ) or 0
         
-        casting_output = self.db.query(func.sum(CastingProcess.gross_quantity)).scalar() or 0
-        turning_output = self.db.query(func.sum(TurningProcess.gross_quantity)).scalar() or 0
-        polishing_output = self.db.query(func.sum(PolishingProcess.gross_quantity)).scalar() or 0
-        packing_output = self.db.query(func.sum(PackingProcess.packed_qty)).scalar() or 0
+        # Casting output: accounts for Rod casting gross, Sheet blanking gross, and Order gross qty
+        casting_output = (
+            self.db.query(
+                func.sum(
+                    func.coalesce(
+                        CastingProcess.gross_quantity,
+                        BlankingProcess.gross_quantity,
+                        Order.quantity,
+                        0,
+                    )
+                )
+            )
+            .select_from(CastingProcess)
+            .join(Order, CastingProcess.order_id == Order.id)
+            .outerjoin(BlankingProcess, Order.id == BlankingProcess.order_id)
+            .scalar()
+        ) or 0
+
+        turning_output = (
+            self.db.query(
+                func.sum(
+                    func.coalesce(
+                        TurningProcess.gross_quantity,
+                        Order.quantity,
+                        0,
+                    )
+                )
+            )
+            .select_from(TurningProcess)
+            .join(Order, TurningProcess.order_id == Order.id)
+            .scalar()
+        ) or 0
+
+        polishing_output = (
+            self.db.query(
+                func.sum(
+                    func.coalesce(
+                        PolishingProcess.gross_quantity,
+                        Order.quantity,
+                        0,
+                    )
+                )
+            )
+            .select_from(PolishingProcess)
+            .join(Order, PolishingProcess.order_id == Order.id)
+            .scalar()
+        ) or 0
+
+        packing_output = (
+            self.db.query(
+                func.sum(
+                    func.coalesce(
+                        PackingProcess.packed_qty,
+                        PackingProcess.in_gross,
+                        Order.quantity,
+                        0,
+                    )
+                )
+            )
+            .select_from(PackingProcess)
+            .join(Order, PackingProcess.order_id == Order.id)
+            .scalar()
+        ) or 0
 
         material_rows = (
             self.db.query(
@@ -75,7 +169,21 @@ class ReportService:
             for row in material_rows
         ]
 
-        total_packed = self.db.query(func.sum(PackingProcess.packed_qty)).scalar() or 0
+        total_packed = (
+            self.db.query(
+                func.sum(
+                    func.coalesce(
+                        PackingProcess.packed_qty,
+                        PackingProcess.in_gross,
+                        Order.quantity,
+                        0,
+                    )
+                )
+            )
+            .select_from(PackingProcess)
+            .join(Order, PackingProcess.order_id == Order.id)
+            .scalar()
+        ) or 0
         total_rejected = self.db.query(func.sum(PackingProcess.rejected_qty)).scalar() or 0
         total_produced = total_packed + total_rejected
         rejection_rate = (total_rejected / total_produced * 100) if total_produced > 0 else 0.0
@@ -91,7 +199,8 @@ class ReportService:
             .filter(
                 Order.rate.isnot(None),
                 Order.quantity.isnot(None),
-                ~Order.status.in_([OrderStatus.READY_TO_DISPATCH.value, OrderStatus.DISPATCHED.value])
+                ~Order.status.in_([OrderStatus.PACKING_COMPLETED.value, OrderStatus.READY_TO_DISPATCH.value, OrderStatus.DISPATCHED.value]),
+                Order.packing_process == None,  # noqa: E711
             )
             .scalar()
         ) or 0.0
