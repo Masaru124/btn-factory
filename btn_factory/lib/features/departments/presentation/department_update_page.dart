@@ -657,7 +657,7 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                 ),
               ),
               actions: [
-                if (isEdit && existingMaterial?['id'] != null)
+                if (isEdit && existingMaterial['id'] != null)
                   TextButton.icon(
                     style: TextButton.styleFrom(foregroundColor: const Color(0xFFFCA5A5)),
                     onPressed: isSaving
@@ -669,7 +669,7 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                                 backgroundColor: const Color(0xFF1E293B),
                                 title: const Text('Delete Universal Material', style: TextStyle(color: Colors.white)),
                                 content: Text(
-                                  'Are you sure you want to delete "${existingMaterial!['material_name']}" from universal stock? This cannot be undone.',
+                                  'Are you sure you want to delete "${existingMaterial['material_name']}" from universal stock? This cannot be undone.',
                                   style: const TextStyle(color: Color(0xFF94A3B8)),
                                 ),
                                 actions: [
@@ -692,14 +692,14 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                             });
                             try {
                               final dio = ref.read(dioProvider);
-                              await dio.delete('/department/raw-material/universal/${existingMaterial!['id']}');
+                              await dio.delete('/department/raw-material/universal/${existingMaterial['id']}');
                               if (dialogContext.mounted) {
                                 Navigator.of(dialogContext).pop();
                               }
                               if (mounted) {
                                 messenger.showSnackBar(
                                   SnackBar(
-                                    content: Text("Universal material '${existingMaterial!['material_name']}' deleted."),
+                                    content: Text("Universal material '${existingMaterial['material_name']}' deleted."),
                                     backgroundColor: Colors.redAccent,
                                   ),
                                 );
