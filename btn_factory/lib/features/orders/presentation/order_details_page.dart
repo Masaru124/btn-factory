@@ -124,7 +124,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
                     color: const Color(0xFF14B8A6).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
@@ -135,15 +135,28 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                IconButton(
-                  icon: const Icon(Icons.picture_as_pdf_outlined, color: Color(0xFF14B8A6)),
-                  tooltip: 'Export Complete Order PDF',
-                  onPressed: () => PdfExportService.exportOrderPdf(order),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.layers_outlined, color: Color(0xFF14B8A6)),
-                  tooltip: 'Export Raw Materials & Button Image PDF',
+                FilledButton.icon(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFF14B8A6),
+                    foregroundColor: const Color(0xFF0F172A),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  icon: const Icon(Icons.picture_as_pdf, size: 15),
+                  label: const Text('RM & Image PDF', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                   onPressed: () => PdfExportService.exportRawMaterialsAndImagePdf(order),
+                ),
+                const SizedBox(width: 6),
+                OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFF94A3B8),
+                    side: const BorderSide(color: Color(0xFF374151)),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  icon: const Icon(Icons.description_outlined, size: 15),
+                  label: const Text('Full Job Card', style: TextStyle(fontSize: 11)),
+                  onPressed: () => PdfExportService.exportOrderPdf(order),
                 ),
                 if (isAdmin) ...[
                   const SizedBox(width: 4),

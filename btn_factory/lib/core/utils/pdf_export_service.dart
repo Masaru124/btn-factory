@@ -350,14 +350,13 @@ class PdfExportService {
                   ),
                 )
               : pw.TableHelper.fromTextArray(
-                  headers: ['Material Name', 'Order Qty', 'Total Available Stock', 'Unit', 'Price (INR)'],
+                  headers: ['Material Name', 'Order Qty', 'Total Available Stock', 'Unit'],
                   data: rawMaterials
                       .map((m) => [
                             '${m['material_name'] ?? 'N/A'}',
                             '${m['quantity'] ?? 'N/A'}',
                             '${m['total_available_quantity'] ?? 'N/A'}',
                             '${m['unit'] ?? ''}',
-                            'INR ${m['price'] ?? 'N/A'}',
                           ])
                       .toList(),
                   headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
