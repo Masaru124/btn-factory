@@ -151,6 +151,7 @@ class TurningUpdate(BaseModel):
     semi_finish_thickness: str | None = None
     finish_thickness: str | None = None
     operator: str | None = None
+    laser: str | None = None
     remarks: str | None = None
 
 
@@ -259,6 +260,7 @@ class TurningRead(BaseModel):
     semi_finish_thickness: str | None = None
     finish_thickness: str | None = None
     operator: str | None = None
+    laser: str | None = None
     remarks: str | None = None
 
 

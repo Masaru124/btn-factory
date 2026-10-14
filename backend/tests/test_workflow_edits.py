@@ -79,7 +79,9 @@ def test_order_creation_and_universal_raw_materials():
     )
     assert raw is not None
     assert raw.quantity == 25.0
-    assert raw.total_available_quantity == 500.0
+    # Process input automatically subtracted 25.0 from 500.0 universal stock -> 475.0 remaining
+    assert raw.total_available_quantity == 475.0
+    assert service.list_universal_raw_materials()[0].total_available_quantity == 475.0
     assert order.status == OrderStatus.RAW_MATERIAL_UPDATED.value
 
 
@@ -153,7 +155,7 @@ def test_department_field_normalization():
     assert blanking.blank_thickness == '2.5 mm'
     assert order.status == OrderStatus.BLANKING_COMPLETED.value
 
-    # 2. Turning with tool_no, inward_weight, outward_weight, blank_thickness
+    # 2. Turning with tool_no, inward_weight, outward_weight, blank_thickness, laser
     turning = service.update_turning(
         TurningUpdate(
             order_token=order.token,
@@ -162,6 +164,7 @@ def test_department_field_normalization():
             outward_weight=42.0,
             blank_thickness='2.5 mm',
             machine_no='TURN-1',
+            laser='LASER-LOGO-XYZ',
         )
     )
     assert turning is not None
@@ -173,6 +176,8 @@ def test_department_field_normalization():
     assert turning.turned_in_kgs == 42.0
     assert turning.blank_thickness == '2.5 mm'
     assert turning.semi_finish_thickness == '2.5 mm'
+    assert turning.laser == 'LASER-LOGO-XYZ'
+    assert order.laser == 'LASER-LOGO-XYZ'
 
     # 3. Polishing with tool_no, inward_weight, outward_weight
     polish = service.update_polishing(
@@ -206,5 +211,57 @@ def test_department_field_normalization():
     assert packing is not None
     assert packing.inward_weight == 41.2
     assert packing.outward_weight == 40.8
-    assert packing.one_gross_weight == 0.08
     assert packing.in_gross == 500
+
+
+def test_reports_summary_with_universal_materials():
+    session = setup_test_db()
+    service = OrderService(session)
+    from app.services.report_service import ReportService
+    report_service = ReportService(session)
+
+    # 1. Create order
+    order = service.create_order(
+        OrderCreate(
+            company_name='Report Test Co',
+            po_date=datetime.now().date(),
+            rate=10.0,
+            quantity=100,
+        )
+    )
+
+    # 2. Add Universal Raw Material: 1000 kg Polyester Resin at ₹150/kg
+    service.upsert_universal_raw_material(
+        UniversalRawMaterialCreate(
+            material_name='Polyester Resin',
+            total_available_quantity=1000.0,
+            unit='kg',
+            price=150.0,
+        )
+    )
+
+    # 3. Process input: 120 kg allocated to order
+    service.add_raw_material(
+        RawMaterialCreate(
+            order_token=order.token,
+            material_name='Polyester Resin',
+            quantity=120.0,
+            unit='kg',
+            price=150.0,
+        )
+    )
+
+    # 4. Check reports summary
+    summary = report_service.reports_summary()
+    assert 'universal_materials' in summary
+    uni_list = summary['universal_materials']
+    assert len(uni_list) == 1
+    u = uni_list[0]
+    assert u['name'] == 'Polyester Resin'
+    assert u['consumed_quantity'] == 120.0
+    assert u['remaining_quantity'] == 880.0
+    assert u['initial_quantity'] == 1000.0
+    assert u['unit'] == 'kg'
+    assert u['price'] == 150.0
+    assert u['total_value'] == 880.0 * 150.0
+

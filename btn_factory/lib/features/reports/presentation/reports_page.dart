@@ -119,6 +119,7 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
     final data = _reportData!;
     final production = data['production'] as Map<String, dynamic>? ?? {};
     final materials = data['materials'] as List<dynamic>? ?? [];
+    final universalMaterials = data['universal_materials'] as List<dynamic>? ?? [];
     final rejection = data['rejection'] as Map<String, dynamic>? ?? {};
     final revenue = data['revenue'] as Map<String, dynamic>? ?? {};
 
@@ -167,7 +168,133 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
             ),
             const SizedBox(height: 18),
             SectionCard(
-              title: 'Material Consumption',
+              title: 'Universal Raw Material Stock & Balance',
+              trailing: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0F766E).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFF14B8A6).withValues(alpha: 0.3)),
+                ),
+                child: Text(
+                  '${universalMaterials.length} Materials Tracked',
+                  style: const TextStyle(color: Color(0xFF14B8A6), fontSize: 12, fontWeight: FontWeight.w600),
+                ),
+              ),
+              child: universalMaterials.isEmpty
+                  ? const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Text(
+                        'No universal raw materials registered yet.',
+                        style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B)),
+                      ),
+                    )
+                  : Column(
+                      children: universalMaterials.map((item) {
+                        final name = item['name'] as String? ?? 'N/A';
+                        final remaining = (item['remaining_quantity'] as num?)?.toDouble() ?? 0.0;
+                        final consumed = (item['consumed_quantity'] as num?)?.toDouble() ?? 0.0;
+                        final initial = (item['initial_quantity'] as num?)?.toDouble() ?? (remaining + consumed);
+                        final unit = item['unit'] as String? ?? '';
+                        final price = (item['price'] as num?)?.toDouble() ?? 0.0;
+                        final totalVal = (item['total_value'] as num?)?.toDouble() ?? (remaining * price);
+
+                        final ratio = initial > 0 ? (remaining / initial).clamp(0.0, 1.0) : 0.0;
+                        final badgeColor = remaining <= 0
+                            ? const Color(0xFFEF4444)
+                            : (ratio < 0.2 ? const Color(0xFFF59E0B) : const Color(0xFF10B981));
+                        final badgeText = remaining <= 0
+                            ? 'DEPLETED'
+                            : (ratio < 0.2 ? 'LOW STOCK' : 'IN STOCK');
+
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1F2937),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: const Color(0xFF374151), width: 1),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      name,
+                                      style: const TextStyle(
+                                        color: Color(0xFFF8FAFC),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                    decoration: BoxDecoration(
+                                      color: badgeColor.withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(6),
+                                      border: Border.all(color: badgeColor.withValues(alpha: 0.4)),
+                                    ),
+                                    child: Text(
+                                      badgeText,
+                                      style: TextStyle(
+                                        color: badgeColor,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: LinearProgressIndicator(
+                                  value: ratio,
+                                  minHeight: 6,
+                                  backgroundColor: const Color(0xFF111827),
+                                  valueColor: AlwaysStoppedAnimation<Color>(badgeColor),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Wrap(
+                                spacing: 16,
+                                runSpacing: 8,
+                                children: [
+                                  _InfoBadge(
+                                    label: 'Remaining',
+                                    value: '$remaining $unit',
+                                    color: const Color(0xFF14B8A6),
+                                  ),
+                                  _InfoBadge(
+                                    label: 'Consumed',
+                                    value: '$consumed $unit',
+                                    color: const Color(0xFFF59E0B),
+                                  ),
+                                  _InfoBadge(
+                                    label: 'Rate',
+                                    value: '₹$price / $unit',
+                                    color: const Color(0xFF94A3B8),
+                                  ),
+                                  _InfoBadge(
+                                    label: 'Valuation',
+                                    value: _formatCurrency(totalVal),
+                                    color: const Color(0xFF8B5CF6),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+            ),
+            const SizedBox(height: 18),
+            SectionCard(
+              title: 'Order Material Consumption',
               child: materials.isEmpty
                   ? const Padding(
                       padding: EdgeInsets.symmetric(vertical: 12),
@@ -338,6 +465,31 @@ class _SummaryTile extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _InfoBadge extends StatelessWidget {
+  const _InfoBadge({required this.label, required this.value, required this.color});
+
+  final String label;
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          '$label: ',
+          style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13, fontWeight: FontWeight.w500),
+        ),
+        Text(
+          value,
+          style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.bold),
+        ),
+      ],
     );
   }
 }

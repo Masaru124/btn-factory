@@ -11,6 +11,7 @@ from app.models.order import (
     PolishingProcess,
     RawMaterial,
     TurningProcess,
+    UniversalRawMaterial,
 )
 
 
@@ -95,6 +96,28 @@ class ReportService:
             .scalar()
         ) or 0.0
 
+        universal_rows = self.db.query(UniversalRawMaterial).order_by(UniversalRawMaterial.material_name).all()
+        universal_materials = []
+        for u in universal_rows:
+            consumed = (
+                self.db.query(func.sum(RawMaterial.quantity))
+                .filter(func.lower(RawMaterial.material_name) == func.lower(u.material_name))
+                .scalar()
+            ) or 0.0
+            rem = float(u.total_available_quantity or 0.0)
+            cons = float(consumed)
+            unit_price = float(u.price or 0.0)
+            universal_materials.append({
+                'id': u.id,
+                'name': u.material_name,
+                'remaining_quantity': round(rem, 3),
+                'consumed_quantity': round(cons, 3),
+                'initial_quantity': round(rem + cons, 3),
+                'unit': u.unit,
+                'price': round(unit_price, 2),
+                'total_value': round(rem * unit_price, 2),
+            })
+
         return {
             'production': {
                 'completed_orders': int(completed_orders),
@@ -104,6 +127,7 @@ class ReportService:
                 'packing_output': int(packing_output),
             },
             'materials': materials,
+            'universal_materials': universal_materials,
             'rejection': {
                 'total_packed': int(total_packed),
                 'total_rejected': int(total_rejected),

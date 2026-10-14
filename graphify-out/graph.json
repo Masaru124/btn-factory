@@ -265,7 +265,7 @@
       "file_type": "code",
       "norm_label": "packingprocess",
       "source_file": "backend/app/models/order.py",
-      "source_location": "L192"
+      "source_location": "L193"
     },
     {
       "id": "backend_app_models_order_polishingprocess",
@@ -278,7 +278,7 @@
       "file_type": "code",
       "norm_label": "polishingprocess",
       "source_file": "backend/app/models/order.py",
-      "source_location": "L171"
+      "source_location": "L172"
     },
     {
       "id": "backend_app_models_order_rawmaterial",
@@ -434,7 +434,7 @@
       "file_type": "code",
       "norm_label": "blankingread",
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L228"
+      "source_location": "L229"
     },
     {
       "id": "backend_app_schemas_order_blankingupdate",
@@ -460,7 +460,7 @@
       "file_type": "code",
       "norm_label": "castingread",
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L204"
+      "source_location": "L205"
     },
     {
       "id": "backend_app_schemas_order_castingupdate",
@@ -512,7 +512,7 @@
       "file_type": "code",
       "norm_label": "orderlistitem",
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L322"
+      "source_location": "L324"
     },
     {
       "id": "backend_app_schemas_order_orderstatusresponse",
@@ -525,7 +525,7 @@
       "file_type": "code",
       "norm_label": "orderstatusresponse",
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L333"
+      "source_location": "L335"
     },
     {
       "id": "backend_app_schemas_order_orderupdate",
@@ -551,7 +551,7 @@
       "file_type": "code",
       "norm_label": "packingread",
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L283"
+      "source_location": "L285"
     },
     {
       "id": "backend_app_schemas_order_packingupdate",
@@ -564,7 +564,7 @@
       "file_type": "code",
       "norm_label": "packingupdate",
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L173"
+      "source_location": "L174"
     },
     {
       "id": "backend_app_schemas_order_polishingread",
@@ -577,7 +577,7 @@
       "file_type": "code",
       "norm_label": "polishingread",
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L265"
+      "source_location": "L267"
     },
     {
       "id": "backend_app_schemas_order_polishingupdate",
@@ -590,7 +590,7 @@
       "file_type": "code",
       "norm_label": "polishingupdate",
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L157"
+      "source_location": "L158"
     },
     {
       "id": "backend_app_schemas_order_rawmaterialbatchcreate",
@@ -642,7 +642,7 @@
       "file_type": "code",
       "norm_label": "rawmaterialread",
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L192"
+      "source_location": "L193"
     },
     {
       "id": "backend_app_schemas_order_turningread",
@@ -655,7 +655,7 @@
       "file_type": "code",
       "norm_label": "turningread",
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L243"
+      "source_location": "L244"
     },
     {
       "id": "backend_app_schemas_order_turningupdate",
@@ -733,7 +733,7 @@
       "file_type": "code",
       "norm_label": "reportservice",
       "source_file": "backend/app/services/report_service.py",
-      "source_location": "L17"
+      "source_location": "L18"
     },
     {
       "id": "backend_app_services_backup_service_backupservice",
@@ -928,7 +928,7 @@
       "file_type": "code",
       "norm_label": "orderread",
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L304"
+      "source_location": "L306"
     },
     {
       "id": "backend_app_core_config_settings",
@@ -1863,7 +1863,7 @@
       "file_type": "code",
       "norm_label": ".delete_universal_raw_material()",
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L302"
+      "source_location": "L305"
     },
     {
       "id": "backend_app_services_order_service_orderservice_get_order",
@@ -1911,7 +1911,7 @@
       "file_type": "code",
       "norm_label": ".list_universal_raw_materials()",
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L279"
+      "source_location": "L282"
     },
     {
       "id": "backend_app_services_order_service_orderservice_update_blanking",
@@ -1959,7 +1959,7 @@
       "file_type": "code",
       "norm_label": ".update_packing()",
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L256"
+      "source_location": "L259"
     },
     {
       "id": "backend_app_services_order_service_orderservice_update_polishing",
@@ -1971,7 +1971,7 @@
       "file_type": "code",
       "norm_label": ".update_polishing()",
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L233"
+      "source_location": "L236"
     },
     {
       "id": "backend_app_services_order_service_orderservice_update_turning",
@@ -1995,7 +1995,7 @@
       "file_type": "code",
       "norm_label": ".upsert_universal_raw_material()",
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L282"
+      "source_location": "L285"
     },
     {
       "id": "backend_app_services_report_service_reportservice_init",
@@ -2007,7 +2007,7 @@
       "file_type": "code",
       "norm_label": ".__init__()",
       "source_file": "backend/app/services/report_service.py",
-      "source_location": "L18"
+      "source_location": "L19"
     },
     {
       "id": "backend_app_services_report_service_reportservice_production_summary",
@@ -2019,7 +2019,7 @@
       "file_type": "code",
       "norm_label": ".production_summary()",
       "source_file": "backend/app/services/report_service.py",
-      "source_location": "L21"
+      "source_location": "L22"
     },
     {
       "id": "backend_app_services_report_service_reportservice_reports_summary",
@@ -2031,7 +2031,7 @@
       "file_type": "code",
       "norm_label": ".reports_summary()",
       "source_file": "backend/app/services/report_service.py",
-      "source_location": "L47"
+      "source_location": "L48"
     },
     {
       "id": "backend_app_services_report_service_reportservice_revenue_summary",
@@ -2043,7 +2043,7 @@
       "file_type": "code",
       "norm_label": ".revenue_summary()",
       "source_file": "backend/app/services/report_service.py",
-      "source_location": "L36"
+      "source_location": "L37"
     },
     {
       "id": "backend_app_services_status_engine_determine_order_status",
@@ -2283,7 +2283,7 @@
       "file_type": "code",
       "norm_label": "test_department_field_normalization()",
       "source_file": "backend/tests/test_workflow_edits.py",
-      "source_location": "L86"
+      "source_location": "L88"
     },
     {
       "id": "backend_tests_test_workflow_edits_test_order_creation_and_universal_raw_materials",
@@ -2296,6 +2296,18 @@
       "norm_label": "test_order_creation_and_universal_raw_materials()",
       "source_file": "backend/tests/test_workflow_edits.py",
       "source_location": "L36"
+    },
+    {
+      "id": "backend_tests_test_workflow_edits_test_reports_summary_with_universal_materials",
+      "label": "test_reports_summary_with_universal_materials()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "test_reports_summary_with_universal_materials()",
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L217"
     },
     {
       "id": "btn_factory_windows_runner_main_wwinmain",
@@ -4424,135 +4436,69 @@
       "source_location": null
     },
     {
+      "id": "btn_factory_lib_features_staff_presentation_staff_page_staffpage",
+      "label": "StaffPage",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "staff_page.dart",
+      "file_type": "code",
+      "norm_label": "staffpage",
+      "source_file": "btn_factory/lib/features/staff/presentation/staff_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_staff_presentation_staff_page_staffpagestate",
+      "label": "_StaffPageState",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "staff_page.dart",
+      "file_type": "code",
+      "norm_label": "_staffpagestate",
+      "source_file": "btn_factory/lib/features/staff/presentation/staff_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_router_app_router",
+      "label": "app_router.dart",
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "app_router.dart",
+      "file_type": "code",
+      "norm_label": "app_router.dart",
+      "source_file": "btn_factory/lib/core/router/app_router.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_core_router_app_router_approuterprovider",
       "label": "appRouterProvider",
       "_origin": "ast",
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "file_type": "code",
       "norm_label": "approuterprovider",
       "source_file": "btn_factory/lib/core/router/app_router.dart",
       "source_location": null
     },
     {
-      "id": "btn_factory_lib_core_storage_secure_storage",
-      "label": "secure_storage.dart",
+      "id": "btn_factory_lib_core_router_app_router_authstate",
+      "label": "authState",
       "_origin": "ast",
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "file_type": "code",
-      "norm_label": "secure_storage.dart",
-      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
+      "norm_label": "authstate",
+      "source_file": "btn_factory/lib/core/router/app_router.dart",
       "source_location": null
     },
     {
-      "id": "btn_factory_lib_core_storage_secure_storage_delete",
-      "label": "delete",
+      "id": "btn_factory_lib_core_router_app_router_authstateval",
+      "label": "authStateVal",
       "_origin": "ast",
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "file_type": "code",
-      "norm_label": "delete",
-      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_storage_secure_storage_deleteall",
-      "label": "deleteAll",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "secure_storage.dart",
-      "file_type": "code",
-      "norm_label": "deleteall",
-      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_storage_secure_storage_fluttersecurestorageadapter",
-      "label": "FlutterSecureStorageAdapter",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "secure_storage.dart",
-      "file_type": "code",
-      "norm_label": "fluttersecurestorageadapter",
-      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_storage_secure_storage_inmemorysecurestorage",
-      "label": "InMemorySecureStorage",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "secure_storage.dart",
-      "file_type": "code",
-      "norm_label": "inmemorysecurestorage",
-      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_storage_secure_storage_read",
-      "label": "read",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "secure_storage.dart",
-      "file_type": "code",
-      "norm_label": "read",
-      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_storage_secure_storage_securestorage",
-      "label": "SecureStorage",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "secure_storage.dart",
-      "file_type": "code",
-      "norm_label": "securestorage",
-      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_storage_secure_storage_sharedpreferencesstorageadapter",
-      "label": "SharedPreferencesStorageAdapter",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "secure_storage.dart",
-      "file_type": "code",
-      "norm_label": "sharedpreferencesstorageadapter",
-      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_storage_secure_storage_storage",
-      "label": "_storage",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "secure_storage.dart",
-      "file_type": "code",
-      "norm_label": "_storage",
-      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_storage_secure_storage_values",
-      "label": "_values",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "secure_storage.dart",
-      "file_type": "code",
-      "norm_label": "_values",
-      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_storage_secure_storage_write",
-      "label": "write",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "secure_storage.dart",
-      "file_type": "code",
-      "norm_label": "write",
-      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
+      "norm_label": "authstateval",
+      "source_file": "btn_factory/lib/core/router/app_router.dart",
       "source_location": null
     },
     {
@@ -4560,7 +4506,7 @@
       "label": "main.dart",
       "_origin": "ast",
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "file_type": "code",
       "norm_label": "main.dart",
       "source_file": "btn_factory/lib/main.dart",
@@ -4571,7 +4517,7 @@
       "label": "build",
       "_origin": "ast",
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "file_type": "code",
       "norm_label": "build",
       "source_file": "btn_factory/lib/main.dart",
@@ -4582,7 +4528,7 @@
       "label": "ButtonFactoryApp",
       "_origin": "ast",
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "file_type": "code",
       "norm_label": "buttonfactoryapp",
       "source_file": "btn_factory/lib/main.dart",
@@ -4593,42 +4539,20 @@
       "label": "main",
       "_origin": "ast",
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "file_type": "code",
       "norm_label": "main",
       "source_file": "btn_factory/lib/main.dart",
       "source_location": null
     },
     {
-      "id": "btn_factory_test_widget_test_delayedinmemorysecurestorage",
-      "label": "DelayedInMemorySecureStorage",
+      "id": "gorouter",
+      "label": "GoRouter",
       "_origin": "ast",
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "file_type": "code",
-      "norm_label": "delayedinmemorysecurestorage",
-      "source_file": "btn_factory/test/widget_test.dart",
-      "source_location": null
-    },
-    {
-      "id": "fluttersecurestorage",
-      "label": "FlutterSecureStorage",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "secure_storage.dart",
-      "file_type": "code",
-      "norm_label": "fluttersecurestorage",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "map",
-      "label": "Map",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "secure_storage.dart",
-      "file_type": "code",
-      "norm_label": "map",
+      "norm_label": "gorouter",
       "source_file": null,
       "source_location": null
     },
@@ -4637,7 +4561,7 @@
       "label": "package:btn_factory/core/router/app_router.dart",
       "_origin": "ast",
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "file_type": "code",
       "norm_label": "package:btn_factory/core/router/app_router.dart",
       "source_file": null,
@@ -4648,31 +4572,130 @@
       "label": "package:btn_factory/core/theme/app_theme.dart",
       "_origin": "ast",
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "file_type": "code",
       "norm_label": "package:btn_factory/core/theme/app_theme.dart",
       "source_file": null,
       "source_location": null
     },
     {
-      "id": "package_flutter_secure_storage_flutter_secure_storage_dart",
-      "label": "package:flutter_secure_storage/flutter_secure_storage.dart",
+      "id": "package_btn_factory_features_auth_presentation_login_page_dart",
+      "label": "package:btn_factory/features/auth/presentation/login_page.dart",
       "_origin": "ast",
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "file_type": "code",
-      "norm_label": "package:flutter_secure_storage/flutter_secure_storage.dart",
+      "norm_label": "package:btn_factory/features/auth/presentation/login_page.dart",
       "source_file": null,
       "source_location": null
     },
     {
-      "id": "package_shared_preferences_shared_preferences_dart",
-      "label": "package:shared_preferences/shared_preferences.dart",
+      "id": "package_btn_factory_features_auth_presentation_profile_page_dart",
+      "label": "package:btn_factory/features/auth/presentation/profile_page.dart",
       "_origin": "ast",
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "file_type": "code",
-      "norm_label": "package:shared_preferences/shared_preferences.dart",
+      "norm_label": "package:btn_factory/features/auth/presentation/profile_page.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "package_btn_factory_features_auth_presentation_splash_page_dart",
+      "label": "package:btn_factory/features/auth/presentation/splash_page.dart",
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "app_router.dart",
+      "file_type": "code",
+      "norm_label": "package:btn_factory/features/auth/presentation/splash_page.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "package_btn_factory_features_dashboard_presentation_dashboard_page_dart",
+      "label": "package:btn_factory/features/dashboard/presentation/dashboard_page.dart",
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "app_router.dart",
+      "file_type": "code",
+      "norm_label": "package:btn_factory/features/dashboard/presentation/dashboard_page.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "package_btn_factory_features_departments_presentation_department_update_page_dart",
+      "label": "package:btn_factory/features/departments/presentation/department_update_page.dart",
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "app_router.dart",
+      "file_type": "code",
+      "norm_label": "package:btn_factory/features/departments/presentation/department_update_page.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "package_btn_factory_features_orders_presentation_order_details_page_dart",
+      "label": "package:btn_factory/features/orders/presentation/order_details_page.dart",
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "app_router.dart",
+      "file_type": "code",
+      "norm_label": "package:btn_factory/features/orders/presentation/order_details_page.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "package_btn_factory_features_orders_presentation_order_form_page_dart",
+      "label": "package:btn_factory/features/orders/presentation/order_form_page.dart",
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "app_router.dart",
+      "file_type": "code",
+      "norm_label": "package:btn_factory/features/orders/presentation/order_form_page.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "package_btn_factory_features_orders_presentation_order_list_page_dart",
+      "label": "package:btn_factory/features/orders/presentation/order_list_page.dart",
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "app_router.dart",
+      "file_type": "code",
+      "norm_label": "package:btn_factory/features/orders/presentation/order_list_page.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "package_btn_factory_features_reports_presentation_reports_page_dart",
+      "label": "package:btn_factory/features/reports/presentation/reports_page.dart",
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "app_router.dart",
+      "file_type": "code",
+      "norm_label": "package:btn_factory/features/reports/presentation/reports_page.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "package_btn_factory_features_staff_presentation_staff_page_dart",
+      "label": "package:btn_factory/features/staff/presentation/staff_page.dart",
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "app_router.dart",
+      "file_type": "code",
+      "norm_label": "package:btn_factory/features/staff/presentation/staff_page.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "package_btn_factory_shared_widgets_feature_placeholder_page_dart",
+      "label": "package:btn_factory/shared/widgets/feature_placeholder_page.dart",
+      "_origin": "ast",
+      "community": 11,
+      "community_name": "app_router.dart",
+      "file_type": "code",
+      "norm_label": "package:btn_factory/shared/widgets/feature_placeholder_page.dart",
       "source_file": null,
       "source_location": null
     },
@@ -5073,17 +5096,6 @@
       "source_location": null
     },
     {
-      "id": "btn_factory_lib_features_orders_presentation_order_list_page_confirmanddelete",
-      "label": "_confirmAndDelete",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "order_list_page.dart",
-      "file_type": "code",
-      "norm_label": "_confirmanddelete",
-      "source_file": "btn_factory/lib/features/orders/presentation/order_list_page.dart",
-      "source_location": null
-    },
-    {
       "id": "btn_factory_lib_features_orders_presentation_order_list_page_createstate",
       "label": "createState",
       "_origin": "ast",
@@ -5146,28 +5158,6 @@
       "community_name": "order_list_page.dart",
       "file_type": "code",
       "norm_label": "_isloading",
-      "source_file": "btn_factory/lib/features/orders/presentation/order_list_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_orders_presentation_order_list_page_orderlistpage",
-      "label": "OrderListPage",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "order_list_page.dart",
-      "file_type": "code",
-      "norm_label": "orderlistpage",
-      "source_file": "btn_factory/lib/features/orders/presentation/order_list_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_orders_presentation_order_list_page_orderlistpagestate",
-      "label": "_OrderListPageState",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "order_list_page.dart",
-      "file_type": "code",
-      "norm_label": "_orderlistpagestate",
       "source_file": "btn_factory/lib/features/orders/presentation/order_list_page.dart",
       "source_location": null
     },
@@ -5282,28 +5272,6 @@
       "source_location": null
     },
     {
-      "id": "btn_factory_lib_features_auth_presentation_login_page_loginpage",
-      "label": "LoginPage",
-      "_origin": "ast",
-      "community": 16,
-      "community_name": "ConsumerState",
-      "file_type": "code",
-      "norm_label": "loginpage",
-      "source_file": "btn_factory/lib/features/auth/presentation/login_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_auth_presentation_login_page_loginpagestate",
-      "label": "_LoginPageState",
-      "_origin": "ast",
-      "community": 16,
-      "community_name": "ConsumerState",
-      "file_type": "code",
-      "norm_label": "_loginpagestate",
-      "source_file": "btn_factory/lib/features/auth/presentation/login_page.dart",
-      "source_location": null
-    },
-    {
       "id": "btn_factory_lib_features_auth_presentation_splash_page_splashpage",
       "label": "SplashPage",
       "_origin": "ast",
@@ -5414,25 +5382,47 @@
       "source_location": null
     },
     {
-      "id": "btn_factory_lib_features_staff_presentation_staff_page_staffpage",
-      "label": "StaffPage",
+      "id": "btn_factory_lib_features_orders_presentation_order_list_page_orderlistpage",
+      "label": "OrderListPage",
       "_origin": "ast",
       "community": 16,
       "community_name": "ConsumerState",
       "file_type": "code",
-      "norm_label": "staffpage",
-      "source_file": "btn_factory/lib/features/staff/presentation/staff_page.dart",
+      "norm_label": "orderlistpage",
+      "source_file": "btn_factory/lib/features/orders/presentation/order_list_page.dart",
       "source_location": null
     },
     {
-      "id": "btn_factory_lib_features_staff_presentation_staff_page_staffpagestate",
-      "label": "_StaffPageState",
+      "id": "btn_factory_lib_features_orders_presentation_order_list_page_orderlistpagestate",
+      "label": "_OrderListPageState",
       "_origin": "ast",
       "community": 16,
       "community_name": "ConsumerState",
       "file_type": "code",
-      "norm_label": "_staffpagestate",
-      "source_file": "btn_factory/lib/features/staff/presentation/staff_page.dart",
+      "norm_label": "_orderlistpagestate",
+      "source_file": "btn_factory/lib/features/orders/presentation/order_list_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_reportspage",
+      "label": "ReportsPage",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "ConsumerState",
+      "file_type": "code",
+      "norm_label": "reportspage",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_reportspagestate",
+      "label": "_ReportsPageState",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "ConsumerState",
+      "file_type": "code",
+      "norm_label": "_reportspagestate",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
       "source_location": null
     },
     {
@@ -5634,6 +5624,17 @@
       "source_location": null
     },
     {
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_color",
+      "label": "color",
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "reports_page.dart",
+      "file_type": "code",
+      "norm_label": "color",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_features_reports_presentation_reports_page_createstate",
       "label": "createState",
       "_origin": "ast",
@@ -5740,28 +5741,6 @@
       "community_name": "reports_page.dart",
       "file_type": "code",
       "norm_label": "_reportrow",
-      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_reports_presentation_reports_page_reportspage",
-      "label": "ReportsPage",
-      "_origin": "ast",
-      "community": 18,
-      "community_name": "reports_page.dart",
-      "file_type": "code",
-      "norm_label": "reportspage",
-      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_reports_presentation_reports_page_reportspagestate",
-      "label": "_ReportsPageState",
-      "_origin": "ast",
-      "community": 18,
-      "community_name": "reports_page.dart",
-      "file_type": "code",
-      "norm_label": "_reportspagestate",
       "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
       "source_location": null
     },
@@ -6822,6 +6801,17 @@
       "source_location": null
     },
     {
+      "id": "btn_factory_lib_features_orders_presentation_order_list_page_confirmanddelete",
+      "label": "_confirmAndDelete",
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "dioProvider",
+      "file_type": "code",
+      "norm_label": "_confirmanddelete",
+      "source_file": "btn_factory/lib/features/orders/presentation/order_list_page.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_features_orders_presentation_order_list_page_fetchorders",
       "label": "_fetchOrders",
       "_origin": "ast",
@@ -6885,6 +6875,17 @@
       "file_type": "code",
       "norm_label": "_detailchip",
       "source_file": "btn_factory/lib/features/orders/presentation/order_details_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_infobadge",
+      "label": "_InfoBadge",
+      "_origin": "ast",
+      "community": 22,
+      "community_name": "StatelessWidget",
+      "file_type": "code",
+      "norm_label": "_infobadge",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
       "source_location": null
     },
     {
@@ -7016,6 +7017,28 @@
       "community_name": "login_page.dart",
       "file_type": "code",
       "norm_label": "_formkey",
+      "source_file": "btn_factory/lib/features/auth/presentation/login_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_auth_presentation_login_page_loginpage",
+      "label": "LoginPage",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "login_page.dart",
+      "file_type": "code",
+      "norm_label": "loginpage",
+      "source_file": "btn_factory/lib/features/auth/presentation/login_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_auth_presentation_login_page_loginpagestate",
+      "label": "_LoginPageState",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "login_page.dart",
+      "file_type": "code",
+      "norm_label": "_loginpagestate",
       "source_file": "btn_factory/lib/features/auth/presentation/login_page.dart",
       "source_location": null
     },
@@ -8241,44 +8264,11 @@
       "source_location": "L85"
     },
     {
-      "id": "btn_factory_lib_core_theme_app_theme",
-      "label": "app_theme.dart",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "app_theme.dart",
-      "source_file": "btn_factory/lib/core/theme/app_theme.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_theme_app_theme_apptheme",
-      "label": "AppTheme",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "apptheme",
-      "source_file": "btn_factory/lib/core/theme/app_theme.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_core_theme_app_theme_light",
-      "label": "light",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "light",
-      "source_file": "btn_factory/lib/core/theme/app_theme.dart",
-      "source_location": null
-    },
-    {
       "id": "btn_factory_lib_shared_widgets_feature_placeholder_page",
       "label": "feature_placeholder_page.dart",
       "_origin": "ast",
       "community": 30,
-      "community_name": "package:flutter/material.dart",
+      "community_name": "feature_placeholder_page.dart",
       "file_type": "code",
       "norm_label": "feature_placeholder_page.dart",
       "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
@@ -8289,7 +8279,7 @@
       "label": "build",
       "_origin": "ast",
       "community": 30,
-      "community_name": "package:flutter/material.dart",
+      "community_name": "feature_placeholder_page.dart",
       "file_type": "code",
       "norm_label": "build",
       "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
@@ -8300,7 +8290,7 @@
       "label": "FeaturePlaceholderPage",
       "_origin": "ast",
       "community": 30,
-      "community_name": "package:flutter/material.dart",
+      "community_name": "feature_placeholder_page.dart",
       "file_type": "code",
       "norm_label": "featureplaceholderpage",
       "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
@@ -8311,7 +8301,7 @@
       "label": "icon",
       "_origin": "ast",
       "community": 30,
-      "community_name": "package:flutter/material.dart",
+      "community_name": "feature_placeholder_page.dart",
       "file_type": "code",
       "norm_label": "icon",
       "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
@@ -8322,7 +8312,7 @@
       "label": "selectedIndex",
       "_origin": "ast",
       "community": 30,
-      "community_name": "package:flutter/material.dart",
+      "community_name": "feature_placeholder_page.dart",
       "file_type": "code",
       "norm_label": "selectedindex",
       "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
@@ -8333,7 +8323,7 @@
       "label": "subtitle",
       "_origin": "ast",
       "community": 30,
-      "community_name": "package:flutter/material.dart",
+      "community_name": "feature_placeholder_page.dart",
       "file_type": "code",
       "norm_label": "subtitle",
       "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
@@ -8344,7 +8334,7 @@
       "label": "title",
       "_origin": "ast",
       "community": 30,
-      "community_name": "package:flutter/material.dart",
+      "community_name": "feature_placeholder_page.dart",
       "file_type": "code",
       "norm_label": "title",
       "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
@@ -8355,20 +8345,9 @@
       "label": "package:btn_factory/shared/widgets/app_scaffold.dart",
       "_origin": "ast",
       "community": 30,
-      "community_name": "package:flutter/material.dart",
+      "community_name": "feature_placeholder_page.dart",
       "file_type": "code",
       "norm_label": "package:btn_factory/shared/widgets/app_scaffold.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "package_flutter_material_dart",
-      "label": "package:flutter/material.dart",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "package:flutter/material.dart",
       "source_file": null,
       "source_location": null
     },
@@ -8494,167 +8473,178 @@
       "source_location": "L1"
     },
     {
-      "id": "btn_factory_lib_core_router_app_router",
-      "label": "app_router.dart",
+      "id": "btn_factory_lib_core_storage_secure_storage",
+      "label": "secure_storage.dart",
       "_origin": "ast",
       "community": 4,
-      "community_name": "app_router.dart",
+      "community_name": "secure_storage.dart",
       "file_type": "code",
-      "norm_label": "app_router.dart",
-      "source_file": "btn_factory/lib/core/router/app_router.dart",
+      "norm_label": "secure_storage.dart",
+      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
       "source_location": null
     },
     {
-      "id": "btn_factory_lib_core_router_app_router_authstate",
-      "label": "authState",
+      "id": "btn_factory_lib_core_storage_secure_storage_delete",
+      "label": "delete",
       "_origin": "ast",
       "community": 4,
-      "community_name": "app_router.dart",
+      "community_name": "secure_storage.dart",
       "file_type": "code",
-      "norm_label": "authstate",
-      "source_file": "btn_factory/lib/core/router/app_router.dart",
+      "norm_label": "delete",
+      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
       "source_location": null
     },
     {
-      "id": "btn_factory_lib_core_router_app_router_authstateval",
-      "label": "authStateVal",
+      "id": "btn_factory_lib_core_storage_secure_storage_deleteall",
+      "label": "deleteAll",
       "_origin": "ast",
       "community": 4,
-      "community_name": "app_router.dart",
+      "community_name": "secure_storage.dart",
       "file_type": "code",
-      "norm_label": "authstateval",
-      "source_file": "btn_factory/lib/core/router/app_router.dart",
+      "norm_label": "deleteall",
+      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
       "source_location": null
     },
     {
-      "id": "gorouter",
-      "label": "GoRouter",
+      "id": "btn_factory_lib_core_storage_secure_storage_fluttersecurestorageadapter",
+      "label": "FlutterSecureStorageAdapter",
       "_origin": "ast",
       "community": 4,
-      "community_name": "app_router.dart",
+      "community_name": "secure_storage.dart",
       "file_type": "code",
-      "norm_label": "gorouter",
+      "norm_label": "fluttersecurestorageadapter",
+      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_storage_secure_storage_inmemorysecurestorage",
+      "label": "InMemorySecureStorage",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "inmemorysecurestorage",
+      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_storage_secure_storage_read",
+      "label": "read",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "read",
+      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_storage_secure_storage_securestorage",
+      "label": "SecureStorage",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "securestorage",
+      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_storage_secure_storage_sharedpreferencesstorageadapter",
+      "label": "SharedPreferencesStorageAdapter",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "sharedpreferencesstorageadapter",
+      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_storage_secure_storage_storage",
+      "label": "_storage",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "_storage",
+      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_storage_secure_storage_values",
+      "label": "_values",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "_values",
+      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_storage_secure_storage_write",
+      "label": "write",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "write",
+      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_test_widget_test_delayedinmemorysecurestorage",
+      "label": "DelayedInMemorySecureStorage",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "delayedinmemorysecurestorage",
+      "source_file": "btn_factory/test/widget_test.dart",
+      "source_location": null
+    },
+    {
+      "id": "fluttersecurestorage",
+      "label": "FlutterSecureStorage",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "fluttersecurestorage",
       "source_file": null,
       "source_location": null
     },
     {
-      "id": "package_btn_factory_features_auth_presentation_login_page_dart",
-      "label": "package:btn_factory/features/auth/presentation/login_page.dart",
+      "id": "map",
+      "label": "Map",
       "_origin": "ast",
       "community": 4,
-      "community_name": "app_router.dart",
+      "community_name": "secure_storage.dart",
       "file_type": "code",
-      "norm_label": "package:btn_factory/features/auth/presentation/login_page.dart",
+      "norm_label": "map",
       "source_file": null,
       "source_location": null
     },
     {
-      "id": "package_btn_factory_features_auth_presentation_profile_page_dart",
-      "label": "package:btn_factory/features/auth/presentation/profile_page.dart",
+      "id": "package_flutter_secure_storage_flutter_secure_storage_dart",
+      "label": "package:flutter_secure_storage/flutter_secure_storage.dart",
       "_origin": "ast",
       "community": 4,
-      "community_name": "app_router.dart",
+      "community_name": "secure_storage.dart",
       "file_type": "code",
-      "norm_label": "package:btn_factory/features/auth/presentation/profile_page.dart",
+      "norm_label": "package:flutter_secure_storage/flutter_secure_storage.dart",
       "source_file": null,
       "source_location": null
     },
     {
-      "id": "package_btn_factory_features_auth_presentation_splash_page_dart",
-      "label": "package:btn_factory/features/auth/presentation/splash_page.dart",
+      "id": "package_shared_preferences_shared_preferences_dart",
+      "label": "package:shared_preferences/shared_preferences.dart",
       "_origin": "ast",
       "community": 4,
-      "community_name": "app_router.dart",
+      "community_name": "secure_storage.dart",
       "file_type": "code",
-      "norm_label": "package:btn_factory/features/auth/presentation/splash_page.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "package_btn_factory_features_dashboard_presentation_dashboard_page_dart",
-      "label": "package:btn_factory/features/dashboard/presentation/dashboard_page.dart",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "app_router.dart",
-      "file_type": "code",
-      "norm_label": "package:btn_factory/features/dashboard/presentation/dashboard_page.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "package_btn_factory_features_departments_presentation_department_update_page_dart",
-      "label": "package:btn_factory/features/departments/presentation/department_update_page.dart",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "app_router.dart",
-      "file_type": "code",
-      "norm_label": "package:btn_factory/features/departments/presentation/department_update_page.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "package_btn_factory_features_orders_presentation_order_details_page_dart",
-      "label": "package:btn_factory/features/orders/presentation/order_details_page.dart",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "app_router.dart",
-      "file_type": "code",
-      "norm_label": "package:btn_factory/features/orders/presentation/order_details_page.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "package_btn_factory_features_orders_presentation_order_form_page_dart",
-      "label": "package:btn_factory/features/orders/presentation/order_form_page.dart",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "app_router.dart",
-      "file_type": "code",
-      "norm_label": "package:btn_factory/features/orders/presentation/order_form_page.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "package_btn_factory_features_orders_presentation_order_list_page_dart",
-      "label": "package:btn_factory/features/orders/presentation/order_list_page.dart",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "app_router.dart",
-      "file_type": "code",
-      "norm_label": "package:btn_factory/features/orders/presentation/order_list_page.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "package_btn_factory_features_reports_presentation_reports_page_dart",
-      "label": "package:btn_factory/features/reports/presentation/reports_page.dart",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "app_router.dart",
-      "file_type": "code",
-      "norm_label": "package:btn_factory/features/reports/presentation/reports_page.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "package_btn_factory_features_staff_presentation_staff_page_dart",
-      "label": "package:btn_factory/features/staff/presentation/staff_page.dart",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "app_router.dart",
-      "file_type": "code",
-      "norm_label": "package:btn_factory/features/staff/presentation/staff_page.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "package_btn_factory_shared_widgets_feature_placeholder_page_dart",
-      "label": "package:btn_factory/shared/widgets/feature_placeholder_page.dart",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "app_router.dart",
-      "file_type": "code",
-      "norm_label": "package:btn_factory/shared/widgets/feature_placeholder_page.dart",
+      "norm_label": "package:shared_preferences/shared_preferences.dart",
       "source_file": null,
       "source_location": null
     },
@@ -9486,11 +9476,44 @@
       "source_location": null
     },
     {
+      "id": "btn_factory_lib_core_theme_app_theme",
+      "label": "app_theme.dart",
+      "_origin": "ast",
+      "community": 52,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "app_theme.dart",
+      "source_file": "btn_factory/lib/core/theme/app_theme.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_theme_app_theme_apptheme",
+      "label": "AppTheme",
+      "_origin": "ast",
+      "community": 52,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "apptheme",
+      "source_file": "btn_factory/lib/core/theme/app_theme.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_theme_app_theme_light",
+      "label": "light",
+      "_origin": "ast",
+      "community": 52,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "light",
+      "source_file": "btn_factory/lib/core/theme/app_theme.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_shared_widgets_section_card",
       "label": "section_card.dart",
       "_origin": "ast",
       "community": 52,
-      "community_name": "section_card.dart",
+      "community_name": "package:flutter/material.dart",
       "file_type": "code",
       "norm_label": "section_card.dart",
       "source_file": "btn_factory/lib/shared/widgets/section_card.dart",
@@ -9501,7 +9524,7 @@
       "label": "build",
       "_origin": "ast",
       "community": 52,
-      "community_name": "section_card.dart",
+      "community_name": "package:flutter/material.dart",
       "file_type": "code",
       "norm_label": "build",
       "source_file": "btn_factory/lib/shared/widgets/section_card.dart",
@@ -9512,7 +9535,7 @@
       "label": "child",
       "_origin": "ast",
       "community": 52,
-      "community_name": "section_card.dart",
+      "community_name": "package:flutter/material.dart",
       "file_type": "code",
       "norm_label": "child",
       "source_file": "btn_factory/lib/shared/widgets/section_card.dart",
@@ -9523,7 +9546,7 @@
       "label": "SectionCard",
       "_origin": "ast",
       "community": 52,
-      "community_name": "section_card.dart",
+      "community_name": "package:flutter/material.dart",
       "file_type": "code",
       "norm_label": "sectioncard",
       "source_file": "btn_factory/lib/shared/widgets/section_card.dart",
@@ -9534,7 +9557,7 @@
       "label": "title",
       "_origin": "ast",
       "community": 52,
-      "community_name": "section_card.dart",
+      "community_name": "package:flutter/material.dart",
       "file_type": "code",
       "norm_label": "title",
       "source_file": "btn_factory/lib/shared/widgets/section_card.dart",
@@ -9545,10 +9568,21 @@
       "label": "trailing",
       "_origin": "ast",
       "community": 52,
-      "community_name": "section_card.dart",
+      "community_name": "package:flutter/material.dart",
       "file_type": "code",
       "norm_label": "trailing",
       "source_file": "btn_factory/lib/shared/widgets/section_card.dart",
+      "source_location": null
+    },
+    {
+      "id": "package_flutter_material_dart",
+      "label": "package:flutter/material.dart",
+      "_origin": "ast",
+      "community": 52,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "package:flutter/material.dart",
+      "source_file": null,
       "source_location": null
     },
     {
@@ -9556,7 +9590,7 @@
       "label": "Widget",
       "_origin": "ast",
       "community": 52,
-      "community_name": "section_card.dart",
+      "community_name": "package:flutter/material.dart",
       "file_type": "code",
       "norm_label": "widget",
       "source_file": null,
@@ -11571,7 +11605,7 @@
       "author": null,
       "captured_at": null,
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "contributor": null,
       "file_type": "concept",
       "norm_label": "render backend deployment",
@@ -11586,7 +11620,7 @@
       "author": null,
       "captured_at": null,
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "contributor": null,
       "file_type": "concept",
       "norm_label": "vercel frontend deployment",
@@ -11601,7 +11635,7 @@
       "author": null,
       "captured_at": null,
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "contributor": null,
       "file_type": "concept",
       "norm_label": "docker volume backend_data",
@@ -11616,7 +11650,7 @@
       "author": null,
       "captured_at": null,
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "contributor": null,
       "file_type": "concept",
       "norm_label": "fastapi backend setup",
@@ -11631,7 +11665,7 @@
       "author": null,
       "captured_at": null,
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "contributor": null,
       "file_type": "concept",
       "norm_label": "flutter frontend setup",
@@ -11646,7 +11680,7 @@
       "author": null,
       "captured_at": null,
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "contributor": null,
       "file_type": "document",
       "norm_label": "button factory mes specifications",
@@ -11661,7 +11695,7 @@
       "author": null,
       "captured_at": null,
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "contributor": null,
       "file_type": "document",
       "norm_label": "flutter app manifest & assets",
@@ -11676,7 +11710,7 @@
       "author": null,
       "captured_at": null,
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "contributor": null,
       "file_type": "document",
       "norm_label": "cloud deployment architecture",
@@ -11691,7 +11725,7 @@
       "author": null,
       "captured_at": null,
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "contributor": null,
       "file_type": "document",
       "norm_label": "docker compose backend container",
@@ -11706,7 +11740,7 @@
       "author": null,
       "captured_at": null,
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "contributor": null,
       "file_type": "document",
       "norm_label": "github actions release workflow",
@@ -11721,7 +11755,7 @@
       "author": null,
       "captured_at": null,
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "contributor": null,
       "file_type": "document",
       "norm_label": "button factory mes overview",
@@ -11736,7 +11770,7 @@
       "author": null,
       "captured_at": null,
       "community": 11,
-      "community_name": "secure_storage.dart",
+      "community_name": "app_router.dart",
       "contributor": null,
       "file_type": "rationale",
       "norm_label": "storage & database persistence",
@@ -12226,7 +12260,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L134",
+      "source_location": "L135",
       "weight": 1.0
     },
     {
@@ -12346,7 +12380,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L272",
+      "source_location": "L275",
       "weight": 1.0
     },
     {
@@ -12358,7 +12392,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L274",
+      "source_location": "L277",
       "weight": 1.0
     },
     {
@@ -12370,7 +12404,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L249",
+      "source_location": "L252",
       "weight": 1.0
     },
     {
@@ -12382,7 +12416,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L251",
+      "source_location": "L254",
       "weight": 1.0
     },
     {
@@ -12394,7 +12428,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L226",
+      "source_location": "L229",
       "weight": 1.0
     },
     {
@@ -12406,7 +12440,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L228",
+      "source_location": "L231",
       "weight": 1.0
     },
     {
@@ -12418,7 +12452,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L287",
+      "source_location": "L290",
       "weight": 1.0
     },
     {
@@ -13138,7 +13172,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/tests/test_workflow_edits.py",
-      "source_location": "L100",
+      "source_location": "L102",
       "weight": 1.0
     },
     {
@@ -13150,7 +13184,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/tests/test_workflow_edits.py",
-      "source_location": "L112",
+      "source_location": "L114",
       "weight": 1.0
     },
     {
@@ -13162,7 +13196,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/tests/test_workflow_edits.py",
-      "source_location": "L138",
+      "source_location": "L140",
       "weight": 1.0
     },
     {
@@ -13174,7 +13208,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/tests/test_workflow_edits.py",
-      "source_location": "L158",
+      "source_location": "L160",
       "weight": 1.0
     },
     {
@@ -13186,7 +13220,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/tests/test_workflow_edits.py",
-      "source_location": "L179",
+      "source_location": "L184",
       "weight": 1.0
     },
     {
@@ -13198,7 +13232,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/tests/test_workflow_edits.py",
-      "source_location": "L197",
+      "source_location": "L202",
       "weight": 1.0
     },
     {
@@ -13210,7 +13244,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/tests/test_workflow_edits.py",
-      "source_location": "L87",
+      "source_location": "L89",
       "weight": 1.0
     },
     {
@@ -13222,7 +13256,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/tests/test_workflow_edits.py",
-      "source_location": "L88",
+      "source_location": "L90",
       "weight": 1.0
     },
     {
@@ -13234,7 +13268,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/tests/test_workflow_edits.py",
-      "source_location": "L91",
+      "source_location": "L93",
       "weight": 1.0
     },
     {
@@ -13295,6 +13329,78 @@
       "context": "call",
       "source_file": "backend/tests/test_workflow_edits.py",
       "source_location": "L71",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_tests_test_workflow_edits_test_reports_summary_with_universal_materials",
+      "target": "backend_tests_test_workflow_edits_setup_test_db",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L218",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_tests_test_workflow_edits_test_reports_summary_with_universal_materials",
+      "target": "backend_app_services_order_service_orderservice",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L219",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_tests_test_workflow_edits_test_reports_summary_with_universal_materials",
+      "target": "backend_app_services_report_service_reportservice",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L221",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_tests_test_workflow_edits_test_reports_summary_with_universal_materials",
+      "target": "backend_app_schemas_order_ordercreate",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L225",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_tests_test_workflow_edits_test_reports_summary_with_universal_materials",
+      "target": "backend_app_schemas_order_universalrawmaterialcreate",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L235",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_tests_test_workflow_edits_test_reports_summary_with_universal_materials",
+      "target": "backend_app_schemas_order_rawmaterialcreate",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L245",
       "weight": 1.0
     },
     {
@@ -14506,7 +14612,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L279",
+      "source_location": "L282",
       "weight": 1.0
     },
     {
@@ -16337,6 +16443,18 @@
       "weight": 1.0
     },
     {
+      "source": "backend_app_services_report_service",
+      "target": "backend_app_models_order_universalrawmaterial",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "backend/app/services/report_service.py",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
       "source": "backend_app_services_status_engine",
       "target": "backend_app_models_order_order",
       "relation": "imports",
@@ -16898,6 +17016,18 @@
       "context": "import",
       "source_file": "backend/tests/test_workflow_edits.py",
       "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_tests_test_workflow_edits",
+      "target": "backend_app_services_report_service_reportservice",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L220",
       "weight": 1.0
     },
     {
@@ -18985,7 +19115,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L256",
+      "source_location": "L259",
       "weight": 1.0
     },
     {
@@ -18997,7 +19127,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L233",
+      "source_location": "L236",
       "weight": 1.0
     },
     {
@@ -19021,7 +19151,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L282",
+      "source_location": "L285",
       "weight": 1.0
     },
     {
@@ -19033,7 +19163,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "backend/app/services/report_service.py",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -19045,7 +19175,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "backend/app/services/report_service.py",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -20930,6 +21060,18 @@
       "weight": 1.0
     },
     {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page",
+      "target": "color",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "type_lookup",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
       "source": "btn_factory_lib_features_staff_presentation_staff_page",
       "target": "formstate",
       "relation": "references",
@@ -21226,18 +21368,6 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "btn_factory/lib/features/orders/presentation/order_list_page.dart",
-      "source_location": null,
-      "weight": 1.0
-    },
-    {
-      "source": "btn_factory_lib_features_reports_presentation_reports_page",
-      "target": "color",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "variable_type",
-      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
       "source_location": null,
       "weight": 1.0
     },
@@ -22183,7 +22313,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/models/order.py",
-      "source_location": "L171",
+      "source_location": "L172",
       "weight": 1.0
     },
     {
@@ -22194,7 +22324,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/models/order.py",
-      "source_location": "L192",
+      "source_location": "L193",
       "weight": 1.0
     },
     {
@@ -22491,7 +22621,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L157",
+      "source_location": "L158",
       "weight": 1.0
     },
     {
@@ -22502,7 +22632,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L173",
+      "source_location": "L174",
       "weight": 1.0
     },
     {
@@ -22513,7 +22643,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L192",
+      "source_location": "L193",
       "weight": 1.0
     },
     {
@@ -22524,7 +22654,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L204",
+      "source_location": "L205",
       "weight": 1.0
     },
     {
@@ -22535,7 +22665,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L228",
+      "source_location": "L229",
       "weight": 1.0
     },
     {
@@ -22546,7 +22676,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L243",
+      "source_location": "L244",
       "weight": 1.0
     },
     {
@@ -22557,7 +22687,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L265",
+      "source_location": "L267",
       "weight": 1.0
     },
     {
@@ -22579,7 +22709,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L283",
+      "source_location": "L285",
       "weight": 1.0
     },
     {
@@ -22590,7 +22720,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L304",
+      "source_location": "L306",
       "weight": 1.0
     },
     {
@@ -22612,7 +22742,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L322",
+      "source_location": "L324",
       "weight": 1.0
     },
     {
@@ -22623,7 +22753,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L333",
+      "source_location": "L335",
       "weight": 1.0
     },
     {
@@ -22843,7 +22973,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/services/report_service.py",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -23266,6 +23396,17 @@
     },
     {
       "source": "backend_tests_test_workflow_edits",
+      "target": "backend_tests_test_workflow_edits_test_reports_summary_with_universal_materials",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L217",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_tests_test_workflow_edits",
       "target": "backend_tests_test_workflow_edits_setup_test_db",
       "relation": "contains",
       "_origin": "ast",
@@ -23294,7 +23435,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/tests/test_workflow_edits.py",
-      "source_location": "L86",
+      "source_location": "L88",
       "weight": 1.0
     },
     {
@@ -26577,6 +26718,17 @@
     },
     {
       "source": "btn_factory_lib_features_reports_presentation_reports_page",
+      "target": "btn_factory_lib_features_reports_presentation_reports_page_color",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page",
       "target": "btn_factory_lib_features_reports_presentation_reports_page_createstate",
       "relation": "defines",
       "_origin": "ast",
@@ -26622,6 +26774,17 @@
     {
       "source": "btn_factory_lib_features_reports_presentation_reports_page",
       "target": "btn_factory_lib_features_reports_presentation_reports_page_formatcurrency",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page",
+      "target": "btn_factory_lib_features_reports_presentation_reports_page_infobadge",
       "relation": "defines",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -29355,7 +29518,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/models/order.py",
-      "source_location": "L192",
+      "source_location": "L193",
       "weight": 1.0
     },
     {
@@ -29366,7 +29529,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/models/order.py",
-      "source_location": "L171",
+      "source_location": "L172",
       "weight": 1.0
     },
     {
@@ -29630,7 +29793,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L228",
+      "source_location": "L229",
       "weight": 1.0
     },
     {
@@ -29652,7 +29815,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L204",
+      "source_location": "L205",
       "weight": 1.0
     },
     {
@@ -29696,7 +29859,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L322",
+      "source_location": "L324",
       "weight": 1.0
     },
     {
@@ -29707,7 +29870,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L304",
+      "source_location": "L306",
       "weight": 1.0
     },
     {
@@ -29718,7 +29881,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L333",
+      "source_location": "L335",
       "weight": 1.0
     },
     {
@@ -29740,7 +29903,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L283",
+      "source_location": "L285",
       "weight": 1.0
     },
     {
@@ -29751,7 +29914,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L173",
+      "source_location": "L174",
       "weight": 1.0
     },
     {
@@ -29762,7 +29925,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L265",
+      "source_location": "L267",
       "weight": 1.0
     },
     {
@@ -29773,7 +29936,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L157",
+      "source_location": "L158",
       "weight": 1.0
     },
     {
@@ -29817,7 +29980,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L192",
+      "source_location": "L193",
       "weight": 1.0
     },
     {
@@ -29828,7 +29991,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/schemas/order.py",
-      "source_location": "L243",
+      "source_location": "L244",
       "weight": 1.0
     },
     {
@@ -30224,6 +30387,17 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "btn_factory/lib/features/orders/presentation/order_list_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_reports_presentation_reports_page_infobadge",
+      "target": "statelesswidget",
+      "relation": "inherits",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
       "source_location": null,
       "weight": 1.0
     },
@@ -31104,7 +31278,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L233",
+      "source_location": "L236",
       "weight": 1.0
     },
     {
@@ -31115,7 +31289,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L256",
+      "source_location": "L259",
       "weight": 1.0
     },
     {
@@ -31126,7 +31300,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L279",
+      "source_location": "L282",
       "weight": 1.0
     },
     {
@@ -31137,7 +31311,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L282",
+      "source_location": "L285",
       "weight": 1.0
     },
     {
@@ -31148,7 +31322,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L302",
+      "source_location": "L305",
       "weight": 1.0
     },
     {
@@ -31192,7 +31366,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/services/report_service.py",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -31203,7 +31377,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/services/report_service.py",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -31214,7 +31388,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/services/report_service.py",
-      "source_location": "L36",
+      "source_location": "L37",
       "weight": 1.0
     },
     {
@@ -31225,7 +31399,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/services/report_service.py",
-      "source_location": "L47",
+      "source_location": "L48",
       "weight": 1.0
     },
     {
@@ -33517,7 +33691,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L233",
+      "source_location": "L236",
       "weight": 0.8
     },
     {
@@ -33528,7 +33702,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L233",
+      "source_location": "L236",
       "weight": 0.8
     },
     {
@@ -33539,7 +33713,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L256",
+      "source_location": "L259",
       "weight": 0.8
     },
     {
@@ -33550,7 +33724,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L256",
+      "source_location": "L259",
       "weight": 0.8
     },
     {
@@ -33561,7 +33735,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L282",
+      "source_location": "L285",
       "weight": 0.8
     },
     {
@@ -33616,7 +33790,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "backend/app/services/report_service.py",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 0.8
     },
     {
@@ -33627,7 +33801,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "backend/app/services/report_service.py",
-      "source_location": "L24",
+      "source_location": "L25",
       "weight": 0.8
     },
     {
@@ -33638,7 +33812,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "backend/app/services/report_service.py",
-      "source_location": "L54",
+      "source_location": "L55",
       "weight": 0.8
     },
     {
@@ -33649,7 +33823,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "backend/app/services/report_service.py",
-      "source_location": "L55",
+      "source_location": "L56",
       "weight": 0.8
     },
     {
@@ -33660,7 +33834,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "backend/app/services/report_service.py",
-      "source_location": "L56",
+      "source_location": "L57",
       "weight": 0.8
     },
     {
@@ -33671,7 +33845,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "backend/app/services/report_service.py",
-      "source_location": "L57",
+      "source_location": "L58",
       "weight": 0.8
     },
     {
@@ -33682,7 +33856,18 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "backend/app/services/report_service.py",
-      "source_location": "L61",
+      "source_location": "L62",
+      "weight": 0.8
+    },
+    {
+      "source": "backend_app_services_report_service_reportservice",
+      "target": "backend_app_models_order_universalrawmaterial",
+      "relation": "uses",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "backend/app/services/report_service.py",
+      "source_location": "L99",
       "weight": 0.8
     },
     {
@@ -33836,7 +34021,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "backend/tests/test_workflow_edits.py",
-      "source_location": "L154",
+      "source_location": "L156",
       "weight": 0.8
     },
     {
@@ -34076,5 +34261,5 @@
       "source_file": "DEPLOYMENT_GUIDE.md"
     }
   ],
-  "built_at_commit": "1e1862230a26affc965e8f7449e8fa6a5f5b4764"
+  "built_at_commit": "28a32258eca2fbc892a89cb59d1530b2f3720a03"
 }

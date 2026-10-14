@@ -118,6 +118,7 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
           FieldDefinition('Tool Number', 'tool_no', 'string'),
           FieldDefinition('Hole', 'hole_size', 'string'),
           FieldDefinition('M/C No.', 'machine_no', 'string'),
+          FieldDefinition('Laser Logo/Text', 'laser', 'string'),
           FieldDefinition('Outward Weight (kg)', 'outward_weight', 'double'),
           FieldDefinition('Gross (Approx)', 'gross_quantity', 'int'),
           FieldDefinition('Blank Thickness', 'blank_thickness', 'string'),
@@ -218,6 +219,7 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
       'excess_qty',
       'short_qty',
       'rejected_qty',
+      'laser',
     ];
     for (final key in allFieldKeys) {
       _fieldControllers[key] = TextEditingController();
@@ -283,6 +285,13 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
           final castingType = _order!['casting_type'].toString().trim();
           if (castingType.isNotEmpty) {
             _fieldControllers['casting_type']?.text = castingType.toLowerCase() == 'rod' ? 'Rod' : 'Sheet';
+          }
+        }
+        if (widget.title == 'Turning' && _order != null) {
+          final turningProc = _order!['turning_process'] as Map<String, dynamic>?;
+          final laserVal = turningProc?['laser']?.toString() ?? _order!['laser']?.toString() ?? '';
+          if (laserVal.isNotEmpty) {
+            _fieldControllers['laser']?.text = laserVal;
           }
         }
       });

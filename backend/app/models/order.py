@@ -163,6 +163,7 @@ class TurningProcess(Base):
     semi_finish_thickness: Mapped[str | None] = mapped_column(String(50), nullable=True)
     finish_thickness: Mapped[str | None] = mapped_column(String(50), nullable=True)
     operator: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    laser: Mapped[str | None] = mapped_column(String(100), nullable=True)
     remarks: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     order = relationship('Order', back_populates='turning_process')

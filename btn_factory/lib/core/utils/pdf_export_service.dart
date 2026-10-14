@@ -9,6 +9,7 @@ class PdfExportService {
 
     final production = reportData['production'] as Map<String, dynamic>? ?? {};
     final materials = reportData['materials'] as List<dynamic>? ?? [];
+    final universalMaterials = reportData['universal_materials'] as List<dynamic>? ?? [];
     final rejection = reportData['rejection'] as Map<String, dynamic>? ?? {};
     final revenue = reportData['revenue'] as Map<String, dynamic>? ?? {};
 
@@ -83,8 +84,30 @@ class PdfExportService {
               ),
               pw.SizedBox(height: 16),
 
+              // Universal Materials Section
+              if (universalMaterials.isNotEmpty) ...[
+                _buildSectionHeader('Universal Raw Material Stock & Balance'),
+                pw.SizedBox(height: 8),
+                pw.TableHelper.fromTextArray(
+                  headers: ['Material Name', 'Remaining', 'Consumed', 'Rate (INR)', 'Valuation (INR)'],
+                  data: universalMaterials
+                      .map((item) => [
+                            item['name'] as String? ?? 'N/A',
+                            '${item['remaining_quantity'] ?? 0} ${item['unit'] as String? ?? ''}',
+                            '${item['consumed_quantity'] ?? 0} ${item['unit'] as String? ?? ''}',
+                            'INR ${item['price'] ?? 0}',
+                            'INR ${item['total_value'] ?? 0}',
+                          ])
+                      .toList(),
+                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+                  headerDecoration: const pw.BoxDecoration(color: PdfColors.teal700),
+                  cellHeight: 24,
+                ),
+                pw.SizedBox(height: 16),
+              ],
+
               // Material Consumption Section
-              _buildSectionHeader('Material Consumption'),
+              _buildSectionHeader('Order Material Consumption'),
               pw.SizedBox(height: 8),
               materials.isEmpty
                   ? pw.Text('No material consumption recorded.', style: const pw.TextStyle(color: PdfColors.grey700))
@@ -282,7 +305,7 @@ class PdfExportService {
                 _buildSectionHeader('Turning Log'),
                 pw.SizedBox(height: 4),
                 pw.TableHelper.fromTextArray(
-                  headers: ['Tool No', 'Inwards Wt (kg)', 'Outward Wt (kg)', 'Gross Qty', 'Blank Thickness', 'M/C No', 'Operator'],
+                  headers: ['Tool No', 'Inwards Wt (kg)', 'Outward Wt (kg)', 'Gross Qty', 'Blank Thickness', 'M/C No', 'Operator', 'Laser'],
                   data: [
                     [
                       '${turning['tool_no'] ?? turning['art_no'] ?? 'N/A'}',
@@ -292,6 +315,7 @@ class PdfExportService {
                       '${turning['blank_thickness'] ?? turning['semi_finish_thickness'] ?? 'N/A'}',
                       '${turning['machine_no'] ?? 'N/A'}',
                       '${turning['operator'] ?? 'N/A'}',
+                      '${turning['laser'] ?? 'N/A'}',
                     ]
                   ],
                   headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),

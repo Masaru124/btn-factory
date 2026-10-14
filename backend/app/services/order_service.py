@@ -2,7 +2,7 @@ from datetime import date, datetime
 
 from sqlalchemy.exc import IntegrityError
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.models.order import (
@@ -125,22 +125,22 @@ class OrderService:
         if order is None:
             return None
 
-        # Check or sync universal raw material
+        # Check or sync universal raw material and subtract consumed quantity
         universal = self.session.scalar(
-            select(UniversalRawMaterial).where(UniversalRawMaterial.material_name == payload.material_name)
+            select(UniversalRawMaterial).where(func.lower(UniversalRawMaterial.material_name) == func.lower(payload.material_name))
         )
         if universal is None:
-            avail = payload.total_available_quantity if payload.total_available_quantity is not None else payload.quantity
+            initial_stock = payload.total_available_quantity if payload.total_available_quantity is not None else payload.quantity
+            remaining_stock = max(0.0, round(float(initial_stock) - float(payload.quantity), 3))
             universal = UniversalRawMaterial(
                 material_name=payload.material_name,
-                total_available_quantity=avail,
+                total_available_quantity=remaining_stock,
                 unit=payload.unit,
                 price=payload.price,
             )
             self.session.add(universal)
         else:
-            if payload.total_available_quantity is not None:
-                universal.total_available_quantity = payload.total_available_quantity
+            universal.total_available_quantity = max(0.0, round(float(universal.total_available_quantity) - float(payload.quantity), 3))
             if payload.unit:
                 universal.unit = payload.unit
             if payload.price:
@@ -150,7 +150,7 @@ class OrderService:
             order_id=order.id,
             material_name=payload.material_name,
             quantity=payload.quantity,
-            total_available_quantity=payload.total_available_quantity if payload.total_available_quantity is not None else universal.total_available_quantity,
+            total_available_quantity=universal.total_available_quantity,
             unit=payload.unit,
             price=payload.price,
             created_by_id=created_by or payload.created_by_id,
@@ -222,6 +222,9 @@ class OrderService:
             data['semi_finish_thickness'] = data['blank_thickness']
         elif 'semi_finish_thickness' in data and 'blank_thickness' not in data:
             data['blank_thickness'] = data['semi_finish_thickness']
+
+        if payload.laser:
+            order.laser = payload.laser
 
         turning = TurningProcess(order_id=order.id, **data)
         self.orders.upsert_turning(order, turning)
