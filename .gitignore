@@ -58,6 +58,8 @@ Desktop.ini
 **/dist/
 **/dist-*/
 **/node_modules/
+cloudflared.exe
+**/cloudflared.exe
 
 **/.agents/
 **skills/
