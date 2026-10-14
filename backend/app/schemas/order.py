@@ -109,7 +109,7 @@ class CastingUpdate(BaseModel):
     weight: float | None = None
     blank_thickness: str | None = None
     thickness: str | None = None
-    no_of_sheets: int | None = None
+    no_of_sheets: float | None = None
     no_of_rods: int | None = None
     sheet: str | None = None
     line: str | None = None
@@ -212,7 +212,7 @@ class CastingRead(BaseModel):
     weight: float | None = None
     blank_thickness: str | None = None
     thickness: str | None = None
-    no_of_sheets: int | None = None
+    no_of_sheets: float | None = None
     no_of_rods: int | None = None
     sheet: str | None = None
     line: str | None = None

@@ -112,7 +112,7 @@ class CastingProcess(Base):
     line: Mapped[str | None] = mapped_column(String(100), nullable=True)
     blank_thickness: Mapped[str | None] = mapped_column(String(50), nullable=True)
     thickness: Mapped[str | None] = mapped_column(String(50), nullable=True)
-    no_of_sheets: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    no_of_sheets: Mapped[float | None] = mapped_column(Float, nullable=True)
     no_of_rods: Mapped[int | None] = mapped_column(Integer, nullable=True)
     gross_quantity: Mapped[int | None] = mapped_column(Integer, nullable=True)
     rejection_weight: Mapped[float | None] = mapped_column(Float, nullable=True)

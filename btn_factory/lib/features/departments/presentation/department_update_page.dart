@@ -2,6 +2,7 @@ import 'package:btn_factory/shared/widgets/app_scaffold.dart';
 import 'package:btn_factory/shared/widgets/app_image_preview.dart';
 import 'package:btn_factory/shared/widgets/section_card.dart';
 import 'package:btn_factory/core/network/api_client.dart';
+import 'package:btn_factory/core/utils/pdf_export_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
@@ -96,7 +97,7 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
             FieldDefinition('Casting Type', 'casting_type', 'string'),
             FieldDefinition('Date of Casting', 'date_of_casting', 'datetime'),
             FieldDefinition('Total Raw Material (kg)', 'total_weight', 'double'),
-            FieldDefinition('Number of Sheets', 'no_of_sheets', 'int'),
+            FieldDefinition('Number of Sheets', 'no_of_sheets', 'double'),
             FieldDefinition('Blank Thickness', 'blank_thickness', 'string'),
             FieldDefinition('Remarks', 'remarks', 'string'),
           ];
@@ -1243,6 +1244,23 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
           const SizedBox(height: 16),
           SectionCard(
             title: 'Step 2: Order Snapshot',
+            trailing: _order == null
+                ? null
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.layers_outlined, color: Color(0xFF14B8A6)),
+                        tooltip: 'Export Raw Materials & Image PDF',
+                        onPressed: () => PdfExportService.exportRawMaterialsAndImagePdf(_order!),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.picture_as_pdf_outlined, color: Color(0xFF14B8A6)),
+                        tooltip: 'Export Complete Order PDF',
+                        onPressed: () => PdfExportService.exportOrderPdf(_order!),
+                      ),
+                    ],
+                  ),
             child: _order == null
                 ? const Text('Search for a valid order to see the snapshot.', style: TextStyle(fontStyle: FontStyle.italic))
                 : Column(

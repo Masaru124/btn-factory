@@ -137,8 +137,13 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                 const SizedBox(width: 8),
                 IconButton(
                   icon: const Icon(Icons.picture_as_pdf_outlined, color: Color(0xFF14B8A6)),
-                  tooltip: 'Export Order PDF',
+                  tooltip: 'Export Complete Order PDF',
                   onPressed: () => PdfExportService.exportOrderPdf(order),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.layers_outlined, color: Color(0xFF14B8A6)),
+                  tooltip: 'Export Raw Materials & Button Image PDF',
+                  onPressed: () => PdfExportService.exportRawMaterialsAndImagePdf(order),
                 ),
                 if (isAdmin) ...[
                   const SizedBox(width: 4),
@@ -205,6 +210,14 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
           // Uploaded Files / Images
           SectionCard(
             title: 'Attachments',
+            trailing: order['button_image'] == null
+                ? null
+                : TextButton.icon(
+                    onPressed: () => PdfExportService.exportRawMaterialsAndImagePdf(order),
+                    icon: const Icon(Icons.picture_as_pdf_outlined, size: 16),
+                    label: const Text('Export RM & Image PDF'),
+                    style: TextButton.styleFrom(foregroundColor: const Color(0xFF14B8A6)),
+                  ),
             child: Wrap(
               spacing: 16,
               runSpacing: 16,
@@ -219,6 +232,12 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
             const SizedBox(height: 18),
             SectionCard(
               title: 'Raw Materials Logs',
+              trailing: TextButton.icon(
+                onPressed: () => PdfExportService.exportRawMaterialsAndImagePdf(order),
+                icon: const Icon(Icons.picture_as_pdf_outlined, size: 16),
+                label: const Text('Export RM & Image PDF'),
+                style: TextButton.styleFrom(foregroundColor: const Color(0xFF14B8A6)),
+              ),
               child: rawMaterials.isEmpty
                   ? const Padding(
                       padding: EdgeInsets.symmetric(vertical: 12),

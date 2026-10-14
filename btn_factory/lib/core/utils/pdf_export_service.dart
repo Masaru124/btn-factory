@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:dio/dio.dart';
+import 'package:btn_factory/core/constants/app_constants.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -167,6 +171,209 @@ class PdfExportService {
     );
   }
 
+  static Future<Uint8List?> _fetchImageBytes(String rawSrc) async {
+    try {
+      final src = rawSrc.trim();
+      if (src.isEmpty) return null;
+
+      if (src.startsWith('data:image')) {
+        final commaIdx = src.indexOf(',');
+        final base64Str = commaIdx != -1 ? src.substring(commaIdx + 1) : src;
+        return base64Decode(base64Str);
+      }
+
+      String url = src;
+      if (url.startsWith('/media') || url.startsWith('/static')) {
+        url = '${AppConstants.mediaBaseUrl}$url';
+      } else if (url.startsWith('media/') || url.startsWith('static/')) {
+        url = '${AppConstants.mediaBaseUrl}/$url';
+      } else if (url.contains('/media/') && !url.startsWith(AppConstants.mediaBaseUrl)) {
+        final mediaIdx = url.indexOf('/media/');
+        url = '${AppConstants.mediaBaseUrl}${url.substring(mediaIdx)}';
+      } else if (url.contains('/static/') && !url.startsWith(AppConstants.mediaBaseUrl)) {
+        final staticIdx = url.indexOf('/static/');
+        url = '${AppConstants.mediaBaseUrl}${url.substring(staticIdx)}';
+      }
+
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        final dio = Dio();
+        final response = await dio.get<List<int>>(
+          url,
+          options: Options(
+            responseType: ResponseType.bytes,
+            headers: {
+              'ngrok-skip-browser-warning': 'true',
+              'User-Agent': 'ButtonFactoryApp/1.0',
+            },
+            sendTimeout: const Duration(seconds: 10),
+            receiveTimeout: const Duration(seconds: 10),
+          ),
+        );
+        if (response.data != null) {
+          return Uint8List.fromList(response.data!);
+        }
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  /// Exports dedicated PDF containing ONLY Raw Materials Logs and Button Sample Image.
+  static Future<void> exportRawMaterialsAndImagePdf(Map<String, dynamic> order) async {
+    final pdf = pw.Document();
+
+    final token = order['token'] as String? ?? 'BTN-ORDER';
+    final companyName = order['company_name'] as String? ?? 'N/A';
+    final poNumber = order['po_number'] as String? ?? 'N/A';
+    final status = order['status'] as String? ?? 'Created';
+    final rawMaterials = order['raw_materials'] as List<dynamic>? ?? [];
+
+    Uint8List? buttonImageBytes;
+    final buttonImageSrc = order['button_image'] as String?;
+    if (buttonImageSrc != null && buttonImageSrc.trim().isNotEmpty) {
+      buttonImageBytes = await _fetchImageBytes(buttonImageSrc);
+    }
+
+    final formattedDate = DateFormat('dd MMM yyyy, hh:mm a').format(DateTime.now());
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(32),
+        build: (pw.Context context) => [
+          // Header Card
+          pw.Container(
+            padding: const pw.EdgeInsets.all(16),
+            decoration: pw.BoxDecoration(
+              color: PdfColors.teal800,
+              borderRadius: pw.BorderRadius.circular(6),
+            ),
+            child: pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text(
+                      'RAW MATERIAL & BUTTON SAMPLE REPORT',
+                      style: pw.TextStyle(
+                        color: PdfColors.white,
+                        fontSize: 16,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                    pw.SizedBox(height: 4),
+                    pw.Text(
+                      'Company: $companyName',
+                      style: const pw.TextStyle(color: PdfColors.white, fontSize: 12),
+                    ),
+                    pw.SizedBox(height: 2),
+                    pw.Text(
+                      'PO Number: $poNumber',
+                      style: const pw.TextStyle(color: PdfColors.teal100, fontSize: 11),
+                    ),
+                  ],
+                ),
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.end,
+                  children: [
+                    pw.Text(
+                      'TOKEN: $token',
+                      style: pw.TextStyle(color: PdfColors.white, fontSize: 13, fontWeight: pw.FontWeight.bold),
+                    ),
+                    pw.SizedBox(height: 4),
+                    pw.Text(
+                      'Status: $status',
+                      style: const pw.TextStyle(color: PdfColors.yellow300, fontSize: 11),
+                    ),
+                    pw.SizedBox(height: 2),
+                    pw.Text(
+                      'Generated: $formattedDate',
+                      style: const pw.TextStyle(color: PdfColors.teal100, fontSize: 9),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          pw.SizedBox(height: 18),
+
+          // Button Sample Image Section
+          _buildSectionHeader('Button Sample Image'),
+          pw.SizedBox(height: 8),
+          buttonImageBytes != null
+              ? pw.Center(
+                  child: pw.Container(
+                    height: 220,
+                    width: 220,
+                    padding: const pw.EdgeInsets.all(8),
+                    decoration: pw.BoxDecoration(
+                      color: PdfColors.grey100,
+                      border: pw.Border.all(color: PdfColors.teal700, width: 1.5),
+                      borderRadius: pw.BorderRadius.circular(8),
+                    ),
+                    child: pw.Image(
+                      pw.MemoryImage(buttonImageBytes),
+                      fit: pw.BoxFit.contain,
+                    ),
+                  ),
+                )
+              : pw.Container(
+                  padding: const pw.EdgeInsets.all(16),
+                  decoration: pw.BoxDecoration(
+                    border: pw.Border.all(color: PdfColors.grey400),
+                    borderRadius: pw.BorderRadius.circular(6),
+                  ),
+                  child: pw.Center(
+                    child: pw.Text(
+                      'No button sample image uploaded for this order.',
+                      style: pw.TextStyle(color: PdfColors.grey700, fontSize: 11, fontStyle: pw.FontStyle.italic),
+                    ),
+                  ),
+                ),
+          pw.SizedBox(height: 20),
+
+          // Raw Material Logs Section
+          _buildSectionHeader('Raw Material Logs'),
+          pw.SizedBox(height: 8),
+          rawMaterials.isEmpty
+              ? pw.Container(
+                  padding: const pw.EdgeInsets.all(16),
+                  decoration: pw.BoxDecoration(
+                    border: pw.Border.all(color: PdfColors.grey400),
+                    borderRadius: pw.BorderRadius.circular(6),
+                  ),
+                  child: pw.Center(
+                    child: pw.Text(
+                      'No raw materials logged for this order.',
+                      style: pw.TextStyle(color: PdfColors.grey700, fontSize: 11, fontStyle: pw.FontStyle.italic),
+                    ),
+                  ),
+                )
+              : pw.TableHelper.fromTextArray(
+                  headers: ['Material Name', 'Order Qty', 'Total Available Stock', 'Unit', 'Price (INR)'],
+                  data: rawMaterials
+                      .map((m) => [
+                            '${m['material_name'] ?? 'N/A'}',
+                            '${m['quantity'] ?? 'N/A'}',
+                            '${m['total_available_quantity'] ?? 'N/A'}',
+                            '${m['unit'] ?? ''}',
+                            'INR ${m['price'] ?? 'N/A'}',
+                          ])
+                      .toList(),
+                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+                  headerDecoration: const pw.BoxDecoration(color: PdfColors.teal700),
+                  cellHeight: 22,
+                ),
+        ],
+      ),
+    );
+
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => pdf.save(),
+      name: 'order_${token}_raw_materials_sample.pdf',
+    );
+  }
+
   static Future<void> exportOrderPdf(Map<String, dynamic> order) async {
     final pdf = pw.Document();
 
@@ -183,6 +390,12 @@ class PdfExportService {
     final turning = order['turning_process'] as Map<String, dynamic>?;
     final polish = order['polishing_process'] as Map<String, dynamic>?;
     final packing = order['packing_process'] as Map<String, dynamic>?;
+
+    Uint8List? buttonImageBytes;
+    final buttonImageSrc = order['button_image'] as String?;
+    if (buttonImageSrc != null && buttonImageSrc.trim().isNotEmpty) {
+      buttonImageBytes = await _fetchImageBytes(buttonImageSrc);
+    }
 
     pdf.addPage(
       pw.Page(
@@ -247,21 +460,50 @@ class PdfExportService {
               // Product Specifications Table
               _buildSectionHeader('Product Specifications'),
               pw.SizedBox(height: 6),
-              pw.TableHelper.fromTextArray(
-                headers: ['Parameter', 'Specification', 'Parameter', 'Specification'],
-                data: [
-                  ['PO Date', '${order['po_date'] ?? 'N/A'}', 'Dispatch Date', '${order['dispatch_date'] ?? 'N/A'}'],
-                  ['Order Type', '${order['order_type'] ?? 'Production'}', 'Casting Type', '${order['casting_type'] ?? 'N/A'}'],
-                  ['Sample', '${order['sample'] ?? 'N/A'}', 'Thickness', '${order['thickness'] ?? 'N/A'}'],
-                  ['Holes', '${order['holes'] ?? 'N/A'}', 'Box Type', '${order['box_type'] ?? 'N/A'}'],
-                  ['Rate', 'INR ${order['rate'] ?? 'N/A'}', 'Quantity', '${order['quantity'] ?? 'N/A'}'],
-                  ['Linings', '${order['linings'] ?? 'N/A'}', 'Laser', '${order['laser'] ?? 'N/A'}'],
-                  ['Polish Type', '${order['polish_type'] ?? 'N/A'}', 'Packing Option', '${order['packing_option'] ?? 'N/A'}'],
-                  ['Status', status, '', ''],
+              pw.Row(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Expanded(
+                    flex: buttonImageBytes != null ? 3 : 1,
+                    child: pw.TableHelper.fromTextArray(
+                      headers: ['Parameter', 'Specification', 'Parameter', 'Specification'],
+                      data: [
+                        ['PO Date', '${order['po_date'] ?? 'N/A'}', 'Dispatch Date', '${order['dispatch_date'] ?? 'N/A'}'],
+                        ['Order Type', '${order['order_type'] ?? 'Production'}', 'Casting Type', '${order['casting_type'] ?? 'N/A'}'],
+                        ['Sample', '${order['sample'] ?? 'N/A'}', 'Thickness', '${order['thickness'] ?? 'N/A'}'],
+                        ['Holes', '${order['holes'] ?? 'N/A'}', 'Box Type', '${order['box_type'] ?? 'N/A'}'],
+                        ['Rate', 'INR ${order['rate'] ?? 'N/A'}', 'Quantity', '${order['quantity'] ?? 'N/A'}'],
+                        ['Linings', '${order['linings'] ?? 'N/A'}', 'Laser', '${order['laser'] ?? 'N/A'}'],
+                        ['Polish Type', '${order['polish_type'] ?? 'N/A'}', 'Packing Option', '${order['packing_option'] ?? 'N/A'}'],
+                        ['Status', status, '', ''],
+                      ],
+                      headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+                      headerDecoration: const pw.BoxDecoration(color: PdfColors.teal700),
+                      cellHeight: 20,
+                    ),
+                  ),
+                  if (buttonImageBytes != null) ...[
+                    pw.SizedBox(width: 10),
+                    pw.Container(
+                      width: 90,
+                      height: 110,
+                      padding: const pw.EdgeInsets.all(4),
+                      decoration: pw.BoxDecoration(
+                        border: pw.Border.all(color: PdfColors.teal700, width: 1),
+                        borderRadius: pw.BorderRadius.circular(6),
+                      ),
+                      child: pw.Column(
+                        children: [
+                          pw.Text('Button Image', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8, color: PdfColors.teal800)),
+                          pw.SizedBox(height: 4),
+                          pw.Expanded(
+                            child: pw.Image(pw.MemoryImage(buttonImageBytes), fit: pw.BoxFit.contain),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ],
-                headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
-                headerDecoration: const pw.BoxDecoration(color: PdfColors.teal700),
-                cellHeight: 20,
               ),
               pw.SizedBox(height: 14),
 

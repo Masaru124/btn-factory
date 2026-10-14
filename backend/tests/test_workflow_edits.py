@@ -117,7 +117,7 @@ def test_department_field_normalization():
             date_of_casting=now,
             total_weight=45.5,
             blank_thickness='2.5 mm',
-            no_of_sheets=12,
+            no_of_sheets=12.5,
             no_of_rods=50,
             rejection_weight=1.5,
             operator='Jane Smith',
@@ -129,7 +129,7 @@ def test_department_field_normalization():
     assert casting.weight == 45.5
     assert casting.blank_thickness == '2.5 mm'
     assert casting.thickness == '2.5 mm'
-    assert casting.no_of_sheets == 12
+    assert casting.no_of_sheets == 12.5
     assert casting.no_of_rods == 50
     assert casting.rejection_weight == 1.5
     assert casting.operator == 'Jane Smith'
