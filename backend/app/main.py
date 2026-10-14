@@ -112,6 +112,10 @@ def on_startup() -> None:
     finally:
         db.close()
 
+    # Trigger automated local snapshot & cloud disaster recovery sync in background
+    from app.services.backup_service import run_background_backup
+    run_background_backup()
+
 
 # 7. Comprehensive Health & Readiness Check
 @app.get('/health')

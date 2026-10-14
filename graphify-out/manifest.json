@@ -90,9 +90,9 @@
     "semantic_hash": ""
   },
   "backend/app/main.py": {
-    "mtime": 1791802262.3782516,
-    "seen": 1791802792.8614535,
-    "ast_hash": "77687432a36c976bde3aa8cdc6fd3918",
+    "mtime": 1791958622.6348572,
+    "seen": 1791958680.0507126,
+    "ast_hash": "12bb8ffd95a9c5ce39f7fb7dde7654f1",
     "semantic_hash": ""
   },
   "backend/app/models/__init__.py": {
@@ -594,9 +594,9 @@
     "semantic_hash": "87201f8a2f86dbb4b4d3df781c578e45"
   },
   "README.md": {
-    "mtime": 1791794311.9565368,
-    "seen": 1791798005.2699447,
-    "ast_hash": "5d9a2ff1925e9ac21f77fa0a8ca40849",
+    "mtime": 1791959188.53688,
+    "seen": 1791959199.3895662,
+    "ast_hash": "725b26d8e4e08181b9bfa8627aa285e5",
     "semantic_hash": ""
   },
   "backend/requirements.txt": {
@@ -1002,15 +1002,33 @@
     "semantic_hash": ""
   },
   "backend/scripts/test_db_connections.py": {
-    "mtime": 1791805673.8418994,
-    "seen": 1791805716.6523845,
-    "ast_hash": "83d9b6a6db88f3a231b56d8234209679",
+    "mtime": 1791959047.3143895,
+    "seen": 1791959086.5696461,
+    "ast_hash": "111ef9e3a5eb85df38243adba593ad6f",
     "semantic_hash": ""
   },
   "backend/tests/test_db_diagnostics.py": {
     "mtime": 1791805391.2560427,
     "seen": 1791805450.940188,
     "ast_hash": "89c046d94c1240a793061564d2b01795",
+    "semantic_hash": ""
+  },
+  "backend/app/services/backup_service.py": {
+    "mtime": 1791958938.842821,
+    "seen": 1791959086.5696294,
+    "ast_hash": "16fff5026dc4527d798abf1280144130",
+    "semantic_hash": ""
+  },
+  "backend/scripts/run_backup.py": {
+    "mtime": 1791958951.6020975,
+    "seen": 1791959086.569641,
+    "ast_hash": "30972b712888257f03f3749a0019ec6c",
+    "semantic_hash": ""
+  },
+  "backend/scripts/setup_local_postgres.py": {
+    "mtime": 1791959240.8183315,
+    "seen": 1791959257.597752,
+    "ast_hash": "88aa6c44679c6270fb7556eb948a4771",
     "semantic_hash": ""
   }
 }

@@ -46,6 +46,10 @@ def is_placeholder(url: str | None) -> bool:
 
 def check_sqlite_connection(url: str) -> dict:
     start = time.perf_counter()
+    if url.startswith('sqlite:///./'):
+        rel_sub = url.replace('sqlite:///./', '')
+        if not os.path.exists(rel_sub) and os.path.exists(os.path.join('backend', rel_sub)):
+            url = f"sqlite:///{os.path.join('backend', rel_sub).replace(chr(92), '/')}"
     res = {
         'tier': 'Tier 1: SQLite',
         'type': 'SQLite (Local Embedded / Offline Fallback)',

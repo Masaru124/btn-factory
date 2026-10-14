@@ -23,6 +23,10 @@ echo Backend Directory : %BACKEND_DIR%
 echo Target Port       : 8000 (FastAPI Backend)
 echo.
 
+:: 0. Automated Database Backup & Disaster Recovery Sync
+echo [Auto-Backup] Creating local DB snapshot & syncing multi-tier databases...
+start "Button Factory - Auto Backup" /min cmd /c "cd /d "%BACKEND_DIR%" && python scripts\run_backup.py"
+
 :: 1. Launch FastAPI Backend
 echo [1/3] Starting Terminal 1: FastAPI Backend (:8000)...
 start "Button Factory - Backend Server (:8000)" cmd /k "title Backend Server [FastAPI :8000] && color 0B && cd /d "%BACKEND_DIR%" && python -m uvicorn app.main:app --port 8000 --reload"
