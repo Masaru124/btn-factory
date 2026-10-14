@@ -4,6 +4,8 @@ import 'package:btn_factory/core/constants/app_constants.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
 
 /// Shows a full-screen interactive lightbox for an image with zoom & pan support.
 void showImageLightbox(
@@ -425,6 +427,7 @@ class AppImageUploadCard extends StatelessWidget {
     required this.imageSource,
     this.imageBytes,
     required this.onPickImage,
+    this.onPickCamera,
     this.onClearImage,
   });
 
@@ -432,6 +435,7 @@ class AppImageUploadCard extends StatelessWidget {
   final String? imageSource;
   final Uint8List? imageBytes;
   final VoidCallback onPickImage;
+  final VoidCallback? onPickCamera;
   final VoidCallback? onClearImage;
 
   @override
@@ -531,52 +535,108 @@ class AppImageUploadCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                if (onPickCamera != null) ...[
+                  OutlinedButton.icon(
+                    onPressed: onPickCamera,
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Color(0xFF14B8A6)),
+                      foregroundColor: const Color(0xFF14B8A6),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    ),
+                    icon: const Icon(Icons.camera_alt_outlined, size: 16),
+                    label: const Text('Camera'),
+                  ),
+                  const SizedBox(width: 8),
+                ],
                 OutlinedButton.icon(
                   onPressed: onPickImage,
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Color(0xFF14B8A6)),
-                    foregroundColor: const Color(0xFF14B8A6),
+                    side: const BorderSide(color: Color(0xFF3B82F6)),
+                    foregroundColor: const Color(0xFF60A5FA),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                   ),
-                  icon: const Icon(Icons.swap_horiz, size: 16),
+                  icon: const Icon(Icons.photo_library_outlined, size: 16),
                   label: const Text('Change'),
                 ),
               ],
             ),
           ] else ...<Widget>[
             // Upload button area when no image selected
-            InkWell(
-              onTap: onPickImage,
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 24),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1F2937).withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFF374151), style: BorderStyle.solid),
-                ),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF14B8A6).withValues(alpha: 0.1),
-                        shape: BoxShape.circle,
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1F2937).withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFF374151), style: BorderStyle.solid),
+              ),
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF14B8A6).withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.camera_alt_outlined, color: Color(0xFF14B8A6), size: 24),
                       ),
-                      child: const Icon(Icons.cloud_upload_outlined, color: Color(0xFF14B8A6), size: 28),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Click to select or upload image',
-                      style: TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold, fontSize: 13),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'PNG, JPG, JPEG, WEBP files supported',
-                      style: TextStyle(color: Color(0xFF64748B), fontSize: 11),
-                    ),
-                  ],
-                ),
+                      const SizedBox(width: 12),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.cloud_upload_outlined, color: Color(0xFF3B82F6), size: 24),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Upload Image or Take Photo',
+                    style: TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold, fontSize: 13),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Use device camera or choose from gallery/files',
+                    style: TextStyle(color: Color(0xFF64748B), fontSize: 11),
+                  ),
+                  const SizedBox(height: 14),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    alignment: WrapAlignment.center,
+                    children: [
+                      if (onPickCamera != null)
+                        FilledButton.icon(
+                          onPressed: onPickCamera,
+                          style: FilledButton.styleFrom(
+                            backgroundColor: const Color(0xFF14B8A6),
+                            foregroundColor: const Color(0xFF0F172A),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                          ),
+                          icon: const Icon(Icons.camera_alt, size: 16),
+                          label: const Text('Take Photo', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                        ),
+                      OutlinedButton.icon(
+                        onPressed: onPickImage,
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Color(0xFF3B82F6)),
+                          foregroundColor: const Color(0xFF60A5FA),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                        ),
+                        icon: const Icon(Icons.photo_library_outlined, size: 16),
+                        label: const Text('Browse Files', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],
@@ -585,6 +645,98 @@ class AppImageUploadCard extends StatelessWidget {
     );
   }
 }
+
+/// Helper bottom sheet / dialog to let the user select between Camera and Gallery
+Future<ImageSource?> showImageSourceDialog(BuildContext context) async {
+  return showModalBottomSheet<ImageSource>(
+    context: context,
+    backgroundColor: const Color(0xFF1E293B),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (BuildContext ctx) {
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const Text(
+                'Select Image Source',
+                style: TextStyle(
+                  color: Color(0xFFF8FAFC),
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'Capture photo directly with camera or choose from gallery',
+                style: TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
+              ),
+              const SizedBox(height: 18),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: const BorderSide(color: Color(0xFF334155)),
+                ),
+                tileColor: const Color(0xFF0F172A),
+                leading: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF14B8A6).withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.camera_alt, color: Color(0xFF14B8A6), size: 24),
+                ),
+                title: const Text('Take Photo with Camera', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                subtitle: const Text('Open camera and capture photo directly', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12)),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 14, color: Color(0xFF64748B)),
+                onTap: () => Navigator.pop(ctx, ImageSource.camera),
+              ),
+              const SizedBox(height: 12),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: const BorderSide(color: Color(0xFF334155)),
+                ),
+                tileColor: const Color(0xFF0F172A),
+                leading: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF3B82F6).withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.photo_library, color: Color(0xFF3B82F6), size: 24),
+                ),
+                title: const Text('Choose from Gallery / Files', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                subtitle: const Text('Pick existing image from device storage', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12)),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 14, color: Color(0xFF64748B)),
+                onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
 
 /// Helper stateful widget that fetches remote images via Dio (adding ngrok-skip headers)
 /// to bypass ngrok browser interstitial warning pages and caches the raw bytes in memory.

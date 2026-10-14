@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 enum OrderFormMode { create, edit }
 
@@ -179,26 +180,51 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
     });
   }
 
-  Future<void> _pickImage(bool isPoImage) async {
-    final FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-      allowMultiple: false,
-      withData: true,
-    );
-    if (result == null || result.files.isEmpty) {
+  Future<void> _pickImage(bool isPoImage, {ImageSource? source}) async {
+    final ImageSource? selectedSource = source ?? await showImageSourceDialog(context);
+    if (selectedSource == null) {
       return;
     }
 
-    final platformFile = result.files.single;
-    Uint8List? bytes = platformFile.bytes;
+    Uint8List? bytes;
+    String fileName = 'image_${DateTime.now().millisecondsSinceEpoch}.jpg';
 
-    if (bytes == null && platformFile.path != null && !kIsWeb) {
-      try {
-        final file = File(platformFile.path!);
-        if (await file.exists()) {
-          bytes = await file.readAsBytes();
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? pickedFile = await picker.pickImage(
+        source: selectedSource,
+        preferredCameraDevice: CameraDevice.rear,
+        maxWidth: 1920,
+        maxHeight: 1920,
+        imageQuality: 85,
+      );
+
+      if (pickedFile != null) {
+        bytes = await pickedFile.readAsBytes();
+        fileName = pickedFile.name;
+      }
+    } catch (_) {
+      // Fallback for desktop or unexpected camera/gallery exceptions
+      if (selectedSource == ImageSource.gallery) {
+        final FilePickerResult? result = await FilePicker.platform.pickFiles(
+          type: FileType.image,
+          allowMultiple: false,
+          withData: true,
+        );
+        if (result != null && result.files.isNotEmpty) {
+          final platformFile = result.files.single;
+          bytes = platformFile.bytes;
+          fileName = platformFile.name;
+          if (bytes == null && platformFile.path != null && !kIsWeb) {
+            try {
+              final file = File(platformFile.path!);
+              if (await file.exists()) {
+                bytes = await file.readAsBytes();
+              }
+            } catch (_) {}
+          }
         }
-      } catch (_) {}
+      }
     }
 
     if (bytes == null || bytes.isEmpty) {
@@ -206,7 +232,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
     }
 
     // Encode image bytes as self-contained Base64 Data URI
-    final ext = platformFile.name.contains('.') ? platformFile.name.split('.').last.toLowerCase() : 'png';
+    final ext = fileName.contains('.') ? fileName.split('.').last.toLowerCase() : 'jpg';
     final mime = (ext == 'jpg' || ext == 'jpeg') ? 'image/jpeg' : (ext == 'webp' ? 'image/webp' : 'image/png');
     final base64Val = 'data:$mime;base64,${base64Encode(bytes)}';
 
@@ -227,7 +253,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
       final formData = FormData.fromMap({
         'file': MultipartFile.fromBytes(
           bytes,
-          filename: platformFile.name,
+          filename: fileName,
         ),
       });
       await dio.post('/media/upload', data: formData);
@@ -514,7 +540,8 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                   label: 'PO Image Upload',
                   imageSource: _poImageName,
                   imageBytes: _poImageBytes,
-                  onPickImage: () => _pickImage(true),
+                  onPickImage: () => _pickImage(true, source: ImageSource.gallery),
+                  onPickCamera: () => _pickImage(true, source: ImageSource.camera),
                   onClearImage: () => setState(() {
                     _poImageName = null;
                     _poImageBytes = null;
@@ -631,7 +658,8 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                   label: 'Button Sample Image',
                   imageSource: _buttonImageName,
                   imageBytes: _buttonImageBytes,
-                  onPickImage: () => _pickImage(false),
+                  onPickImage: () => _pickImage(false, source: ImageSource.gallery),
+                  onPickCamera: () => _pickImage(false, source: ImageSource.camera),
                   onClearImage: () => setState(() {
                     _buttonImageName = null;
                     _buttonImageBytes = null;
