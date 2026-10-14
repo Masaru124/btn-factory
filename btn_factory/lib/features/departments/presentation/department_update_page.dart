@@ -483,6 +483,7 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
             return AlertDialog(
               backgroundColor: const Color(0xFF1E293B),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              actionsAlignment: isEdit ? MainAxisAlignment.spaceBetween : MainAxisAlignment.end,
               title: Row(
                 children: [
                   Icon(
@@ -715,7 +716,6 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                     icon: const Icon(Icons.delete_outline, size: 18),
                     label: const Text('Delete Material'),
                   ),
-                const Spacer(),
                 TextButton(
                   onPressed: isSaving ? null : () => Navigator.of(dialogContext).pop(),
                   child: const Text('Cancel'),
