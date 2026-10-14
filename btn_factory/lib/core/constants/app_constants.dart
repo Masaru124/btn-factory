@@ -26,6 +26,13 @@ class AppConstants {
     if (dartDefineUrl.trim().isNotEmpty) {
       return dartDefineUrl.trim();
     }
+    // Automatically derive from apiBaseUrl so media requests route to backend host
+    final apiUrl = apiBaseUrl;
+    if (apiUrl.endsWith('/api')) {
+      return apiUrl.substring(0, apiUrl.length - 4);
+    } else if (apiUrl.endsWith('/api/')) {
+      return apiUrl.substring(0, apiUrl.length - 5);
+    }
     if (kIsWeb) {
       final origin = Uri.base.origin;
       final port = Uri.base.port;

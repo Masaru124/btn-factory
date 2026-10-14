@@ -154,6 +154,12 @@ class AppImagePreview extends StatelessWidget {
       src = '${AppConstants.mediaBaseUrl}$src';
     } else if (src.startsWith('media/') || src.startsWith('static/')) {
       src = '${AppConstants.mediaBaseUrl}/$src';
+    } else if (src.contains('/media/') && !src.startsWith(AppConstants.mediaBaseUrl)) {
+      final mediaIdx = src.indexOf('/media/');
+      src = '${AppConstants.mediaBaseUrl}${src.substring(mediaIdx)}';
+    } else if (src.contains('/static/') && !src.startsWith(AppConstants.mediaBaseUrl)) {
+      final staticIdx = src.indexOf('/static/');
+      src = '${AppConstants.mediaBaseUrl}${src.substring(staticIdx)}';
     }
 
     // 2. HTTP / HTTPS Network URL (including resolved local/LAN media URLs)
@@ -163,6 +169,9 @@ class AppImagePreview extends StatelessWidget {
         fit: fit,
         width: width,
         height: height,
+        headers: const <String, String>{
+          'ngrok-skip-browser-warning': 'true',
+        },
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
           return Container(
