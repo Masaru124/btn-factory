@@ -120,90 +120,18 @@ class ReportService:
 
         all_orders = self.db.query(Order).order_by(Order.id.desc()).all()
         order_reports = []
+        from app.schemas.order import OrderRead
         for o in all_orders:
-            order_reports.append({
-                'id': o.id,
-                'token': o.token,
-                'company_name': o.party_name or 'N/A',
-                'party_name': o.party_name or 'N/A',
-                'product_name': o.product_name or 'N/A',
-                'po_number': o.po_number or 'N/A',
-                'order_date': o.order_date.isoformat() if o.order_date else None,
-                'delivery_date': o.delivery_date.isoformat() if o.delivery_date else None,
-                'quantity': o.quantity,
-                'unit': o.unit,
-                'rate': float(o.rate) if o.rate is not None else None,
-                'total_amount': round(float(o.rate * o.quantity), 2) if (o.rate is not None and o.quantity is not None) else None,
-                'size': o.size,
-                'colour': o.colour,
-                'status': o.status,
-                'laser': o.laser,
-                'button_image': o.sample_image_url,
-                'sample_image_url': o.sample_image_url,
-                'raw_materials': [
-                    {
-                        'id': rm.id,
-                        'name': rm.material_name,
-                        'material_name': rm.material_name,
-                        'quantity': float(rm.quantity),
-                        'unit': rm.unit,
-                        'price': float(rm.price) if rm.price is not None else 0.0,
-                    }
-                    for rm in o.raw_materials
-                ],
-                'casting_process': {
-                    'casting_type': o.casting_process.casting_type,
-                    'date_of_casting': o.casting_process.date_of_casting.isoformat() if o.casting_process.date_of_casting else None,
-                    'gross_quantity': o.casting_process.gross_quantity,
-                    'no_of_rods': o.casting_process.no_of_rods,
-                    'no_of_sheets': o.casting_process.no_of_sheets,
-                    'total_weight': o.casting_process.total_weight,
-                    'blank_thickness': o.casting_process.blank_thickness,
-                    'remarks': o.casting_process.remarks,
-                    'operator': o.casting_process.operator,
-                } if o.casting_process else None,
-                'turning_process': {
-                    'tool_no': o.turning_process.tool_no or o.turning_process.art_no,
-                    'art_no': o.turning_process.art_no or o.turning_process.tool_no,
-                    'gross_quantity': o.turning_process.gross_quantity,
-                    'inward_weight': o.turning_process.inward_weight or o.turning_process.weight,
-                    'outward_weight': o.turning_process.outward_weight or o.turning_process.turned_in_kgs,
-                    'blank_thickness': o.turning_process.blank_thickness,
-                    'finish_thickness': o.turning_process.finish_thickness,
-                    'machine_no': o.turning_process.machine_no,
-                    'laser': o.turning_process.laser or o.laser,
-                    'operator': o.turning_process.operator,
-                    'remarks': o.turning_process.remarks,
-                } if o.turning_process else None,
-                'polishing_process': {
-                    'receiving_date': o.polishing_process.receiving_date.isoformat() if o.polishing_process.receiving_date else None,
-                    'polish_type': o.polishing_process.polish_type,
-                    'gross_quantity': o.polishing_process.gross_quantity,
-                    'inward_weight': o.polishing_process.inward_weight or o.polishing_process.weight,
-                    'outward_weight': o.polishing_process.outward_weight,
-                    'operator': o.polishing_process.operator,
-                    'remarks': o.polishing_process.remarks,
-                } if o.polishing_process else None,
-                'packing_process': {
-                    'receiving_date': o.packing_process.receiving_date.isoformat() if o.packing_process.receiving_date else None,
-                    'in_gross': o.packing_process.in_gross,
-                    'packed_qty': o.packing_process.packed_qty,
-                    'rejected_qty': o.packing_process.rejected_qty,
-                    'rejection_weight': o.packing_process.rejection_weight,
-                    'rejection_unit': o.packing_process.rejection_unit or 'g',
-                    'inward_weight': o.packing_process.inward_weight or o.packing_process.weight,
-                    'inward_weight_unit': o.packing_process.inward_weight_unit or 'kg',
-                    'outward_weight': o.packing_process.outward_weight,
-                    'outward_weight_unit': o.packing_process.outward_weight_unit or 'kg',
-                    'one_gross_weight': o.packing_process.one_gross_weight,
-                    'one_gross_weight_unit': o.packing_process.one_gross_weight_unit or 'g',
-                    'excess_qty': o.packing_process.excess_qty,
-                    'short_qty': o.packing_process.short_qty,
-                    'finishing': o.packing_process.finishing,
-                    'operator': o.packing_process.operator,
-                    'remarks': o.packing_process.remarks,
-                } if o.packing_process else None,
-            })
+            order_data = OrderRead.model_validate(o).model_dump(mode='json')
+            order_data['party_name'] = o.company_name
+            order_data['company_name'] = o.company_name
+            order_data['sample_image_url'] = o.button_image
+            order_data['button_image'] = o.button_image
+            order_data['total_amount'] = round(float(o.rate * o.quantity), 2) if (o.rate is not None and o.quantity is not None) else None
+            for rm in order_data.get('raw_materials', []):
+                rm['name'] = rm.get('material_name', '')
+            order_reports.append(order_data)
+
 
         return {
             'production': {
