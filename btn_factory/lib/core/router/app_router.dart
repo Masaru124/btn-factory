@@ -9,8 +9,7 @@ import 'package:btn_factory/features/orders/presentation/order_form_page.dart';
 import 'package:btn_factory/features/orders/presentation/order_list_page.dart';
 import 'package:btn_factory/features/reports/presentation/reports_page.dart';
 import 'package:btn_factory/features/staff/presentation/staff_page.dart';
-import 'package:btn_factory/shared/widgets/feature_placeholder_page.dart';
-import 'package:flutter/material.dart';
+import 'package:btn_factory/features/dashboard/presentation/analytics_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -171,12 +170,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/analytics',
-        builder: (context, state) => const FeaturePlaceholderPage(
-          title: 'Analytics',
-          subtitle: 'Orders trend, production trend, material consumption, and rejection analysis will be charted here.',
-          icon: Icons.insights_outlined,
-          selectedIndex: 8,
-        ),
+        builder: (context, state) => const AnalyticsPage(),
       ),
       GoRoute(
         path: '/staff',

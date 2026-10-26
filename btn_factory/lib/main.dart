@@ -18,6 +18,6 @@ class ButtonFactoryApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       routerConfig: ref.watch(appRouterProvider),
-    );
+    );    
   }
 }

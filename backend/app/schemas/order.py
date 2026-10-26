@@ -13,6 +13,7 @@ class OrderBase(BaseModel):
     box_type: str | None = None
     rate: float | None = None
     quantity: int | None = None
+    weight: float | None = None
     linings: str | None = None
     laser: str | None = None
     polish_type: str | None = None
@@ -40,6 +41,7 @@ class OrderUpdate(BaseModel):
     box_type: str | None = None
     rate: float | None = None
     quantity: int | None = None
+    weight: float | None = None
     linings: str | None = None
     laser: str | None = None
     polish_type: str | None = None

@@ -36,11 +36,12 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
   final TextEditingController _thicknessController = TextEditingController();
   final TextEditingController _boxTypeController = TextEditingController();
   final TextEditingController _sampleController = TextEditingController();
+  final TextEditingController _weightController = TextEditingController();
+  final TextEditingController _poDateController = TextEditingController();
+  final TextEditingController _dispatchDateController = TextEditingController();
   String _orderType = 'Production';
   String? _castingType;
   String? _linings;
-  DateTime? _poDate;
-  DateTime? _dispatchDate;
   String? _poImageName;
   Uint8List? _poImageBytes;
   String? _buttonImageName;
@@ -59,22 +60,10 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
       _tokenController.text = widget.orderToken!;
       WidgetsBinding.instance.addPostFrameCallback((_) => _fetchOrderDetails());
     } else {
-      // Set default values for Create Mode
-      _companyController.text = 'Alpha Metal Works';
-      _holesController.text = '4';
-      _rateController.text = '42.50';
-      _quantityController.text = '12000';
+      // Empty fields for real order creation - no dummy placeholders
       _castingType = 'Sheet';
-      _thicknessController.text = '1.2 mm';
-      _boxTypeController.text = 'DD';
-      _sampleController.text = '';
-      _linings = '14';
-      _laserController.text = 'Logo';
-      _polishTypeController.text = 'Mirror';
-      _packingOptionController.text = 'Carton';
       _orderType = 'Production';
-      _poDate = DateTime.now();
-      _dispatchDate = DateTime.now().add(const Duration(days: 14));
+      _poDateController.text = DateTime.now().toIso8601String().split('T').first;
       WidgetsBinding.instance.addPostFrameCallback((_) => _fetchNextToken());
     }
   }
@@ -118,6 +107,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
         _sampleController.text = order['sample'] as String? ?? '';
         _thicknessController.text = order['thickness'] as String? ?? '';
         _boxTypeController.text = order['box_type'] as String? ?? '';
+        _weightController.text = order['weight']?.toString() ?? '';
         _linings = order['linings'] as String?;
         _laserController.text = order['laser'] as String? ?? '';
         _polishTypeController.text = order['polish_type'] as String? ?? '';
@@ -125,10 +115,12 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
         _status = order['status'] as String?;
 
         if (order['po_date'] != null) {
-          _poDate = DateTime.tryParse(order['po_date'] as String);
+          final s = order['po_date'].toString();
+          _poDateController.text = s.contains('T') ? s.split('T').first : s;
         }
         if (order['dispatch_date'] != null) {
-          _dispatchDate = DateTime.tryParse(order['dispatch_date'] as String);
+          final s = order['dispatch_date'].toString();
+          _dispatchDateController.text = s.contains('T') ? s.split('T').first : s;
         }
         _poImageName = order['po_image'] as String?;
         _buttonImageName = order['button_image'] as String?;
@@ -155,11 +147,35 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
     _thicknessController.dispose();
     _boxTypeController.dispose();
     _sampleController.dispose();
+    _weightController.dispose();
+    _poDateController.dispose();
+    _dispatchDateController.dispose();
     super.dispose();
   }
 
+  String _formatDateForPayload(String text) {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) return DateTime.now().toIso8601String().split('T').first;
+    if (RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(trimmed)) return trimmed;
+    final dt = DateTime.tryParse(trimmed);
+    if (dt != null) return dt.toIso8601String().split('T').first;
+    final dmy = RegExp(r'^(\d{1,2})[-/](\d{1,2})[-/](\d{4})').firstMatch(trimmed);
+    if (dmy != null) {
+      final d = dmy.group(1)!.padLeft(2, '0');
+      final m = dmy.group(2)!.padLeft(2, '0');
+      final y = dmy.group(3)!;
+      return '$y-$m-$d';
+    }
+    return trimmed;
+  }
+
   Future<void> _pickDate(bool isPoDate) async {
-    final DateTime initialDate = isPoDate ? _poDate ?? DateTime.now() : _dispatchDate ?? DateTime.now();
+    final controller = isPoDate ? _poDateController : _dispatchDateController;
+    DateTime initialDate = DateTime.now();
+    if (controller.text.trim().isNotEmpty) {
+      final parsed = DateTime.tryParse(_formatDateForPayload(controller.text));
+      if (parsed != null) initialDate = parsed;
+    }
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: initialDate,
@@ -171,11 +187,12 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
       return;
     }
 
+    final dateStr = pickedDate.toIso8601String().split('T').first;
     setState(() {
       if (isPoDate) {
-        _poDate = pickedDate;
+        _poDateController.text = dateStr;
       } else {
-        _dispatchDate = pickedDate;
+        _dispatchDateController.text = dateStr;
       }
     });
   }
@@ -274,29 +291,25 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
     );
   }
 
-  Widget _buildDateField(String label, DateTime? selectedDate, VoidCallback onTap) {
-    final String displayValue = _selectedDateLabel(selectedDate, label);
-
-    return InkWell(
-      onTap: onTap,
-      child: InputDecorator(
-        decoration: InputDecoration(labelText: label),
-        child: Row(
-          children: <Widget>[
-            const Icon(Icons.date_range_outlined, color: Color(0xFF64748B)),
-            const SizedBox(width: 10),
-            Text(displayValue, style: const TextStyle(color: Color(0xFFF8FAFC))),
-          ],
+  Widget _buildDateField(String label, TextEditingController controller, VoidCallback onPick) {
+    return TextFormField(
+      controller: controller,
+      style: const TextStyle(color: Color(0xFFF8FAFC)),
+      decoration: InputDecoration(
+        labelText: label,
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.calendar_today_outlined, color: Color(0xFF14B8A6), size: 20),
+          tooltip: 'Pick date',
+          onPressed: onPick,
         ),
       ),
+      validator: (value) {
+        if (label.contains('PO Date') && (value == null || value.trim().isEmpty)) {
+          return 'PO Date is required';
+        }
+        return null;
+      },
     );
-  }
-
-  String _selectedDateLabel(DateTime? selectedDate, String label) {
-    if (selectedDate == null) {
-      return 'Pick $label';
-    }
-    return MaterialLocalizations.of(context).formatMediumDate(selectedDate);
   }
 
   Future<void> _submit() async {
@@ -313,18 +326,21 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
         'order_type': _orderType,
         'sample': _sampleController.text.trim().isNotEmpty ? _sampleController.text.trim() : null,
         'company_name': _companyController.text.trim(),
-        'po_date': _poDate?.toIso8601String().split('T').first,
+        'po_date': _formatDateForPayload(_poDateController.text),
         'casting_type': _castingType,
         'thickness': _thicknessController.text.trim(),
         'holes': _holesController.text.trim(),
         'box_type': _boxTypeController.text.trim(),
         'rate': double.tryParse(_rateController.text) ?? 0.0,
         'quantity': int.tryParse(_quantityController.text) ?? 0,
+        'weight': double.tryParse(_weightController.text.trim()),
         'linings': _linings,
         'laser': _laserController.text.trim(),
         'polish_type': _polishTypeController.text.trim(),
         'packing_option': _packingOptionController.text.trim(),
-        'dispatch_date': _dispatchDate?.toIso8601String().split('T').first,
+        'dispatch_date': _dispatchDateController.text.trim().isNotEmpty
+            ? _formatDateForPayload(_dispatchDateController.text)
+            : null,
         'po_image': _poImageName,
         'button_image': _buttonImageName,
         if (widget.mode == OrderFormMode.edit && _status != null) 'status': _status,
@@ -473,7 +489,6 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                             style: const TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.w600),
                             decoration: const InputDecoration(
                               labelText: 'Order Number (Job Card No.) *',
-                              hintText: 'e.g. 1001',
                               helperText: 'Editable number. If deleted, it is freed & new orders can reuse it.',
                               prefixIcon: Icon(Icons.tag, color: Color(0xFF14B8A6)),
                             ),
@@ -534,7 +549,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                   validator: (value) => value == null || value.trim().isEmpty ? 'Company name is required' : null,
                 ),
                 const SizedBox(height: 16),
-                _buildDateField('PO Date', _poDate, () => _pickDate(true)),
+                _buildDateField('PO Date (Manual Entry or Pick)', _poDateController, () => _pickDate(true)),
                 const SizedBox(height: 16),
                 AppImageUploadCard(
                   label: 'PO Image Upload',
@@ -594,7 +609,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                         TextFormField(
                           controller: _sampleController,
                           style: const TextStyle(color: Color(0xFFF8FAFC)),
-                          decoration: const InputDecoration(labelText: 'Sample', hintText: 'Enter sample reference or details'),
+                          decoration: const InputDecoration(labelText: 'Sample'),
                         ),
                         TextFormField(
                           controller: _thicknessController,
@@ -629,6 +644,12 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                           keyboardType: TextInputType.number,
                           validator: (value) => value == null || value.trim().isEmpty ? 'Quantity is required' : null,
                         ),
+                        TextFormField(
+                          controller: _weightController,
+                          style: const TextStyle(color: Color(0xFFF8FAFC)),
+                          decoration: const InputDecoration(labelText: 'Order Weight (kg)'),
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        ),
                         _buildDropdown('Linings', _linings, liningOptions, (value) => setState(() => _linings = value)),
                         TextFormField(
                           controller: _laserController,
@@ -652,7 +673,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                   },
                 ),
                 const SizedBox(height: 16),
-                _buildDateField('Dispatch Date', _dispatchDate, () => _pickDate(false)),
+                _buildDateField('Dispatch Date (Manual Entry or Pick)', _dispatchDateController, () => _pickDate(false)),
                 const SizedBox(height: 16),
                 AppImageUploadCard(
                   label: 'Button Sample Image',

@@ -199,6 +199,8 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                 _DetailChip(label: 'Holes', value: order['holes'] as String? ?? 'N/A'),
                 _DetailChip(label: 'Box Type', value: order['box_type'] as String? ?? 'N/A'),
                 _DetailChip(label: 'Quantity', value: '${order['quantity'] ?? 'N/A'}'),
+                if (order['weight'] != null)
+                  _DetailChip(label: 'Order Weight', value: '${order['weight']} kg'),
                 _DetailChip(label: 'Rate', value: '₹${order['rate'] ?? 'N/A'}'),
                 _DetailChip(label: 'Linings', value: order['linings'] as String? ?? 'N/A'),
                 _DetailChip(label: 'Laser', value: order['laser'] as String? ?? 'N/A'),

@@ -58,7 +58,7 @@ class DepartmentUpdatePage extends ConsumerStatefulWidget {
 }
 
 class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
-  final TextEditingController _tokenController = TextEditingController(text: 'BTN-2025-0001');
+  final TextEditingController _tokenController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   Map<String, dynamic>? _order;
@@ -299,34 +299,183 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
       setState(() {
         _order = response.data as Map<String, dynamic>;
         _isFetching = false;
-        if (widget.title == 'Casting' && _order != null && _order!['casting_type'] != null) {
-          final castingType = _order!['casting_type'].toString().trim();
-          if (castingType.isNotEmpty) {
+
+        final casting = _order!['casting_process'] as Map<String, dynamic>?;
+        final blanking = _order!['blanking_process'] as Map<String, dynamic>?;
+        final turning = _order!['turning_process'] as Map<String, dynamic>?;
+        final polish = _order!['polishing_process'] as Map<String, dynamic>?;
+        final packing = _order!['packing_process'] as Map<String, dynamic>?;
+
+        final orderWeight = _order!['weight'];
+        final orderQty = _order!['quantity'];
+        final orderThickness = _order!['thickness'];
+        final orderHoles = _order!['holes'];
+        final orderLinings = _order!['linings'];
+        final orderLaser = _order!['laser'];
+        final orderPolish = _order!['polish_type'];
+        final nowStr = _formatDateTimeDisplay(DateTime.now());
+
+        // 1. Raw Material Department: auto-fill weight
+        if (widget.title == 'Raw Material') {
+          if (orderWeight != null && _rawMaterialRows.isNotEmpty) {
+            if (_rawMaterialRows.first.quantityController.text.trim().isEmpty) {
+              _rawMaterialRows.first.quantityController.text = orderWeight.toString();
+            }
+          }
+        }
+
+        // 2. Casting Department: auto-fill weight, resin, thickness, linings, quantity
+        if (widget.title == 'Casting') {
+          final castingType = (_order!['casting_type'] as String?)?.trim();
+          if (castingType != null && castingType.isNotEmpty) {
             _fieldControllers['casting_type']?.text = castingType.toLowerCase() == 'rod' ? 'Rod' : 'Sheet';
           }
-        }
-        if (widget.title == 'Turning' && _order != null) {
-          final turningProc = _order!['turning_process'] as Map<String, dynamic>?;
-          final laserVal = turningProc?['laser']?.toString() ?? _order!['laser']?.toString() ?? '';
-          if (laserVal.isNotEmpty) {
-            _fieldControllers['laser']?.text = laserVal;
+          final isRod = _isCastingRod;
+          if (isRod) {
+            final resinVal = casting?['total_resin'] ?? orderWeight;
+            if (resinVal != null && (_fieldControllers['total_resin']?.text.isEmpty ?? true)) {
+              _fieldControllers['total_resin']?.text = resinVal.toString();
+            }
+            final thk = casting?['blank_thickness'] ?? orderThickness;
+            if (thk != null && (_fieldControllers['blank_thickness']?.text.isEmpty ?? true)) {
+              _fieldControllers['blank_thickness']?.text = thk.toString();
+            }
+            final lineVal = casting?['line'] ?? orderLinings;
+            if (lineVal != null && (_fieldControllers['line']?.text.isEmpty ?? true)) {
+              _fieldControllers['line']?.text = lineVal.toString();
+            }
+            final grossVal = casting?['gross_quantity'] ?? orderQty;
+            if (grossVal != null && (_fieldControllers['gross_quantity']?.text.isEmpty ?? true)) {
+              _fieldControllers['gross_quantity']?.text = grossVal.toString();
+            }
+          } else {
+            final wtVal = casting?['total_weight'] ?? orderWeight;
+            if (wtVal != null && (_fieldControllers['total_weight']?.text.isEmpty ?? true)) {
+              _fieldControllers['total_weight']?.text = wtVal.toString();
+            }
+            final thk = casting?['blank_thickness'] ?? orderThickness;
+            if (thk != null && (_fieldControllers['blank_thickness']?.text.isEmpty ?? true)) {
+              _fieldControllers['blank_thickness']?.text = thk.toString();
+            }
+            if (casting?['no_of_sheets'] != null && (_fieldControllers['no_of_sheets']?.text.isEmpty ?? true)) {
+              _fieldControllers['no_of_sheets']?.text = casting!['no_of_sheets'].toString();
+            }
+          }
+          if (_fieldControllers['date_of_casting']?.text.isEmpty ?? true) {
+            _fieldControllers['date_of_casting']?.text = casting?['date_of_casting'] != null
+                ? _formatDateTimeDisplay(DateTime.parse(casting!['date_of_casting']))
+                : nowStr;
           }
         }
-        if (widget.title == 'Packing' && _order != null) {
-          final pack = _order!['packing_process'] as Map<String, dynamic>?;
-          if (pack != null) {
-            if (pack['inward_weight_unit'] != null) {
-              _selectedUnits['inward_weight'] = pack['inward_weight_unit'].toString();
+
+        // 3. Blanking Department: auto-fill weight from Casting or Order
+        if (widget.title == 'Blanking') {
+          final bWeight = blanking?['weight'] ?? casting?['total_weight'] ?? casting?['total_resin'] ?? orderWeight;
+          if (bWeight != null && (_fieldControllers['weight']?.text.isEmpty ?? true)) {
+            _fieldControllers['weight']?.text = bWeight.toString();
+          }
+          final thk = blanking?['blank_thickness'] ?? casting?['blank_thickness'] ?? orderThickness;
+          if (thk != null && (_fieldControllers['blank_thickness']?.text.isEmpty ?? true)) {
+            _fieldControllers['blank_thickness']?.text = thk.toString();
+          }
+          final gross = blanking?['gross_quantity'] ?? casting?['gross_quantity'] ?? orderQty;
+          if (gross != null && (_fieldControllers['gross_quantity']?.text.isEmpty ?? true)) {
+            _fieldControllers['gross_quantity']?.text = gross.toString();
+          }
+        }
+
+        // 4. Turning Department: auto-fill inward weight from Blanking or Casting
+        if (widget.title == 'Turning') {
+          final inWeight = turning?['inward_weight'] ?? blanking?['weight'] ?? casting?['total_weight'] ?? casting?['total_resin'] ?? orderWeight;
+          if (inWeight != null && (_fieldControllers['inward_weight']?.text.isEmpty ?? true)) {
+            _fieldControllers['inward_weight']?.text = inWeight.toString();
+          }
+          final gross = turning?['gross_quantity'] ?? blanking?['gross_quantity'] ?? casting?['gross_quantity'] ?? orderQty;
+          if (gross != null && (_fieldControllers['gross_quantity']?.text.isEmpty ?? true)) {
+            _fieldControllers['gross_quantity']?.text = gross.toString();
+          }
+          final thk = turning?['blank_thickness'] ?? blanking?['blank_thickness'] ?? orderThickness;
+          if (thk != null && (_fieldControllers['blank_thickness']?.text.isEmpty ?? true)) {
+            _fieldControllers['blank_thickness']?.text = thk.toString();
+          }
+          final holesVal = turning?['hole_size'] ?? orderHoles;
+          if (holesVal != null && (_fieldControllers['hole_size']?.text.isEmpty ?? true)) {
+            _fieldControllers['hole_size']?.text = holesVal.toString();
+          }
+          final laserVal = turning?['laser'] ?? orderLaser;
+          if (laserVal != null && (_fieldControllers['laser']?.text.isEmpty ?? true)) {
+            _fieldControllers['laser']?.text = laserVal.toString();
+          }
+          if (_fieldControllers['receiving_date']?.text.isEmpty ?? true) {
+            _fieldControllers['receiving_date']?.text = turning?['receiving_date'] != null
+                ? _formatDateTimeDisplay(DateTime.parse(turning!['receiving_date']))
+                : nowStr;
+          }
+          if (_fieldControllers['date_of_turning']?.text.isEmpty ?? true) {
+            _fieldControllers['date_of_turning']?.text = turning?['date_of_turning'] != null
+                ? _formatDateTimeDisplay(DateTime.parse(turning!['date_of_turning']))
+                : nowStr;
+          }
+        }
+
+        // 5. Polish Department: auto-fill inward weight from Turning
+        if (widget.title == 'Polish') {
+          final inWeight = polish?['inward_weight'] ?? turning?['outward_weight'] ?? turning?['inward_weight'] ?? blanking?['weight'] ?? orderWeight;
+          if (inWeight != null && (_fieldControllers['inward_weight']?.text.isEmpty ?? true)) {
+            _fieldControllers['inward_weight']?.text = inWeight.toString();
+          }
+          final gross = polish?['gross_quantity'] ?? turning?['gross_quantity'] ?? orderQty;
+          if (gross != null && (_fieldControllers['gross_quantity']?.text.isEmpty ?? true)) {
+            _fieldControllers['gross_quantity']?.text = gross.toString();
+          }
+          final pType = polish?['polish_type'] ?? orderPolish;
+          if (pType != null && (_fieldControllers['polish_type']?.text.isEmpty ?? true)) {
+            _fieldControllers['polish_type']?.text = pType.toString();
+          }
+          if (_fieldControllers['receiving_date']?.text.isEmpty ?? true) {
+            _fieldControllers['receiving_date']?.text = polish?['receiving_date'] != null
+                ? _formatDateTimeDisplay(DateTime.parse(polish!['receiving_date']))
+                : nowStr;
+          }
+          if (_fieldControllers['feeding_time']?.text.isEmpty ?? true) {
+            _fieldControllers['feeding_time']?.text = polish?['feeding_time'] != null
+                ? _formatDateTimeDisplay(DateTime.parse(polish!['feeding_time']))
+                : nowStr;
+          }
+        }
+
+        // 6. Packing Department: auto-fill inward weight from Polish
+        if (widget.title == 'Packing') {
+          final inWeight = packing?['inward_weight'] ?? polish?['outward_weight'] ?? polish?['inward_weight'] ?? turning?['outward_weight'] ?? orderWeight;
+          if (inWeight != null && (_fieldControllers['inward_weight']?.text.isEmpty ?? true)) {
+            _fieldControllers['inward_weight']?.text = inWeight.toString();
+          }
+          final inGross = packing?['in_gross'] ?? polish?['gross_quantity'] ?? turning?['gross_quantity'] ?? orderQty;
+          if (inGross != null && (_fieldControllers['in_gross']?.text.isEmpty ?? true)) {
+            _fieldControllers['in_gross']?.text = inGross.toString();
+          }
+          final finish = packing?['finishing'] ?? polish?['polish_type'] ?? orderPolish;
+          if (finish != null && (_fieldControllers['finishing']?.text.isEmpty ?? true)) {
+            _fieldControllers['finishing']?.text = finish.toString();
+          }
+          if (packing != null) {
+            if (packing['inward_weight_unit'] != null) {
+              _selectedUnits['inward_weight'] = packing['inward_weight_unit'].toString();
             }
-            if (pack['outward_weight_unit'] != null) {
-              _selectedUnits['outward_weight'] = pack['outward_weight_unit'].toString();
+            if (packing['outward_weight_unit'] != null) {
+              _selectedUnits['outward_weight'] = packing['outward_weight_unit'].toString();
             }
-            if (pack['one_gross_weight_unit'] != null) {
-              _selectedUnits['one_gross_weight'] = pack['one_gross_weight_unit'].toString();
+            if (packing['one_gross_weight_unit'] != null) {
+              _selectedUnits['one_gross_weight'] = packing['one_gross_weight_unit'].toString();
             }
-            if (pack['rejection_unit'] != null) {
-              _selectedUnits['rejection_weight'] = pack['rejection_unit'].toString();
+            if (packing['rejection_unit'] != null) {
+              _selectedUnits['rejection_weight'] = packing['rejection_unit'].toString();
             }
+          }
+          if (_fieldControllers['receiving_date']?.text.isEmpty ?? true) {
+            _fieldControllers['receiving_date']?.text = packing?['receiving_date'] != null
+                ? _formatDateTimeDisplay(DateTime.parse(packing!['receiving_date']))
+                : nowStr;
           }
         }
       });
@@ -341,11 +490,57 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
     }
   }
 
+  String _formatDateTimeDisplay(DateTime dt) {
+    final y = dt.year.toString().padLeft(4, '0');
+    final m = dt.month.toString().padLeft(2, '0');
+    final d = dt.day.toString().padLeft(2, '0');
+    final h = dt.hour.toString().padLeft(2, '0');
+    final min = dt.minute.toString().padLeft(2, '0');
+    return '$y-$m-$d $h:$min';
+  }
+
+  DateTime? _parseDateTime(String text) {
+    final t = text.trim();
+    if (t.isEmpty) return null;
+    final direct = DateTime.tryParse(t);
+    if (direct != null) return direct;
+    final ymdMatch = RegExp(r'^(\d{4})[-/](\d{1,2})[-/](\d{1,2})(?:[ T](\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?').firstMatch(t);
+    if (ymdMatch != null) {
+      final y = int.parse(ymdMatch.group(1)!);
+      final m = int.parse(ymdMatch.group(2)!);
+      final d = int.parse(ymdMatch.group(3)!);
+      final h = ymdMatch.group(4) != null ? int.parse(ymdMatch.group(4)!) : 0;
+      final min = ymdMatch.group(5) != null ? int.parse(ymdMatch.group(5)!) : 0;
+      final s = ymdMatch.group(6) != null ? int.parse(ymdMatch.group(6)!) : 0;
+      return DateTime(y, m, d, h, min, s);
+    }
+    final dmyMatch = RegExp(r'^(\d{1,2})[-/](\d{1,2})[-/](\d{4})(?:[ T](\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?').firstMatch(t);
+    if (dmyMatch != null) {
+      final d = int.parse(dmyMatch.group(1)!);
+      final m = int.parse(dmyMatch.group(2)!);
+      final y = int.parse(dmyMatch.group(3)!);
+      final h = dmyMatch.group(4) != null ? int.parse(dmyMatch.group(4)!) : 0;
+      final min = dmyMatch.group(5) != null ? int.parse(dmyMatch.group(5)!) : 0;
+      final s = dmyMatch.group(6) != null ? int.parse(dmyMatch.group(6)!) : 0;
+      return DateTime(y, m, d, h, min, s);
+    }
+    return null;
+  }
+
   Future<void> _selectDateTime(BuildContext context, TextEditingController controller) async {
+    final now = DateTime.now();
+    DateTime initialDate = now;
+    TimeOfDay initialTime = TimeOfDay.fromDateTime(now);
+    final parsed = _parseDateTime(controller.text);
+    if (parsed != null) {
+      initialDate = parsed;
+      initialTime = TimeOfDay.fromDateTime(parsed);
+    }
+
     final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2025),
+      initialDate: initialDate,
+      firstDate: DateTime(2020),
       lastDate: DateTime(2035),
     );
     if (pickedDate == null) return;
@@ -354,9 +549,12 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
 
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
+      initialTime: initialTime,
     );
-    if (pickedTime == null) return;
+    if (pickedTime == null) {
+      controller.text = _formatDateTimeDisplay(DateTime(pickedDate.year, pickedDate.month, pickedDate.day));
+      return;
+    }
 
     final DateTime dateTime = DateTime(
       pickedDate.year,
@@ -365,7 +563,7 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
       pickedTime.hour,
       pickedTime.minute,
     );
-    controller.text = dateTime.toUtc().toIso8601String();
+    controller.text = _formatDateTimeDisplay(dateTime);
   }
 
   Future<void> _submitUpdate() async {
@@ -407,7 +605,10 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
         if (text.isEmpty) {
           continue;
         }
-        if (field.type == 'double') {
+        if (field.type == 'datetime') {
+          final dt = _parseDateTime(text);
+          payload[field.jsonKey] = dt != null ? dt.toUtc().toIso8601String() : text;
+        } else if (field.type == 'double') {
           payload[field.jsonKey] = double.tryParse(text) ?? 0.0;
         } else if (field.type == 'int') {
           payload[field.jsonKey] = int.tryParse(text) ?? 0;
@@ -492,7 +693,6 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
           style: const TextStyle(color: Color(0xFFF8FAFC)),
           decoration: const InputDecoration(
             labelText: 'Unit Name',
-            hintText: 'e.g. bundle, roll, drum',
             border: OutlineInputBorder(),
           ),
         ),
@@ -588,7 +788,6 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                           enabled: !isSaving && !isEdit,
                           decoration: const InputDecoration(
                             labelText: 'Material Name *',
-                            hintText: 'e.g. Polyester Resin, Brass Rod',
                             border: OutlineInputBorder(),
                             prefixIcon: Icon(Icons.category_outlined),
                           ),
@@ -605,7 +804,6 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                           enabled: !isSaving,
                           decoration: const InputDecoration(
                             labelText: 'Total Available Quantity (Stock) *',
-                            hintText: 'e.g. 500',
                             border: OutlineInputBorder(),
                             prefixIcon: Icon(Icons.inventory_2_outlined),
                           ),
@@ -688,7 +886,6 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                                 enabled: !isSaving,
                                 decoration: const InputDecoration(
                                   labelText: 'Price per Unit',
-                                  hintText: '0.0',
                                   border: OutlineInputBorder(),
                                   prefixIcon: Icon(Icons.currency_rupee),
                                 ),
@@ -1106,7 +1303,6 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                           focusNode: focusNode,
                           decoration: const InputDecoration(
                             labelText: 'Material Name',
-                            hintText: 'e.g. Polyester Resin',
                             border: OutlineInputBorder(),
                           ),
                           onChanged: (val) => row.nameController.text = val,
@@ -1118,7 +1314,6 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                       controller: row.totalAvailableController,
                       decoration: const InputDecoration(
                         labelText: 'Total Available Raw Material',
-                        hintText: 'Universal available stock',
                         border: OutlineInputBorder(),
                       ),
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -1127,7 +1322,6 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                       controller: row.quantityController,
                       decoration: const InputDecoration(
                         labelText: 'Quantity for Order',
-                        hintText: 'Used for this order',
                         border: OutlineInputBorder(),
                       ),
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -1253,8 +1447,7 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                   child: TextFormField(
                     controller: _tokenController,
                     decoration: const InputDecoration(
-                      labelText: 'Token',
-                      hintText: 'Enter order token (e.g. BTN-2025-0001)',
+                      labelText: 'Order Number / Token *',
                       border: OutlineInputBorder(),
                     ),
                     onFieldSubmitted: (_) => _fetchOrder(),
@@ -1528,25 +1721,35 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
                                             Expanded(
                                               child: TextFormField(
                                                 controller: controller,
-                                                readOnly: true,
+                                                readOnly: false,
+                                                style: const TextStyle(color: Color(0xFFF8FAFC)),
                                                 decoration: InputDecoration(
                                                   labelText: field.label,
                                                   suffixIcon: IconButton(
-                                                    icon: const Icon(Icons.calendar_today),
+                                                    icon: const Icon(Icons.calendar_today_outlined, color: Color(0xFF14B8A6), size: 20),
+                                                    tooltip: 'Pick Date & Time',
                                                     onPressed: () => _selectDateTime(context, controller),
                                                   ),
                                                   border: const OutlineInputBorder(),
                                                 ),
-                                                validator: (value) => value == null || value.trim().isEmpty ? '${field.label} is required' : null,
-                                                onTap: () => _selectDateTime(context, controller),
+                                                validator: (value) {
+                                                  if (field.isOptional) return null;
+                                                  if (value == null || value.trim().isEmpty) return '${field.label} is required';
+                                                  if (_parseDateTime(value) == null) return 'Enter valid date (e.g. YYYY-MM-DD HH:mm)';
+                                                  return null;
+                                                },
                                               ),
                                             ),
                                             const SizedBox(width: 8),
-                                            TextButton(
+                                            TextButton.icon(
+                                              icon: const Icon(Icons.access_time, size: 16),
+                                              label: const Text('NOW'),
+                                              style: TextButton.styleFrom(
+                                                foregroundColor: const Color(0xFF14B8A6),
+                                              ),
                                               onPressed: () {
-                                                controller.text = DateTime.now().toUtc().toIso8601String();
+                                                controller.text = _formatDateTimeDisplay(DateTime.now());
                                               },
-                                              child: const Text('NOW'),
                                             ),
                                           ],
                                         );

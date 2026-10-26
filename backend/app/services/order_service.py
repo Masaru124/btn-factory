@@ -67,6 +67,7 @@ class OrderService:
             box_type=payload.box_type,
             rate=payload.rate,
             quantity=payload.quantity,
+            weight=payload.weight,
             linings=payload.linings,
             laser=payload.laser,
             polish_type=payload.polish_type,

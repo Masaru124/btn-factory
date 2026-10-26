@@ -33,6 +33,7 @@ class Order(Base):
     box_type: Mapped[str | None] = mapped_column(String(80), nullable=True)
     rate: Mapped[float | None] = mapped_column(Float, nullable=True)
     quantity: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    weight: Mapped[float | None] = mapped_column(Float, nullable=True)
     linings: Mapped[str | None] = mapped_column(String(20), nullable=True)
     laser: Mapped[str | None] = mapped_column(String(100), nullable=True)
     polish_type: Mapped[str | None] = mapped_column(String(80), nullable=True)

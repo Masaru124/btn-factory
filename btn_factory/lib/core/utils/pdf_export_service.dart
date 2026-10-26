@@ -512,7 +512,7 @@ class PdfExportService {
                     ['Rate', 'INR ${order['rate'] ?? 'N/A'}', 'Quantity', '${order['quantity'] ?? 'N/A'}'],
                     ['Linings', '${order['linings'] ?? 'N/A'}', 'Laser', '${order['laser'] ?? 'N/A'}'],
                     ['Polish Type', '${order['polish_type'] ?? 'N/A'}', 'Packing Option', '${order['packing_option'] ?? 'N/A'}'],
-                    ['Status', status, '', ''],
+                    ['Status', status, 'Order Weight', order['weight'] != null ? '${order['weight']} kg' : 'N/A'],
                   ],
                   headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
                   headerDecoration: const pw.BoxDecoration(color: PdfColors.teal700),
