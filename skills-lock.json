@@ -67,6 +67,12 @@
       "skillPath": "skills/dns/SKILL.md",
       "computedHash": "edd4da00c2ee7cda11d59173c2073b6726477c220652f2d63c2b2cde7dfcd2a8"
     },
+    "gravitas": {
+      "source": "udaysharmadev/Gravitas",
+      "sourceType": "github",
+      "skillPath": "skills/gravitas/SKILL.md",
+      "computedHash": "4f80f7322bf62ac3667ee38afdf914b4e79023f166cc75696267a5b2be59432d"
+    },
     "load-balancing": {
       "source": "proyecto26/system-design-skills",
       "sourceType": "github",

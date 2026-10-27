@@ -1,3 +1,4 @@
+from datetime import date
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
@@ -7,6 +8,7 @@ from app.core.redis_client import cache_client
 from app.models.user import User
 from app.schemas.order import OrderCreate, OrderRead, OrderUpdate
 from app.services.order_service import OrderService
+from app.services.status_engine import recompute_order_status
 
 router = APIRouter()
 
@@ -80,12 +82,23 @@ def delete_order(token: str, db: Session = Depends(get_db), current_user: User =
 
 
 @router.post('/dispatch/{token}', response_model=OrderRead, dependencies=[Depends(require_roles('super_admin'))])
-def dispatch_order(token: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> OrderRead:
+def dispatch_order(
+    token: str,
+    dispatched: bool = True,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> OrderRead:
     service = OrderService(db)
     order = service.get_order(token)
     if order is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Order not found')
-    order.status = 'Dispatched'
+    if dispatched:
+        order.status = 'Dispatched'
+        if not order.dispatch_date:
+            order.dispatch_date = date.today()
+    else:
+        order.dispatch_date = None
+        order.status = recompute_order_status(order)
     db.commit()
     db.refresh(order)
     cache_client.delete_pattern('orders:*')

@@ -45,6 +45,7 @@ class DepartmentUpdatePage extends ConsumerStatefulWidget {
     required this.description,
     required this.fieldLabels,
     required this.currentStatusLabel,
+    this.initialToken,
   });
 
   final String title;
@@ -52,6 +53,7 @@ class DepartmentUpdatePage extends ConsumerStatefulWidget {
   final String description;
   final List<String> fieldLabels;
   final String currentStatusLabel;
+  final String? initialToken;
 
   @override
   ConsumerState<DepartmentUpdatePage> createState() => _DepartmentUpdatePageState();
@@ -249,6 +251,10 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
       _rawMaterialRows.add(RawMaterialInputRow());
       WidgetsBinding.instance.addPostFrameCallback((_) => _fetchUniversalMaterials());
     }
+    if (widget.initialToken != null && widget.initialToken!.trim().isNotEmpty) {
+      _tokenController.text = widget.initialToken!.trim();
+      WidgetsBinding.instance.addPostFrameCallback((_) => _fetchOrder());
+    }
   }
 
   Future<void> _fetchUniversalMaterials() async {
@@ -315,167 +321,199 @@ class _DepartmentUpdatePageState extends ConsumerState<DepartmentUpdatePage> {
         final orderPolish = _order!['polish_type'];
         final nowStr = _formatDateTimeDisplay(DateTime.now());
 
-        // 1. Raw Material Department: auto-fill weight
+        // 1. Raw Material Department: load existing items or auto-fill weight
         if (widget.title == 'Raw Material') {
-          if (orderWeight != null && _rawMaterialRows.isNotEmpty) {
+          final existingRMs = _order!['raw_materials'] as List<dynamic>?;
+          if (existingRMs != null && existingRMs.isNotEmpty) {
+            _rawMaterialRows.clear();
+            for (final rm in existingRMs) {
+              final row = RawMaterialInputRow();
+              row.nameController.text = rm['material_name']?.toString() ?? '';
+              row.quantityController.text = rm['quantity']?.toString() ?? '';
+              row.totalAvailableController.text = rm['total_available_quantity']?.toString() ?? '';
+              row.unitController.text = rm['unit']?.toString() ?? 'kg';
+              row.priceController.text = rm['price']?.toString() ?? '';
+              _rawMaterialRows.add(row);
+            }
+          } else if (orderWeight != null && _rawMaterialRows.isNotEmpty) {
             if (_rawMaterialRows.first.quantityController.text.trim().isEmpty) {
               _rawMaterialRows.first.quantityController.text = orderWeight.toString();
             }
           }
         }
 
-        // 2. Casting Department: auto-fill weight, resin, thickness, linings, quantity
+        // 2. Casting Department: load existing data if present, else auto-fill
         if (widget.title == 'Casting') {
-          final castingType = (_order!['casting_type'] as String?)?.trim();
+          final castingType = (casting?['casting_type'] ?? _order!['casting_type']) as String?;
           if (castingType != null && castingType.isNotEmpty) {
             _fieldControllers['casting_type']?.text = castingType.toLowerCase() == 'rod' ? 'Rod' : 'Sheet';
           }
           final isRod = _isCastingRod;
-          if (isRod) {
-            final resinVal = casting?['total_resin'] ?? orderWeight;
-            if (resinVal != null && (_fieldControllers['total_resin']?.text.isEmpty ?? true)) {
-              _fieldControllers['total_resin']?.text = resinVal.toString();
+          if (casting != null) {
+            // Load existing saved logs for editing
+            if (isRod) {
+              if (casting['total_resin'] != null) _fieldControllers['total_resin']?.text = casting['total_resin'].toString();
+              if (casting['blank_thickness'] != null) _fieldControllers['blank_thickness']?.text = casting['blank_thickness'].toString();
+              if (casting['line'] != null) _fieldControllers['line']?.text = casting['line'].toString();
+              if (casting['gross_quantity'] != null) _fieldControllers['gross_quantity']?.text = casting['gross_quantity'].toString();
+              if (casting['sheet'] != null) _fieldControllers['sheet']?.text = casting['sheet'].toString();
+              if (casting['no_of_rods'] != null) _fieldControllers['no_of_rods']?.text = casting['no_of_rods'].toString();
+              if (casting['operator'] != null) _fieldControllers['operator']?.text = casting['operator'].toString();
+            } else {
+              final wt = casting['total_weight'] ?? casting['weight'];
+              if (wt != null) _fieldControllers['total_weight']?.text = wt.toString();
+              if (casting['blank_thickness'] != null) _fieldControllers['blank_thickness']?.text = casting['blank_thickness'].toString();
+              if (casting['no_of_sheets'] != null) _fieldControllers['no_of_sheets']?.text = casting['no_of_sheets'].toString();
             }
-            final thk = casting?['blank_thickness'] ?? orderThickness;
-            if (thk != null && (_fieldControllers['blank_thickness']?.text.isEmpty ?? true)) {
-              _fieldControllers['blank_thickness']?.text = thk.toString();
-            }
-            final lineVal = casting?['line'] ?? orderLinings;
-            if (lineVal != null && (_fieldControllers['line']?.text.isEmpty ?? true)) {
-              _fieldControllers['line']?.text = lineVal.toString();
-            }
-            final grossVal = casting?['gross_quantity'] ?? orderQty;
-            if (grossVal != null && (_fieldControllers['gross_quantity']?.text.isEmpty ?? true)) {
-              _fieldControllers['gross_quantity']?.text = grossVal.toString();
+            if (casting['remarks'] != null) _fieldControllers['remarks']?.text = casting['remarks'].toString();
+            if (casting['date_of_casting'] != null) {
+              final parsed = DateTime.tryParse(casting['date_of_casting'].toString());
+              _fieldControllers['date_of_casting']?.text = parsed != null ? _formatDateTimeDisplay(parsed) : casting['date_of_casting'].toString();
             }
           } else {
-            final wtVal = casting?['total_weight'] ?? orderWeight;
-            if (wtVal != null && (_fieldControllers['total_weight']?.text.isEmpty ?? true)) {
-              _fieldControllers['total_weight']?.text = wtVal.toString();
+            // Auto-fill from Order specs
+            if (isRod) {
+              if (orderWeight != null) _fieldControllers['total_resin']?.text = orderWeight.toString();
+              if (orderThickness != null) _fieldControllers['blank_thickness']?.text = orderThickness.toString();
+              if (orderLinings != null) _fieldControllers['line']?.text = orderLinings.toString();
+              if (orderQty != null) _fieldControllers['gross_quantity']?.text = orderQty.toString();
+            } else {
+              if (orderWeight != null) _fieldControllers['total_weight']?.text = orderWeight.toString();
+              if (orderThickness != null) _fieldControllers['blank_thickness']?.text = orderThickness.toString();
             }
-            final thk = casting?['blank_thickness'] ?? orderThickness;
-            if (thk != null && (_fieldControllers['blank_thickness']?.text.isEmpty ?? true)) {
-              _fieldControllers['blank_thickness']?.text = thk.toString();
-            }
-            if (casting?['no_of_sheets'] != null && (_fieldControllers['no_of_sheets']?.text.isEmpty ?? true)) {
-              _fieldControllers['no_of_sheets']?.text = casting!['no_of_sheets'].toString();
-            }
-          }
-          if (_fieldControllers['date_of_casting']?.text.isEmpty ?? true) {
-            _fieldControllers['date_of_casting']?.text = casting?['date_of_casting'] != null
-                ? _formatDateTimeDisplay(DateTime.parse(casting!['date_of_casting']))
-                : nowStr;
+            _fieldControllers['date_of_casting']?.text = nowStr;
           }
         }
 
-        // 3. Blanking Department: auto-fill weight from Casting or Order
+        // 3. Blanking Department: load existing or auto-fill
         if (widget.title == 'Blanking') {
-          final bWeight = blanking?['weight'] ?? casting?['total_weight'] ?? casting?['total_resin'] ?? orderWeight;
-          if (bWeight != null && (_fieldControllers['weight']?.text.isEmpty ?? true)) {
-            _fieldControllers['weight']?.text = bWeight.toString();
-          }
-          final thk = blanking?['blank_thickness'] ?? casting?['blank_thickness'] ?? orderThickness;
-          if (thk != null && (_fieldControllers['blank_thickness']?.text.isEmpty ?? true)) {
-            _fieldControllers['blank_thickness']?.text = thk.toString();
-          }
-          final gross = blanking?['gross_quantity'] ?? casting?['gross_quantity'] ?? orderQty;
-          if (gross != null && (_fieldControllers['gross_quantity']?.text.isEmpty ?? true)) {
-            _fieldControllers['gross_quantity']?.text = gross.toString();
+          if (blanking != null) {
+            if (blanking['weight'] != null) _fieldControllers['weight']?.text = blanking['weight'].toString();
+            if (blanking['gross_quantity'] != null) _fieldControllers['gross_quantity']?.text = blanking['gross_quantity'].toString();
+            if (blanking['rejection_weight'] != null) _fieldControllers['rejection_weight']?.text = blanking['rejection_weight'].toString();
+            final thk = blanking['blank_thickness'] ?? casting?['blank_thickness'] ?? orderThickness;
+            if (thk != null) _fieldControllers['blank_thickness']?.text = thk.toString();
+            if (blanking['operator'] != null) _fieldControllers['operator']?.text = blanking['operator'].toString();
+            if (blanking['remarks'] != null) _fieldControllers['remarks']?.text = blanking['remarks'].toString();
+          } else {
+            final bWeight = casting?['total_weight'] ?? casting?['total_resin'] ?? orderWeight;
+            if (bWeight != null) _fieldControllers['weight']?.text = bWeight.toString();
+            final thk = casting?['blank_thickness'] ?? orderThickness;
+            if (thk != null) _fieldControllers['blank_thickness']?.text = thk.toString();
+            final gross = casting?['gross_quantity'] ?? orderQty;
+            if (gross != null) _fieldControllers['gross_quantity']?.text = gross.toString();
           }
         }
 
-        // 4. Turning Department: auto-fill inward weight from Blanking or Casting
+        // 4. Turning Department: load existing or auto-fill
         if (widget.title == 'Turning') {
-          final inWeight = turning?['inward_weight'] ?? blanking?['weight'] ?? casting?['total_weight'] ?? casting?['total_resin'] ?? orderWeight;
-          if (inWeight != null && (_fieldControllers['inward_weight']?.text.isEmpty ?? true)) {
-            _fieldControllers['inward_weight']?.text = inWeight.toString();
-          }
-          final gross = turning?['gross_quantity'] ?? blanking?['gross_quantity'] ?? casting?['gross_quantity'] ?? orderQty;
-          if (gross != null && (_fieldControllers['gross_quantity']?.text.isEmpty ?? true)) {
-            _fieldControllers['gross_quantity']?.text = gross.toString();
-          }
-          final thk = turning?['blank_thickness'] ?? blanking?['blank_thickness'] ?? orderThickness;
-          if (thk != null && (_fieldControllers['blank_thickness']?.text.isEmpty ?? true)) {
-            _fieldControllers['blank_thickness']?.text = thk.toString();
-          }
-          final holesVal = turning?['hole_size'] ?? orderHoles;
-          if (holesVal != null && (_fieldControllers['hole_size']?.text.isEmpty ?? true)) {
-            _fieldControllers['hole_size']?.text = holesVal.toString();
-          }
-          final laserVal = turning?['laser'] ?? orderLaser;
-          if (laserVal != null && (_fieldControllers['laser']?.text.isEmpty ?? true)) {
-            _fieldControllers['laser']?.text = laserVal.toString();
-          }
-          if (_fieldControllers['receiving_date']?.text.isEmpty ?? true) {
-            _fieldControllers['receiving_date']?.text = turning?['receiving_date'] != null
-                ? _formatDateTimeDisplay(DateTime.parse(turning!['receiving_date']))
-                : nowStr;
-          }
-          if (_fieldControllers['date_of_turning']?.text.isEmpty ?? true) {
-            _fieldControllers['date_of_turning']?.text = turning?['date_of_turning'] != null
-                ? _formatDateTimeDisplay(DateTime.parse(turning!['date_of_turning']))
-                : nowStr;
+          if (turning != null) {
+            if (turning['receiving_date'] != null) {
+              final parsed = DateTime.tryParse(turning['receiving_date'].toString());
+              _fieldControllers['receiving_date']?.text = parsed != null ? _formatDateTimeDisplay(parsed) : turning['receiving_date'].toString();
+            }
+            if (turning['date_of_turning'] != null) {
+              final parsed = DateTime.tryParse(turning['date_of_turning'].toString());
+              _fieldControllers['date_of_turning']?.text = parsed != null ? _formatDateTimeDisplay(parsed) : turning['date_of_turning'].toString();
+            }
+            final inWt = turning['inward_weight'] ?? turning['weight'];
+            if (inWt != null) _fieldControllers['inward_weight']?.text = inWt.toString();
+            final tNo = turning['tool_no'] ?? turning['art_no'];
+            if (tNo != null) _fieldControllers['tool_no']?.text = tNo.toString();
+            if (turning['hole_size'] != null) _fieldControllers['hole_size']?.text = turning['hole_size'].toString();
+            if (turning['machine_no'] != null) _fieldControllers['machine_no']?.text = turning['machine_no'].toString();
+            if (turning['laser'] != null) _fieldControllers['laser']?.text = turning['laser'].toString();
+            final outWt = turning['outward_weight'] ?? turning['turned_in_kgs'];
+            if (outWt != null) _fieldControllers['outward_weight']?.text = outWt.toString();
+            if (turning['gross_quantity'] != null) _fieldControllers['gross_quantity']?.text = turning['gross_quantity'].toString();
+            final bThk = turning['blank_thickness'] ?? turning['semi_finish_thickness'];
+            if (bThk != null) _fieldControllers['blank_thickness']?.text = bThk.toString();
+            if (turning['finish_thickness'] != null) _fieldControllers['finish_thickness']?.text = turning['finish_thickness'].toString();
+            if (turning['operator'] != null) _fieldControllers['operator']?.text = turning['operator'].toString();
+            if (turning['remarks'] != null) _fieldControllers['remarks']?.text = turning['remarks'].toString();
+          } else {
+            final inWeight = blanking?['weight'] ?? casting?['total_weight'] ?? casting?['total_resin'] ?? orderWeight;
+            if (inWeight != null) _fieldControllers['inward_weight']?.text = inWeight.toString();
+            final gross = blanking?['gross_quantity'] ?? casting?['gross_quantity'] ?? orderQty;
+            if (gross != null) _fieldControllers['gross_quantity']?.text = gross.toString();
+            final thk = blanking?['blank_thickness'] ?? casting?['blank_thickness'] ?? orderThickness;
+            if (thk != null) _fieldControllers['blank_thickness']?.text = thk.toString();
+            final holesVal = orderHoles;
+            if (holesVal != null) _fieldControllers['hole_size']?.text = holesVal.toString();
+            final laserVal = orderLaser;
+            if (laserVal != null) _fieldControllers['laser']?.text = laserVal.toString();
+            _fieldControllers['receiving_date']?.text = nowStr;
+            _fieldControllers['date_of_turning']?.text = nowStr;
           }
         }
 
-        // 5. Polish Department: auto-fill inward weight from Turning
+        // 5. Polish Department: load existing or auto-fill
         if (widget.title == 'Polish') {
-          final inWeight = polish?['inward_weight'] ?? turning?['outward_weight'] ?? turning?['inward_weight'] ?? blanking?['weight'] ?? orderWeight;
-          if (inWeight != null && (_fieldControllers['inward_weight']?.text.isEmpty ?? true)) {
-            _fieldControllers['inward_weight']?.text = inWeight.toString();
-          }
-          final gross = polish?['gross_quantity'] ?? turning?['gross_quantity'] ?? orderQty;
-          if (gross != null && (_fieldControllers['gross_quantity']?.text.isEmpty ?? true)) {
-            _fieldControllers['gross_quantity']?.text = gross.toString();
-          }
-          final pType = polish?['polish_type'] ?? orderPolish;
-          if (pType != null && (_fieldControllers['polish_type']?.text.isEmpty ?? true)) {
-            _fieldControllers['polish_type']?.text = pType.toString();
-          }
-          if (_fieldControllers['receiving_date']?.text.isEmpty ?? true) {
-            _fieldControllers['receiving_date']?.text = polish?['receiving_date'] != null
-                ? _formatDateTimeDisplay(DateTime.parse(polish!['receiving_date']))
-                : nowStr;
-          }
-          if (_fieldControllers['feeding_time']?.text.isEmpty ?? true) {
-            _fieldControllers['feeding_time']?.text = polish?['feeding_time'] != null
-                ? _formatDateTimeDisplay(DateTime.parse(polish!['feeding_time']))
-                : nowStr;
+          if (polish != null) {
+            if (polish['receiving_date'] != null) {
+              final parsed = DateTime.tryParse(polish['receiving_date'].toString());
+              _fieldControllers['receiving_date']?.text = parsed != null ? _formatDateTimeDisplay(parsed) : polish['receiving_date'].toString();
+            }
+            if (polish['feeding_time'] != null) {
+              final parsed = DateTime.tryParse(polish['feeding_time'].toString());
+              _fieldControllers['feeding_time']?.text = parsed != null ? _formatDateTimeDisplay(parsed) : polish['feeding_time'].toString();
+            }
+            if (polish['out_time'] != null) {
+              final parsed = DateTime.tryParse(polish['out_time'].toString());
+              _fieldControllers['out_time']?.text = parsed != null ? _formatDateTimeDisplay(parsed) : polish['out_time'].toString();
+            }
+            final inWt = polish['inward_weight'] ?? polish['weight'];
+            if (inWt != null) _fieldControllers['inward_weight']?.text = inWt.toString();
+            if (polish['outward_weight'] != null) _fieldControllers['outward_weight']?.text = polish['outward_weight'].toString();
+            if (polish['gross_quantity'] != null) _fieldControllers['gross_quantity']?.text = polish['gross_quantity'].toString();
+            if (polish['polish_type'] != null) _fieldControllers['polish_type']?.text = polish['polish_type'].toString();
+            if (polish['operator'] != null) _fieldControllers['operator']?.text = polish['operator'].toString();
+            if (polish['remarks'] != null) _fieldControllers['remarks']?.text = polish['remarks'].toString();
+          } else {
+            final inWeight = turning?['outward_weight'] ?? turning?['inward_weight'] ?? blanking?['weight'] ?? orderWeight;
+            if (inWeight != null) _fieldControllers['inward_weight']?.text = inWeight.toString();
+            final gross = turning?['gross_quantity'] ?? orderQty;
+            if (gross != null) _fieldControllers['gross_quantity']?.text = gross.toString();
+            final pType = orderPolish;
+            if (pType != null) _fieldControllers['polish_type']?.text = pType.toString();
+            _fieldControllers['receiving_date']?.text = nowStr;
+            _fieldControllers['feeding_time']?.text = nowStr;
           }
         }
 
-        // 6. Packing Department: auto-fill inward weight from Polish
+        // 6. Packing Department: load existing or auto-fill
         if (widget.title == 'Packing') {
-          final inWeight = packing?['inward_weight'] ?? polish?['outward_weight'] ?? polish?['inward_weight'] ?? turning?['outward_weight'] ?? orderWeight;
-          if (inWeight != null && (_fieldControllers['inward_weight']?.text.isEmpty ?? true)) {
-            _fieldControllers['inward_weight']?.text = inWeight.toString();
-          }
-          final inGross = packing?['in_gross'] ?? polish?['gross_quantity'] ?? turning?['gross_quantity'] ?? orderQty;
-          if (inGross != null && (_fieldControllers['in_gross']?.text.isEmpty ?? true)) {
-            _fieldControllers['in_gross']?.text = inGross.toString();
-          }
-          final finish = packing?['finishing'] ?? polish?['polish_type'] ?? orderPolish;
-          if (finish != null && (_fieldControllers['finishing']?.text.isEmpty ?? true)) {
-            _fieldControllers['finishing']?.text = finish.toString();
-          }
           if (packing != null) {
-            if (packing['inward_weight_unit'] != null) {
-              _selectedUnits['inward_weight'] = packing['inward_weight_unit'].toString();
+            if (packing['receiving_date'] != null) {
+              final parsed = DateTime.tryParse(packing['receiving_date'].toString());
+              _fieldControllers['receiving_date']?.text = parsed != null ? _formatDateTimeDisplay(parsed) : packing['receiving_date'].toString();
             }
-            if (packing['outward_weight_unit'] != null) {
-              _selectedUnits['outward_weight'] = packing['outward_weight_unit'].toString();
-            }
-            if (packing['one_gross_weight_unit'] != null) {
-              _selectedUnits['one_gross_weight'] = packing['one_gross_weight_unit'].toString();
-            }
-            if (packing['rejection_unit'] != null) {
-              _selectedUnits['rejection_weight'] = packing['rejection_unit'].toString();
-            }
-          }
-          if (_fieldControllers['receiving_date']?.text.isEmpty ?? true) {
-            _fieldControllers['receiving_date']?.text = packing?['receiving_date'] != null
-                ? _formatDateTimeDisplay(DateTime.parse(packing!['receiving_date']))
-                : nowStr;
+            final inWt = packing['inward_weight'] ?? packing['weight'];
+            if (inWt != null) _fieldControllers['inward_weight']?.text = inWt.toString();
+            if (packing['outward_weight'] != null) _fieldControllers['outward_weight']?.text = packing['outward_weight'].toString();
+            if (packing['one_gross_weight'] != null) _fieldControllers['one_gross_weight']?.text = packing['one_gross_weight'].toString();
+            if (packing['in_gross'] != null) _fieldControllers['in_gross']?.text = packing['in_gross'].toString();
+            if (packing['finishing'] != null) _fieldControllers['finishing']?.text = packing['finishing'].toString();
+            if (packing['packed_qty'] != null) _fieldControllers['packed_qty']?.text = packing['packed_qty'].toString();
+            if (packing['excess_qty'] != null) _fieldControllers['excess_qty']?.text = packing['excess_qty'].toString();
+            if (packing['short_qty'] != null) _fieldControllers['short_qty']?.text = packing['short_qty'].toString();
+            if (packing['rejection_weight'] != null) _fieldControllers['rejection_weight']?.text = packing['rejection_weight'].toString();
+            if (packing['rejected_qty'] != null) _fieldControllers['rejected_qty']?.text = packing['rejected_qty'].toString();
+            if (packing['operator'] != null) _fieldControllers['operator']?.text = packing['operator'].toString();
+            if (packing['remarks'] != null) _fieldControllers['remarks']?.text = packing['remarks'].toString();
+
+            if (packing['inward_weight_unit'] != null) _selectedUnits['inward_weight'] = packing['inward_weight_unit'].toString();
+            if (packing['outward_weight_unit'] != null) _selectedUnits['outward_weight'] = packing['outward_weight_unit'].toString();
+            if (packing['one_gross_weight_unit'] != null) _selectedUnits['one_gross_weight'] = packing['one_gross_weight_unit'].toString();
+            if (packing['rejection_unit'] != null) _selectedUnits['rejection_weight'] = packing['rejection_unit'].toString();
+          } else {
+            final inWeight = polish?['outward_weight'] ?? polish?['inward_weight'] ?? turning?['outward_weight'] ?? orderWeight;
+            if (inWeight != null) _fieldControllers['inward_weight']?.text = inWeight.toString();
+            final inGross = polish?['gross_quantity'] ?? turning?['gross_quantity'] ?? orderQty;
+            if (inGross != null) _fieldControllers['in_gross']?.text = inGross.toString();
+            final finish = polish?['polish_type'] ?? orderPolish;
+            if (finish != null) _fieldControllers['finishing']?.text = finish.toString();
+            _fieldControllers['receiving_date']?.text = nowStr;
           }
         }
       });

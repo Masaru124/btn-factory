@@ -47,6 +47,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
   String? _buttonImageName;
   Uint8List? _buttonImageBytes;
   String? _status;
+  bool _isDispatched = false;
 
   bool _isSubmitting = false;
   bool _isSubmitted = false;
@@ -60,9 +61,13 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
       _tokenController.text = widget.orderToken!;
       WidgetsBinding.instance.addPostFrameCallback((_) => _fetchOrderDetails());
     } else {
-      // Empty fields for real order creation - no dummy placeholders
+      // Sensible standard factory defaults
       _castingType = 'Sheet';
       _orderType = 'Production';
+      _holesController.text = '4';
+      _boxTypeController.text = 'DD';
+      _thicknessController.text = '1.2 mm';
+      _linings = '14';
       _poDateController.text = DateTime.now().toIso8601String().split('T').first;
       WidgetsBinding.instance.addPostFrameCallback((_) => _fetchNextToken());
     }
@@ -113,6 +118,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
         _polishTypeController.text = order['polish_type'] as String? ?? '';
         _packingOptionController.text = order['packing_option'] as String? ?? '';
         _status = order['status'] as String?;
+        _isDispatched = _status == 'Dispatched';
 
         if (order['po_date'] != null) {
           final s = order['po_date'].toString();
@@ -338,12 +344,19 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
         'laser': _laserController.text.trim(),
         'polish_type': _polishTypeController.text.trim(),
         'packing_option': _packingOptionController.text.trim(),
-        'dispatch_date': _dispatchDateController.text.trim().isNotEmpty
-            ? _formatDateForPayload(_dispatchDateController.text)
-            : null,
+        'dispatch_date': _isDispatched
+            ? (_dispatchDateController.text.trim().isNotEmpty
+                ? _formatDateForPayload(_dispatchDateController.text)
+                : DateTime.now().toIso8601String().split('T').first)
+            : (_dispatchDateController.text.trim().isNotEmpty
+                ? _formatDateForPayload(_dispatchDateController.text)
+                : null),
         'po_image': _poImageName,
         'button_image': _buttonImageName,
-        if (widget.mode == OrderFormMode.edit && _status != null) 'status': _status,
+        if (_isDispatched)
+          'status': 'Dispatched'
+        else if (widget.mode == OrderFormMode.edit && _status != null)
+          'status': (_status == 'Dispatched' ? 'Ready To Dispatch' : _status),
       };
 
       final Response response;
@@ -620,7 +633,10 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                         TextFormField(
                           controller: _holesController,
                           style: const TextStyle(color: Color(0xFFF8FAFC)),
-                          decoration: const InputDecoration(labelText: 'Holes'),
+                          decoration: const InputDecoration(
+                            labelText: 'Holes *',
+                            helperText: 'Standard default: 4 (or 2, 0)',
+                          ),
                           keyboardType: TextInputType.number,
                           validator: (value) => value == null || value.trim().isEmpty ? 'Holes are required' : null,
                         ),
@@ -658,19 +674,85 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                         ),
                         TextFormField(
                           controller: _polishTypeController,
-                          enabled: !_isSubmitted,
                           style: const TextStyle(color: Color(0xFFF8FAFC)),
                           decoration: const InputDecoration(labelText: 'Polish Type'),
                         ),
                         TextFormField(
                           controller: _packingOptionController,
-                          enabled: !_isSubmitted,
                           style: const TextStyle(color: Color(0xFFF8FAFC)),
                           decoration: const InputDecoration(labelText: 'Packing Type'),
                         ),
                       ],
                     );
                   },
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1E293B),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: _isDispatched ? const Color(0xFF10B981) : const Color(0xFF334155),
+                      width: _isDispatched ? 2 : 1,
+                    ),
+                  ),
+                  child: CheckboxListTile(
+                    value: _isDispatched,
+                    activeColor: const Color(0xFF10B981),
+                    checkColor: Colors.black,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    title: Row(
+                      children: [
+                        const Text(
+                          'Order Dispatched',
+                          style: TextStyle(
+                            color: Color(0xFFF8FAFC),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: _isDispatched
+                                ? const Color(0xFF10B981).withValues(alpha: 0.2)
+                                : const Color(0xFF64748B).withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            _isDispatched ? 'DISPATCHED' : 'NOT DISPATCHED',
+                            style: TextStyle(
+                              color: _isDispatched ? const Color(0xFF10B981) : const Color(0xFF94A3B8),
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    subtitle: Text(
+                      _isDispatched
+                          ? 'Tick enabled: Order marked as dispatched.'
+                          : 'Unticked: Order has not been dispatched yet.',
+                      style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
+                    ),
+                    onChanged: (bool? val) {
+                      setState(() {
+                        _isDispatched = val ?? false;
+                        if (_isDispatched) {
+                          _status = 'Dispatched';
+                          if (_dispatchDateController.text.trim().isEmpty) {
+                            _dispatchDateController.text = DateTime.now().toIso8601String().split('T').first;
+                          }
+                        } else {
+                          if (_status == 'Dispatched') {
+                            _status = 'Ready To Dispatch';
+                          }
+                        }
+                      });
+                    },
+                  ),
                 ),
                 const SizedBox(height: 16),
                 _buildDateField('Dispatch Date (Manual Entry or Pick)', _dispatchDateController, () => _pickDate(false)),

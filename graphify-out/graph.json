@@ -34,6 +34,19 @@
       "source_location": "L20"
     },
     {
+      "id": "backend_app_repositories_base_baserepository",
+      "label": "BaseRepository",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": "baserepository",
+      "source_file": "backend/app/repositories/base.py",
+      "source_location": "L4"
+    },
+    {
       "id": "backend_app_repositories_user_userrepository",
       "label": "UserRepository",
       "_callable": true,
@@ -125,45 +138,6 @@
       "source_location": "L59"
     },
     {
-      "id": "backend_app_models_order_order",
-      "label": "Order",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": "order",
-      "source_file": "backend/app/models/order.py",
-      "source_location": "L22"
-    },
-    {
-      "id": "backend_app_repositories_base_baserepository",
-      "label": "BaseRepository",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": "baserepository",
-      "source_file": "backend/app/repositories/base.py",
-      "source_location": "L4"
-    },
-    {
-      "id": "backend_app_repositories_order_orderrepository",
-      "label": "OrderRepository",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": "orderrepository",
-      "source_file": "backend/app/repositories/order.py",
-      "source_location": "L17"
-    },
-    {
       "id": "backend_app_core_redis_client_inmemoryfallbackcache",
       "label": "InMemoryFallbackCache",
       "_callable": true,
@@ -188,110 +162,6 @@
       "norm_label": "redisclient",
       "source_file": "backend/app/core/redis_client.py",
       "source_location": "L64"
-    },
-    {
-      "id": "backend_app_models_order_blankingprocess",
-      "label": "BlankingProcess",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "blankingprocess",
-      "source_file": "backend/app/models/order.py",
-      "source_location": "L129"
-    },
-    {
-      "id": "backend_app_models_order_castingprocess",
-      "label": "CastingProcess",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "castingprocess",
-      "source_file": "backend/app/models/order.py",
-      "source_location": "L102"
-    },
-    {
-      "id": "backend_app_models_order_orderstatus",
-      "label": "OrderStatus",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "orderstatus",
-      "source_file": "backend/app/models/order.py",
-      "source_location": "L10"
-    },
-    {
-      "id": "backend_app_models_order_packingprocess",
-      "label": "PackingProcess",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "packingprocess",
-      "source_file": "backend/app/models/order.py",
-      "source_location": "L194"
-    },
-    {
-      "id": "backend_app_models_order_polishingprocess",
-      "label": "PolishingProcess",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "polishingprocess",
-      "source_file": "backend/app/models/order.py",
-      "source_location": "L173"
-    },
-    {
-      "id": "backend_app_models_order_rawmaterial",
-      "label": "RawMaterial",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "rawmaterial",
-      "source_file": "backend/app/models/order.py",
-      "source_location": "L85"
-    },
-    {
-      "id": "backend_app_models_order_turningprocess",
-      "label": "TurningProcess",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "turningprocess",
-      "source_file": "backend/app/models/order.py",
-      "source_location": "L147"
-    },
-    {
-      "id": "backend_app_services_report_service_reportservice",
-      "label": "ReportService",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "reportservice",
-      "source_file": "backend/app/services/report_service.py",
-      "source_location": "L20"
     },
     {
       "id": "backend_app_services_backup_service_backupservice",
@@ -489,13 +359,169 @@
       "source_location": "L17"
     },
     {
+      "id": "backend_app_core_database_base",
+      "label": "Base",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "base",
+      "source_file": "backend/app/core/database.py",
+      "source_location": "L69"
+    },
+    {
+      "id": "backend_app_models_order_blankingprocess",
+      "label": "BlankingProcess",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "blankingprocess",
+      "source_file": "backend/app/models/order.py",
+      "source_location": "L129"
+    },
+    {
+      "id": "backend_app_models_order_castingprocess",
+      "label": "CastingProcess",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "castingprocess",
+      "source_file": "backend/app/models/order.py",
+      "source_location": "L102"
+    },
+    {
+      "id": "backend_app_models_order_order",
+      "label": "Order",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "order",
+      "source_file": "backend/app/models/order.py",
+      "source_location": "L22"
+    },
+    {
+      "id": "backend_app_models_order_orderstatus",
+      "label": "OrderStatus",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "orderstatus",
+      "source_file": "backend/app/models/order.py",
+      "source_location": "L10"
+    },
+    {
+      "id": "backend_app_models_order_packingprocess",
+      "label": "PackingProcess",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "packingprocess",
+      "source_file": "backend/app/models/order.py",
+      "source_location": "L194"
+    },
+    {
+      "id": "backend_app_models_order_polishingprocess",
+      "label": "PolishingProcess",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "polishingprocess",
+      "source_file": "backend/app/models/order.py",
+      "source_location": "L173"
+    },
+    {
+      "id": "backend_app_models_order_rawmaterial",
+      "label": "RawMaterial",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "rawmaterial",
+      "source_file": "backend/app/models/order.py",
+      "source_location": "L85"
+    },
+    {
+      "id": "backend_app_models_order_tokencounter",
+      "label": "TokenCounter",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "tokencounter",
+      "source_file": "backend/app/models/order.py",
+      "source_location": "L60"
+    },
+    {
+      "id": "backend_app_models_order_turningprocess",
+      "label": "TurningProcess",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "turningprocess",
+      "source_file": "backend/app/models/order.py",
+      "source_location": "L147"
+    },
+    {
+      "id": "backend_app_models_order_universalrawmaterial",
+      "label": "UniversalRawMaterial",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "universalrawmaterial",
+      "source_file": "backend/app/models/order.py",
+      "source_location": "L73"
+    },
+    {
+      "id": "backend_app_repositories_order_orderrepository",
+      "label": "OrderRepository",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "orderrepository",
+      "source_file": "backend/app/repositories/order.py",
+      "source_location": "L17"
+    },
+    {
       "id": "backend_app_schemas_department_castingupdaterequest",
       "label": "CastingUpdateRequest",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "castingupdaterequest",
       "source_file": "backend/app/schemas/department.py",
@@ -508,7 +534,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "departmenttokenpayload",
       "source_file": "backend/app/schemas/department.py",
@@ -521,7 +547,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "packingupdaterequest",
       "source_file": "backend/app/schemas/department.py",
@@ -534,7 +560,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "polishupdaterequest",
       "source_file": "backend/app/schemas/department.py",
@@ -547,7 +573,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "rawmaterialupdaterequest",
       "source_file": "backend/app/schemas/department.py",
@@ -560,7 +586,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "turningupdaterequest",
       "source_file": "backend/app/schemas/department.py",
@@ -573,7 +599,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "blankingread",
       "source_file": "backend/app/schemas/order.py",
@@ -586,7 +612,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "blankingupdate",
       "source_file": "backend/app/schemas/order.py",
@@ -599,11 +625,24 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "castingread",
       "source_file": "backend/app/schemas/order.py",
       "source_location": "L213"
+    },
+    {
+      "id": "backend_app_schemas_order_castingupdate",
+      "label": "CastingUpdate",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "castingupdate",
+      "source_file": "backend/app/schemas/order.py",
+      "source_location": "L106"
     },
     {
       "id": "backend_app_schemas_order_orderbase",
@@ -612,7 +651,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "orderbase",
       "source_file": "backend/app/schemas/order.py",
@@ -625,7 +664,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "ordercreate",
       "source_file": "backend/app/schemas/order.py",
@@ -638,7 +677,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "orderlistitem",
       "source_file": "backend/app/schemas/order.py",
@@ -651,11 +690,24 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "orderstatusresponse",
       "source_file": "backend/app/schemas/order.py",
       "source_location": "L349"
+    },
+    {
+      "id": "backend_app_schemas_order_orderupdate",
+      "label": "OrderUpdate",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "orderupdate",
+      "source_file": "backend/app/schemas/order.py",
+      "source_location": "L33"
     },
     {
       "id": "backend_app_schemas_order_packingread",
@@ -664,7 +716,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "packingread",
       "source_file": "backend/app/schemas/order.py",
@@ -677,7 +729,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "packingupdate",
       "source_file": "backend/app/schemas/order.py",
@@ -690,7 +742,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "polishingread",
       "source_file": "backend/app/schemas/order.py",
@@ -703,7 +755,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "polishingupdate",
       "source_file": "backend/app/schemas/order.py",
@@ -716,7 +768,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "rawmaterialbatchcreate",
       "source_file": "backend/app/schemas/order.py",
@@ -729,7 +781,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "rawmaterialcreate",
       "source_file": "backend/app/schemas/order.py",
@@ -742,7 +794,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "rawmaterialitem",
       "source_file": "backend/app/schemas/order.py",
@@ -755,7 +807,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "rawmaterialread",
       "source_file": "backend/app/schemas/order.py",
@@ -768,7 +820,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "turningread",
       "source_file": "backend/app/schemas/order.py",
@@ -781,11 +833,24 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "turningupdate",
       "source_file": "backend/app/schemas/order.py",
       "source_location": "L139"
+    },
+    {
+      "id": "backend_app_schemas_order_universalrawmaterialcreate",
+      "label": "UniversalRawMaterialCreate",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "universalrawmaterialcreate",
+      "source_file": "backend/app/schemas/order.py",
+      "source_location": "L57"
     },
     {
       "id": "backend_app_schemas_order_universalrawmaterialread",
@@ -794,7 +859,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "universalrawmaterialread",
       "source_file": "backend/app/schemas/order.py",
@@ -807,37 +872,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "universalrawmaterialupdate",
       "source_file": "backend/app/schemas/order.py",
       "source_location": "L64"
-    },
-    {
-      "id": "backend_app_schemas_order_castingupdate",
-      "label": "CastingUpdate",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 61,
-      "community_name": "OrderService",
-      "file_type": "code",
-      "norm_label": "castingupdate",
-      "source_file": "backend/app/schemas/order.py",
-      "source_location": "L106"
-    },
-    {
-      "id": "backend_app_schemas_order_orderupdate",
-      "label": "OrderUpdate",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 61,
-      "community_name": "OrderService",
-      "file_type": "code",
-      "norm_label": "orderupdate",
-      "source_file": "backend/app/schemas/order.py",
-      "source_location": "L33"
     },
     {
       "id": "backend_app_services_order_service_orderservice",
@@ -845,12 +884,25 @@
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 61,
+      "community": 59,
       "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "orderservice",
       "source_file": "backend/app/services/order_service.py",
       "source_location": "L34"
+    },
+    {
+      "id": "backend_app_services_report_service_reportservice",
+      "label": "ReportService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "reportservice",
+      "source_file": "backend/app/services/report_service.py",
+      "source_location": "L20"
     },
     {
       "id": "backend_app_schemas_auth_loginrequest",
@@ -931,19 +983,6 @@
       "source_location": "L41"
     },
     {
-      "id": "backend_app_models_user_userrole",
-      "label": "UserRole",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 65,
-      "community_name": "models/user.py",
-      "file_type": "code",
-      "norm_label": "userrole",
-      "source_file": "backend/app/models/user.py",
-      "source_location": "L10"
-    },
-    {
       "id": "backend_app_schemas_order_orderread",
       "label": "OrderRead",
       "_callable": true,
@@ -957,56 +996,17 @@
       "source_location": "L320"
     },
     {
-      "id": "backend_app_core_database_base",
-      "label": "Base",
+      "id": "backend_app_models_user_userrole",
+      "label": "UserRole",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 68,
-      "community_name": "Base",
+      "community_name": "models/user.py",
       "file_type": "code",
-      "norm_label": "base",
-      "source_file": "backend/app/core/database.py",
-      "source_location": "L69"
-    },
-    {
-      "id": "backend_app_models_order_tokencounter",
-      "label": "TokenCounter",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 68,
-      "community_name": "Base",
-      "file_type": "code",
-      "norm_label": "tokencounter",
-      "source_file": "backend/app/models/order.py",
-      "source_location": "L60"
-    },
-    {
-      "id": "backend_app_models_order_universalrawmaterial",
-      "label": "UniversalRawMaterial",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 71,
-      "community_name": "UniversalRawMaterial",
-      "file_type": "code",
-      "norm_label": "universalrawmaterial",
-      "source_file": "backend/app/models/order.py",
-      "source_location": "L73"
-    },
-    {
-      "id": "backend_app_schemas_order_universalrawmaterialcreate",
-      "label": "UniversalRawMaterialCreate",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 71,
-      "community_name": "UniversalRawMaterial",
-      "file_type": "code",
-      "norm_label": "universalrawmaterialcreate",
-      "source_file": "backend/app/schemas/order.py",
-      "source_location": "L57"
+      "norm_label": "userrole",
+      "source_file": "backend/app/models/user.py",
+      "source_location": "L10"
     },
     {
       "id": "backend_app_schemas_user_userbase",
@@ -1098,18 +1098,6 @@
       "source_location": "L29"
     },
     {
-      "id": "backend_app_core_security_get_password_hash",
-      "label": "get_password_hash()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "User",
-      "file_type": "code",
-      "norm_label": "get_password_hash()",
-      "source_file": "backend/app/core/security.py",
-      "source_location": "L19"
-    },
-    {
       "id": "backend_app_core_security_verify_password",
       "label": "verify_password()",
       "_callable": true,
@@ -1120,6 +1108,18 @@
       "norm_label": "verify_password()",
       "source_file": "backend/app/core/security.py",
       "source_location": "L15"
+    },
+    {
+      "id": "backend_app_repositories_base_baserepository_init",
+      "label": ".__init__()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": ".__init__()",
+      "source_file": "backend/app/repositories/base.py",
+      "source_location": "L5"
     },
     {
       "id": "backend_app_repositories_user_userrepository_create",
@@ -1350,186 +1350,6 @@
       "source_location": "L61"
     },
     {
-      "id": "backend_app_api_routes_analytics_dashboard_stats",
-      "label": "dashboard_stats()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": "dashboard_stats()",
-      "source_file": "backend/app/api/routes/analytics.py",
-      "source_location": "L14"
-    },
-    {
-      "id": "backend_app_repositories_base_baserepository_init",
-      "label": ".__init__()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": ".__init__()",
-      "source_file": "backend/app/repositories/base.py",
-      "source_location": "L5"
-    },
-    {
-      "id": "backend_app_repositories_order_orderrepository_add_raw_material",
-      "label": ".add_raw_material()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": ".add_raw_material()",
-      "source_file": "backend/app/repositories/order.py",
-      "source_location": "L69"
-    },
-    {
-      "id": "backend_app_repositories_order_orderrepository_create",
-      "label": ".create()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": ".create()",
-      "source_file": "backend/app/repositories/order.py",
-      "source_location": "L39"
-    },
-    {
-      "id": "backend_app_repositories_order_orderrepository_delete",
-      "label": ".delete()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": ".delete()",
-      "source_file": "backend/app/repositories/order.py",
-      "source_location": "L66"
-    },
-    {
-      "id": "backend_app_repositories_order_orderrepository_get_by_token",
-      "label": ".get_by_token()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": ".get_by_token()",
-      "source_file": "backend/app/repositories/order.py",
-      "source_location": "L55"
-    },
-    {
-      "id": "backend_app_repositories_order_orderrepository_init",
-      "label": ".__init__()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": ".__init__()",
-      "source_file": "backend/app/repositories/order.py",
-      "source_location": "L18"
-    },
-    {
-      "id": "backend_app_repositories_order_orderrepository_list",
-      "label": ".list()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": ".list()",
-      "source_file": "backend/app/repositories/order.py",
-      "source_location": "L44"
-    },
-    {
-      "id": "backend_app_repositories_order_orderrepository_next_token",
-      "label": ".next_token()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": ".next_token()",
-      "source_file": "backend/app/repositories/order.py",
-      "source_location": "L23"
-    },
-    {
-      "id": "backend_app_repositories_order_orderrepository_upsert_blanking",
-      "label": ".upsert_blanking()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": ".upsert_blanking()",
-      "source_file": "backend/app/repositories/order.py",
-      "source_location": "L81"
-    },
-    {
-      "id": "backend_app_repositories_order_orderrepository_upsert_casting",
-      "label": ".upsert_casting()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": ".upsert_casting()",
-      "source_file": "backend/app/repositories/order.py",
-      "source_location": "L75"
-    },
-    {
-      "id": "backend_app_repositories_order_orderrepository_upsert_packing",
-      "label": ".upsert_packing()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": ".upsert_packing()",
-      "source_file": "backend/app/repositories/order.py",
-      "source_location": "L99"
-    },
-    {
-      "id": "backend_app_repositories_order_orderrepository_upsert_polishing",
-      "label": ".upsert_polishing()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": ".upsert_polishing()",
-      "source_file": "backend/app/repositories/order.py",
-      "source_location": "L93"
-    },
-    {
-      "id": "backend_app_repositories_order_orderrepository_upsert_turning",
-      "label": ".upsert_turning()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": ".upsert_turning()",
-      "source_file": "backend/app/repositories/order.py",
-      "source_location": "L87"
-    },
-    {
-      "id": "backend_app_services_order_service_orderservice_init",
-      "label": ".__init__()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": ".__init__()",
-      "source_file": "backend/app/services/order_service.py",
-      "source_location": "L35"
-    },
-    {
       "id": "backend_app_core_redis_client_inmemoryfallbackcache_check_idempotency",
       "label": ".check_idempotency()",
       "_callable": true,
@@ -1722,148 +1542,40 @@
       "source_location": "L107"
     },
     {
-      "id": "backend_app_services_order_service_orderservice_update_blanking",
-      "label": ".update_blanking()",
+      "id": "backend_app_main_custom_http_exception_handler",
+      "label": "custom_http_exception_handler()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "order_service.py",
+      "community_name": "custom_http_exception_handler",
       "file_type": "code",
-      "norm_label": ".update_blanking()",
-      "source_file": "backend/app/services/order_service.py",
-      "source_location": "L188"
+      "norm_label": "custom_http_exception_handler()",
+      "source_file": "backend/app/main.py",
+      "source_location": "L64"
     },
     {
-      "id": "backend_app_services_order_service_orderservice_update_packing",
-      "label": ".update_packing()",
+      "id": "backend_app_main_trace_and_timing_middleware",
+      "label": "trace_and_timing_middleware()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "order_service.py",
+      "community_name": "custom_http_exception_handler",
       "file_type": "code",
-      "norm_label": ".update_packing()",
-      "source_file": "backend/app/services/order_service.py",
-      "source_location": "L260"
+      "norm_label": "trace_and_timing_middleware()",
+      "source_file": "backend/app/main.py",
+      "source_location": "L50"
     },
     {
-      "id": "backend_app_services_report_service_reportservice_init",
-      "label": ".__init__()",
+      "id": "backend_app_main_unhandled_exception_handler",
+      "label": "unhandled_exception_handler()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "order_service.py",
+      "community_name": "custom_http_exception_handler",
       "file_type": "code",
-      "norm_label": ".__init__()",
-      "source_file": "backend/app/services/report_service.py",
-      "source_location": "L21"
-    },
-    {
-      "id": "backend_app_services_report_service_reportservice_production_summary",
-      "label": ".production_summary()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": ".production_summary()",
-      "source_file": "backend/app/services/report_service.py",
-      "source_location": "L24"
-    },
-    {
-      "id": "backend_app_services_report_service_reportservice_reports_summary",
-      "label": ".reports_summary()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": ".reports_summary()",
-      "source_file": "backend/app/services/report_service.py",
-      "source_location": "L69"
-    },
-    {
-      "id": "backend_app_services_report_service_reportservice_revenue_summary",
-      "label": ".revenue_summary()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": ".revenue_summary()",
-      "source_file": "backend/app/services/report_service.py",
-      "source_location": "L44"
-    },
-    {
-      "id": "backend_app_services_status_engine_determine_order_status",
-      "label": "determine_order_status()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "determine_order_status()",
-      "source_file": "backend/app/services/status_engine.py",
-      "source_location": "L6"
-    },
-    {
-      "id": "backend_app_services_status_engine_recompute_order_status",
-      "label": "recompute_order_status()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "recompute_order_status()",
-      "source_file": "backend/app/services/status_engine.py",
-      "source_location": "L34"
-    },
-    {
-      "id": "backend_tests_test_status_engine_make_order",
-      "label": "make_order()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "make_order()",
-      "source_file": "backend/tests/test_status_engine.py",
-      "source_location": "L7"
-    },
-    {
-      "id": "backend_tests_test_status_engine_test_reports_summary_with_completed_order",
-      "label": "test_reports_summary_with_completed_order()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "test_reports_summary_with_completed_order()",
-      "source_file": "backend/tests/test_status_engine.py",
-      "source_location": "L99"
-    },
-    {
-      "id": "backend_tests_test_status_engine_test_status_progression_matches_workflow",
-      "label": "test_status_progression_matches_workflow()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "test_status_progression_matches_workflow()",
-      "source_file": "backend/tests/test_status_engine.py",
-      "source_location": "L21"
-    },
-    {
-      "id": "backend_tests_test_status_engine_test_status_with_null_end_time_progresses_correctly",
-      "label": "test_status_with_null_end_time_progresses_correctly()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "test_status_with_null_end_time_progresses_correctly()",
-      "source_file": "backend/tests/test_status_engine.py",
-      "source_location": "L79"
+      "norm_label": "unhandled_exception_handler()",
+      "source_file": "backend/app/main.py",
+      "source_location": "L78"
     },
     {
       "id": "backend_scripts_check_postgres_dbs_check_db",
@@ -2646,95 +2358,191 @@
       "source_location": "L21"
     },
     {
-      "id": "backend_app_services_order_service_orderservice_update_polishing",
-      "label": ".update_polishing()",
+      "id": "backend_alembic_env_run_migrations_offline",
+      "label": "run_migrations_offline()",
       "_callable": true,
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
-      "norm_label": ".update_polishing()",
+      "norm_label": "run_migrations_offline()",
+      "source_file": "backend/alembic/env.py",
+      "source_location": "L19"
+    },
+    {
+      "id": "backend_alembic_env_run_migrations_online",
+      "label": "run_migrations_online()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "run_migrations_online()",
+      "source_file": "backend/alembic/env.py",
+      "source_location": "L28"
+    },
+    {
+      "id": "backend_app_repositories_order_orderrepository_add_raw_material",
+      "label": ".add_raw_material()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".add_raw_material()",
+      "source_file": "backend/app/repositories/order.py",
+      "source_location": "L69"
+    },
+    {
+      "id": "backend_app_repositories_order_orderrepository_create",
+      "label": ".create()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".create()",
+      "source_file": "backend/app/repositories/order.py",
+      "source_location": "L39"
+    },
+    {
+      "id": "backend_app_repositories_order_orderrepository_delete",
+      "label": ".delete()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".delete()",
+      "source_file": "backend/app/repositories/order.py",
+      "source_location": "L66"
+    },
+    {
+      "id": "backend_app_repositories_order_orderrepository_get_by_token",
+      "label": ".get_by_token()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".get_by_token()",
+      "source_file": "backend/app/repositories/order.py",
+      "source_location": "L55"
+    },
+    {
+      "id": "backend_app_repositories_order_orderrepository_init",
+      "label": ".__init__()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".__init__()",
+      "source_file": "backend/app/repositories/order.py",
+      "source_location": "L18"
+    },
+    {
+      "id": "backend_app_repositories_order_orderrepository_list",
+      "label": ".list()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".list()",
+      "source_file": "backend/app/repositories/order.py",
+      "source_location": "L44"
+    },
+    {
+      "id": "backend_app_repositories_order_orderrepository_next_token",
+      "label": ".next_token()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".next_token()",
+      "source_file": "backend/app/repositories/order.py",
+      "source_location": "L23"
+    },
+    {
+      "id": "backend_app_repositories_order_orderrepository_upsert_blanking",
+      "label": ".upsert_blanking()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".upsert_blanking()",
+      "source_file": "backend/app/repositories/order.py",
+      "source_location": "L81"
+    },
+    {
+      "id": "backend_app_repositories_order_orderrepository_upsert_casting",
+      "label": ".upsert_casting()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".upsert_casting()",
+      "source_file": "backend/app/repositories/order.py",
+      "source_location": "L75"
+    },
+    {
+      "id": "backend_app_repositories_order_orderrepository_upsert_packing",
+      "label": ".upsert_packing()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".upsert_packing()",
+      "source_file": "backend/app/repositories/order.py",
+      "source_location": "L99"
+    },
+    {
+      "id": "backend_app_repositories_order_orderrepository_upsert_polishing",
+      "label": ".upsert_polishing()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".upsert_polishing()",
+      "source_file": "backend/app/repositories/order.py",
+      "source_location": "L93"
+    },
+    {
+      "id": "backend_app_repositories_order_orderrepository_upsert_turning",
+      "label": ".upsert_turning()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".upsert_turning()",
+      "source_file": "backend/app/repositories/order.py",
+      "source_location": "L87"
+    },
+    {
+      "id": "backend_app_services_order_service_orderservice_add_raw_material",
+      "label": ".add_raw_material()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".add_raw_material()",
       "source_file": "backend/app/services/order_service.py",
-      "source_location": "L237"
-    },
-    {
-      "id": "backend_app_services_order_service_orderservice_update_turning",
-      "label": ".update_turning()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 59,
-      "community_name": "schemas/order.py",
-      "file_type": "code",
-      "norm_label": ".update_turning()",
-      "source_file": "backend/app/services/order_service.py",
-      "source_location": "L201"
-    },
-    {
-      "id": "backend_tests_test_workflow_edits_setup_test_db",
-      "label": "setup_test_db()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 59,
-      "community_name": "schemas/order.py",
-      "file_type": "code",
-      "norm_label": "setup_test_db()",
-      "source_file": "backend/tests/test_workflow_edits.py",
-      "source_location": "L29"
-    },
-    {
-      "id": "backend_tests_test_workflow_edits_test_department_field_normalization",
-      "label": "test_department_field_normalization()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 59,
-      "community_name": "schemas/order.py",
-      "file_type": "code",
-      "norm_label": "test_department_field_normalization()",
-      "source_file": "backend/tests/test_workflow_edits.py",
-      "source_location": "L88"
-    },
-    {
-      "id": "backend_tests_test_workflow_edits_test_order_creation_and_universal_raw_materials",
-      "label": "test_order_creation_and_universal_raw_materials()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 59,
-      "community_name": "schemas/order.py",
-      "file_type": "code",
-      "norm_label": "test_order_creation_and_universal_raw_materials()",
-      "source_file": "backend/tests/test_workflow_edits.py",
-      "source_location": "L36"
-    },
-    {
-      "id": "backend_tests_test_workflow_edits_test_packing_grams_and_excess_shortage",
-      "label": "test_packing_grams_and_excess_shortage()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 59,
-      "community_name": "schemas/order.py",
-      "file_type": "code",
-      "norm_label": "test_packing_grams_and_excess_shortage()",
-      "source_file": "backend/tests/test_workflow_edits.py",
-      "source_location": "L277"
-    },
-    {
-      "id": "backend_tests_test_workflow_edits_test_reports_summary_with_universal_materials",
-      "label": "test_reports_summary_with_universal_materials()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 59,
-      "community_name": "schemas/order.py",
-      "file_type": "code",
-      "norm_label": "test_reports_summary_with_universal_materials()",
-      "source_file": "backend/tests/test_workflow_edits.py",
-      "source_location": "L217"
+      "source_location": "L124"
     },
     {
       "id": "backend_app_services_order_service_orderservice_create_order",
       "label": ".create_order()",
       "_callable": true,
       "_origin": "ast",
-      "community": 61,
+      "community": 59,
       "community_name": "OrderService",
       "file_type": "code",
       "norm_label": ".create_order()",
@@ -2746,7 +2554,7 @@
       "label": ".delete_order()",
       "_callable": true,
       "_origin": "ast",
-      "community": 61,
+      "community": 59,
       "community_name": "OrderService",
       "file_type": "code",
       "norm_label": ".delete_order()",
@@ -2758,7 +2566,7 @@
       "label": ".delete_universal_raw_material()",
       "_callable": true,
       "_origin": "ast",
-      "community": 61,
+      "community": 59,
       "community_name": "OrderService",
       "file_type": "code",
       "norm_label": ".delete_universal_raw_material()",
@@ -2770,7 +2578,7 @@
       "label": ".get_order()",
       "_callable": true,
       "_origin": "ast",
-      "community": 61,
+      "community": 59,
       "community_name": "OrderService",
       "file_type": "code",
       "norm_label": ".get_order()",
@@ -2778,11 +2586,23 @@
       "source_location": "L121"
     },
     {
+      "id": "backend_app_services_order_service_orderservice_init",
+      "label": ".__init__()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".__init__()",
+      "source_file": "backend/app/services/order_service.py",
+      "source_location": "L35"
+    },
+    {
       "id": "backend_app_services_order_service_orderservice_list_orders",
       "label": ".list_orders()",
       "_callable": true,
       "_origin": "ast",
-      "community": 61,
+      "community": 59,
       "community_name": "OrderService",
       "file_type": "code",
       "norm_label": ".list_orders()",
@@ -2790,11 +2610,35 @@
       "source_location": "L118"
     },
     {
+      "id": "backend_app_services_order_service_orderservice_list_universal_raw_materials",
+      "label": ".list_universal_raw_materials()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".list_universal_raw_materials()",
+      "source_file": "backend/app/services/order_service.py",
+      "source_location": "L283"
+    },
+    {
+      "id": "backend_app_services_order_service_orderservice_update_blanking",
+      "label": ".update_blanking()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".update_blanking()",
+      "source_file": "backend/app/services/order_service.py",
+      "source_location": "L188"
+    },
+    {
       "id": "backend_app_services_order_service_orderservice_update_casting",
       "label": ".update_casting()",
       "_callable": true,
       "_origin": "ast",
-      "community": 61,
+      "community": 59,
       "community_name": "OrderService",
       "file_type": "code",
       "norm_label": ".update_casting()",
@@ -2806,7 +2650,7 @@
       "label": ".update_order()",
       "_callable": true,
       "_origin": "ast",
-      "community": 61,
+      "community": 59,
       "community_name": "OrderService",
       "file_type": "code",
       "norm_label": ".update_order()",
@@ -2814,11 +2658,143 @@
       "source_location": "L85"
     },
     {
+      "id": "backend_app_services_order_service_orderservice_update_packing",
+      "label": ".update_packing()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".update_packing()",
+      "source_file": "backend/app/services/order_service.py",
+      "source_location": "L260"
+    },
+    {
+      "id": "backend_app_services_order_service_orderservice_update_polishing",
+      "label": ".update_polishing()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".update_polishing()",
+      "source_file": "backend/app/services/order_service.py",
+      "source_location": "L237"
+    },
+    {
+      "id": "backend_app_services_order_service_orderservice_update_turning",
+      "label": ".update_turning()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".update_turning()",
+      "source_file": "backend/app/services/order_service.py",
+      "source_location": "L201"
+    },
+    {
+      "id": "backend_app_services_order_service_orderservice_upsert_universal_raw_material",
+      "label": ".upsert_universal_raw_material()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".upsert_universal_raw_material()",
+      "source_file": "backend/app/services/order_service.py",
+      "source_location": "L286"
+    },
+    {
+      "id": "backend_app_services_report_service_reportservice_init",
+      "label": ".__init__()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".__init__()",
+      "source_file": "backend/app/services/report_service.py",
+      "source_location": "L21"
+    },
+    {
+      "id": "backend_app_services_report_service_reportservice_production_summary",
+      "label": ".production_summary()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".production_summary()",
+      "source_file": "backend/app/services/report_service.py",
+      "source_location": "L24"
+    },
+    {
+      "id": "backend_app_services_report_service_reportservice_reports_summary",
+      "label": ".reports_summary()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".reports_summary()",
+      "source_file": "backend/app/services/report_service.py",
+      "source_location": "L69"
+    },
+    {
+      "id": "backend_app_services_report_service_reportservice_revenue_summary",
+      "label": ".revenue_summary()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": ".revenue_summary()",
+      "source_file": "backend/app/services/report_service.py",
+      "source_location": "L44"
+    },
+    {
+      "id": "backend_app_services_status_engine_determine_order_status",
+      "label": "determine_order_status()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "determine_order_status()",
+      "source_file": "backend/app/services/status_engine.py",
+      "source_location": "L6"
+    },
+    {
+      "id": "backend_app_services_status_engine_recompute_order_status",
+      "label": "recompute_order_status()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "recompute_order_status()",
+      "source_file": "backend/app/services/status_engine.py",
+      "source_location": "L34"
+    },
+    {
+      "id": "backend_scripts_test_sanitize_sanitize_value",
+      "label": "sanitize_value()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "sanitize_value()",
+      "source_file": "backend/scripts/test_sanitize.py",
+      "source_location": "L18"
+    },
+    {
       "id": "backend_tests_test_order_tokens_and_delete_order_payload",
       "label": "_order_payload()",
       "_callable": true,
       "_origin": "ast",
-      "community": 61,
+      "community": 59,
       "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "_order_payload()",
@@ -2830,7 +2806,7 @@
       "label": "setup_test_db()",
       "_callable": true,
       "_origin": "ast",
-      "community": 61,
+      "community": 59,
       "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "setup_test_db()",
@@ -2842,7 +2818,7 @@
       "label": "test_delete_is_atomic_when_child_rows_exist()",
       "_callable": true,
       "_origin": "ast",
-      "community": 61,
+      "community": 59,
       "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "test_delete_is_atomic_when_child_rows_exist()",
@@ -2854,7 +2830,7 @@
       "label": "test_delete_only_removes_target_order()",
       "_callable": true,
       "_origin": "ast",
-      "community": 61,
+      "community": 59,
       "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "test_delete_only_removes_target_order()",
@@ -2866,7 +2842,7 @@
       "label": "test_deleted_tokens_are_reused_and_editable()",
       "_callable": true,
       "_origin": "ast",
-      "community": 61,
+      "community": 59,
       "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "test_deleted_tokens_are_reused_and_editable()",
@@ -2878,7 +2854,7 @@
       "label": "test_sequence_fills_available_slots_starting_at_1001()",
       "_callable": true,
       "_origin": "ast",
-      "community": 61,
+      "community": 59,
       "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "test_sequence_fills_available_slots_starting_at_1001()",
@@ -2890,7 +2866,7 @@
       "label": "test_token_and_order_type_editable()",
       "_callable": true,
       "_origin": "ast",
-      "community": 61,
+      "community": 59,
       "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "test_token_and_order_type_editable()",
@@ -2902,7 +2878,7 @@
       "label": "test_tokens_start_at_1001_and_increment()",
       "_callable": true,
       "_origin": "ast",
-      "community": 61,
+      "community": 59,
       "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "test_tokens_start_at_1001_and_increment()",
@@ -2914,7 +2890,7 @@
       "label": "setup_test_db()",
       "_callable": true,
       "_origin": "ast",
-      "community": 61,
+      "community": 59,
       "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "setup_test_db()",
@@ -2926,7 +2902,7 @@
       "label": "test_order_creation_with_sample_and_rod_casting()",
       "_callable": true,
       "_origin": "ast",
-      "community": 61,
+      "community": 59,
       "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "test_order_creation_with_sample_and_rod_casting()",
@@ -2934,16 +2910,148 @@
       "source_location": "L18"
     },
     {
-      "id": "backend_app_main_custom_http_exception_handler",
-      "label": "custom_http_exception_handler()",
+      "id": "backend_tests_test_status_engine_make_order",
+      "label": "make_order()",
       "_callable": true,
       "_origin": "ast",
-      "community": 62,
-      "community_name": "main.py",
+      "community": 59,
+      "community_name": "OrderService",
       "file_type": "code",
-      "norm_label": "custom_http_exception_handler()",
-      "source_file": "backend/app/main.py",
-      "source_location": "L64"
+      "norm_label": "make_order()",
+      "source_file": "backend/tests/test_status_engine.py",
+      "source_location": "L7"
+    },
+    {
+      "id": "backend_tests_test_status_engine_test_dispatch_toggle_and_recompute",
+      "label": "test_dispatch_toggle_and_recompute()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "test_dispatch_toggle_and_recompute()",
+      "source_file": "backend/tests/test_status_engine.py",
+      "source_location": "L156"
+    },
+    {
+      "id": "backend_tests_test_status_engine_test_reports_summary_with_completed_order",
+      "label": "test_reports_summary_with_completed_order()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "test_reports_summary_with_completed_order()",
+      "source_file": "backend/tests/test_status_engine.py",
+      "source_location": "L99"
+    },
+    {
+      "id": "backend_tests_test_status_engine_test_status_progression_matches_workflow",
+      "label": "test_status_progression_matches_workflow()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "test_status_progression_matches_workflow()",
+      "source_file": "backend/tests/test_status_engine.py",
+      "source_location": "L21"
+    },
+    {
+      "id": "backend_tests_test_status_engine_test_status_with_null_end_time_progresses_correctly",
+      "label": "test_status_with_null_end_time_progresses_correctly()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "test_status_with_null_end_time_progresses_correctly()",
+      "source_file": "backend/tests/test_status_engine.py",
+      "source_location": "L79"
+    },
+    {
+      "id": "backend_tests_test_universal_raw_material_delete_setup_test_db",
+      "label": "setup_test_db()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "setup_test_db()",
+      "source_file": "backend/tests/test_universal_raw_material_delete.py",
+      "source_location": "L10"
+    },
+    {
+      "id": "backend_tests_test_universal_raw_material_delete_test_upsert_and_delete_universal_raw_material",
+      "label": "test_upsert_and_delete_universal_raw_material()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "test_upsert_and_delete_universal_raw_material()",
+      "source_file": "backend/tests/test_universal_raw_material_delete.py",
+      "source_location": "L17"
+    },
+    {
+      "id": "backend_tests_test_workflow_edits_setup_test_db",
+      "label": "setup_test_db()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "setup_test_db()",
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L29"
+    },
+    {
+      "id": "backend_tests_test_workflow_edits_test_department_field_normalization",
+      "label": "test_department_field_normalization()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "test_department_field_normalization()",
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L88"
+    },
+    {
+      "id": "backend_tests_test_workflow_edits_test_order_creation_and_universal_raw_materials",
+      "label": "test_order_creation_and_universal_raw_materials()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "test_order_creation_and_universal_raw_materials()",
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L36"
+    },
+    {
+      "id": "backend_tests_test_workflow_edits_test_packing_grams_and_excess_shortage",
+      "label": "test_packing_grams_and_excess_shortage()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "test_packing_grams_and_excess_shortage()",
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L277"
+    },
+    {
+      "id": "backend_tests_test_workflow_edits_test_reports_summary_with_universal_materials",
+      "label": "test_reports_summary_with_universal_materials()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "test_reports_summary_with_universal_materials()",
+      "source_file": "backend/tests/test_workflow_edits.py",
+      "source_location": "L217"
     },
     {
       "id": "backend_app_main_health_check",
@@ -2968,30 +3076,6 @@
       "norm_label": "on_startup()",
       "source_file": "backend/app/main.py",
       "source_location": "L103"
-    },
-    {
-      "id": "backend_app_main_trace_and_timing_middleware",
-      "label": "trace_and_timing_middleware()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "main.py",
-      "file_type": "code",
-      "norm_label": "trace_and_timing_middleware()",
-      "source_file": "backend/app/main.py",
-      "source_location": "L50"
-    },
-    {
-      "id": "backend_app_main_unhandled_exception_handler",
-      "label": "unhandled_exception_handler()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "main.py",
-      "file_type": "code",
-      "norm_label": "unhandled_exception_handler()",
-      "source_file": "backend/app/main.py",
-      "source_location": "L78"
     },
     {
       "id": "backend_app_services_backup_service_run_background_backup",
@@ -3102,12 +3186,24 @@
       "source_location": "L87"
     },
     {
+      "id": "backend_app_api_routes_analytics_dashboard_stats",
+      "label": "dashboard_stats()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 65,
+      "community_name": "routes/analytics.py",
+      "file_type": "code",
+      "norm_label": "dashboard_stats()",
+      "source_file": "backend/app/api/routes/analytics.py",
+      "source_location": "L14"
+    },
+    {
       "id": "backend_app_api_routes_analytics_orders_trend",
       "label": "orders_trend()",
       "_callable": true,
       "_origin": "ast",
       "community": 65,
-      "community_name": "models/user.py",
+      "community_name": "routes/analytics.py",
       "file_type": "code",
       "norm_label": "orders_trend()",
       "source_file": "backend/app/api/routes/analytics.py",
@@ -3119,59 +3215,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 65,
-      "community_name": "models/user.py",
+      "community_name": "routes/analytics.py",
       "file_type": "code",
       "norm_label": "production_trend()",
       "source_file": "backend/app/api/routes/analytics.py",
       "source_location": "L87"
-    },
-    {
-      "id": "backend_app_core_database_get_db",
-      "label": "get_db()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 65,
-      "community_name": "models/user.py",
-      "file_type": "code",
-      "norm_label": "get_db()",
-      "source_file": "backend/app/core/database.py",
-      "source_location": "L73"
-    },
-    {
-      "id": "backend_app_core_deps_get_current_user",
-      "label": "get_current_user()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 65,
-      "community_name": "models/user.py",
-      "file_type": "code",
-      "norm_label": "get_current_user()",
-      "source_file": "backend/app/core/deps.py",
-      "source_location": "L11"
-    },
-    {
-      "id": "backend_app_core_deps_require_roles",
-      "label": "require_roles()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 65,
-      "community_name": "models/user.py",
-      "file_type": "code",
-      "norm_label": "require_roles()",
-      "source_file": "backend/app/core/deps.py",
-      "source_location": "L23"
-    },
-    {
-      "id": "backend_app_core_security_decode_token",
-      "label": "decode_token()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 65,
-      "community_name": "models/user.py",
-      "file_type": "code",
-      "norm_label": "decode_token()",
-      "source_file": "backend/app/core/security.py",
-      "source_location": "L35"
     },
     {
       "id": "backend_app_api_routes_orders_create_order",
@@ -3183,7 +3231,7 @@
       "file_type": "code",
       "norm_label": "create_order()",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L21"
+      "source_location": "L23"
     },
     {
       "id": "backend_app_api_routes_orders_delete_order",
@@ -3195,7 +3243,7 @@
       "file_type": "code",
       "norm_label": "delete_order()",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L74"
+      "source_location": "L76"
     },
     {
       "id": "backend_app_api_routes_orders_dispatch_order",
@@ -3207,7 +3255,7 @@
       "file_type": "code",
       "norm_label": "dispatch_order()",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L83"
+      "source_location": "L85"
     },
     {
       "id": "backend_app_api_routes_orders_get_next_token",
@@ -3219,7 +3267,7 @@
       "file_type": "code",
       "norm_label": "get_next_token()",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L39"
+      "source_location": "L41"
     },
     {
       "id": "backend_app_api_routes_orders_get_order",
@@ -3231,7 +3279,7 @@
       "file_type": "code",
       "norm_label": "get_order()",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L51"
+      "source_location": "L53"
     },
     {
       "id": "backend_app_api_routes_orders_list_orders",
@@ -3243,7 +3291,7 @@
       "file_type": "code",
       "norm_label": "list_orders()",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L45"
+      "source_location": "L47"
     },
     {
       "id": "backend_app_api_routes_orders_scrub_order_by_role",
@@ -3255,7 +3303,7 @@
       "file_type": "code",
       "norm_label": "scrub_order_by_role()",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L14"
+      "source_location": "L16"
     },
     {
       "id": "backend_app_api_routes_orders_update_order",
@@ -3267,31 +3315,19 @@
       "file_type": "code",
       "norm_label": "update_order()",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L60"
+      "source_location": "L62"
     },
     {
-      "id": "backend_alembic_env_run_migrations_offline",
-      "label": "run_migrations_offline()",
+      "id": "backend_app_core_security_get_password_hash",
+      "label": "get_password_hash()",
       "_callable": true,
       "_origin": "ast",
       "community": 68,
-      "community_name": "Base",
+      "community_name": "models/user.py",
       "file_type": "code",
-      "norm_label": "run_migrations_offline()",
-      "source_file": "backend/alembic/env.py",
+      "norm_label": "get_password_hash()",
+      "source_file": "backend/app/core/security.py",
       "source_location": "L19"
-    },
-    {
-      "id": "backend_alembic_env_run_migrations_online",
-      "label": "run_migrations_online()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 68,
-      "community_name": "Base",
-      "file_type": "code",
-      "norm_label": "run_migrations_online()",
-      "source_file": "backend/alembic/env.py",
-      "source_location": "L28"
     },
     {
       "id": "backend_scripts_drop_recreate_main",
@@ -3299,7 +3335,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 68,
-      "community_name": "Base",
+      "community_name": "models/user.py",
       "file_type": "code",
       "norm_label": "main()",
       "source_file": "backend/scripts/drop_recreate.py",
@@ -3311,23 +3347,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 68,
-      "community_name": "Base",
+      "community_name": "models/user.py",
       "file_type": "code",
       "norm_label": "run_seed()",
       "source_file": "backend/scripts/seed.py",
       "source_location": "L10"
-    },
-    {
-      "id": "backend_scripts_test_sanitize_sanitize_value",
-      "label": "sanitize_value()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 68,
-      "community_name": "Base",
-      "file_type": "code",
-      "norm_label": "sanitize_value()",
-      "source_file": "backend/scripts/test_sanitize.py",
-      "source_location": "L18"
     },
     {
       "id": "backend_app_api_routes_departments_add_raw_material",
@@ -3438,64 +3462,52 @@
       "source_location": "L31"
     },
     {
-      "id": "backend_app_services_order_service_orderservice_add_raw_material",
-      "label": ".add_raw_material()",
+      "id": "backend_app_core_database_get_db",
+      "label": "get_db()",
       "_callable": true,
       "_origin": "ast",
-      "community": 71,
-      "community_name": "UniversalRawMaterial",
+      "community": 69,
+      "community_name": "departments.py",
       "file_type": "code",
-      "norm_label": ".add_raw_material()",
-      "source_file": "backend/app/services/order_service.py",
-      "source_location": "L124"
+      "norm_label": "get_db()",
+      "source_file": "backend/app/core/database.py",
+      "source_location": "L73"
     },
     {
-      "id": "backend_app_services_order_service_orderservice_list_universal_raw_materials",
-      "label": ".list_universal_raw_materials()",
+      "id": "backend_app_core_deps_get_current_user",
+      "label": "get_current_user()",
       "_callable": true,
       "_origin": "ast",
-      "community": 71,
-      "community_name": "UniversalRawMaterial",
+      "community": 69,
+      "community_name": "departments.py",
       "file_type": "code",
-      "norm_label": ".list_universal_raw_materials()",
-      "source_file": "backend/app/services/order_service.py",
-      "source_location": "L283"
+      "norm_label": "get_current_user()",
+      "source_file": "backend/app/core/deps.py",
+      "source_location": "L11"
     },
     {
-      "id": "backend_app_services_order_service_orderservice_upsert_universal_raw_material",
-      "label": ".upsert_universal_raw_material()",
+      "id": "backend_app_core_deps_require_roles",
+      "label": "require_roles()",
       "_callable": true,
       "_origin": "ast",
-      "community": 71,
-      "community_name": "UniversalRawMaterial",
+      "community": 69,
+      "community_name": "departments.py",
       "file_type": "code",
-      "norm_label": ".upsert_universal_raw_material()",
-      "source_file": "backend/app/services/order_service.py",
-      "source_location": "L286"
+      "norm_label": "require_roles()",
+      "source_file": "backend/app/core/deps.py",
+      "source_location": "L23"
     },
     {
-      "id": "backend_tests_test_universal_raw_material_delete_setup_test_db",
-      "label": "setup_test_db()",
+      "id": "backend_app_core_security_decode_token",
+      "label": "decode_token()",
       "_callable": true,
       "_origin": "ast",
-      "community": 71,
-      "community_name": "UniversalRawMaterial",
+      "community": 69,
+      "community_name": "departments.py",
       "file_type": "code",
-      "norm_label": "setup_test_db()",
-      "source_file": "backend/tests/test_universal_raw_material_delete.py",
-      "source_location": "L10"
-    },
-    {
-      "id": "backend_tests_test_universal_raw_material_delete_test_upsert_and_delete_universal_raw_material",
-      "label": "test_upsert_and_delete_universal_raw_material()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 71,
-      "community_name": "UniversalRawMaterial",
-      "file_type": "code",
-      "norm_label": "test_upsert_and_delete_universal_raw_material()",
-      "source_file": "backend/tests/test_universal_raw_material_delete.py",
-      "source_location": "L17"
+      "norm_label": "decode_token()",
+      "source_file": "backend/app/core/security.py",
+      "source_location": "L35"
     },
     {
       "id": "btn_factory_linux_flutter_generated_plugin_registrant_fl_register_plugins",
@@ -3638,6 +3650,39 @@
       "file_type": "code",
       "norm_label": "security.py",
       "source_file": "backend/app/core/security.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_app_repositories_base",
+      "label": "repositories/base.py",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": "repositories/base.py",
+      "source_file": "backend/app/repositories/base.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_app_repositories_base_py_session",
+      "label": "Session",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": "session",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_app_repositories_init",
+      "label": "repositories/__init__.py",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "User",
+      "file_type": "code",
+      "norm_label": "repositories/__init__.py",
+      "source_file": "backend/app/repositories/__init__.py",
       "source_location": "L1"
     },
     {
@@ -4311,6 +4356,138 @@
       "source_location": ""
     },
     {
+      "id": "btn_factory_lib_core_network_api_client_dioprovider",
+      "label": "dioProvider",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "staff_page.dart",
+      "file_type": "code",
+      "norm_label": "dioprovider",
+      "source_file": "btn_factory/lib/core/network/api_client.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_dashboard_presentation_dashboard_page_fetchdashboard",
+      "label": "_fetchDashboard",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "staff_page.dart",
+      "file_type": "code",
+      "norm_label": "_fetchdashboard",
+      "source_file": "btn_factory/lib/features/dashboard/presentation/dashboard_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_departments_presentation_department_update_page_confirmdeleteuniversalmaterialdirect",
+      "label": "_confirmDeleteUniversalMaterialDirect",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "staff_page.dart",
+      "file_type": "code",
+      "norm_label": "_confirmdeleteuniversalmaterialdirect",
+      "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_departments_presentation_department_update_page_fetchorder",
+      "label": "_fetchOrder",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "staff_page.dart",
+      "file_type": "code",
+      "norm_label": "_fetchorder",
+      "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_departments_presentation_department_update_page_fetchuniversalmaterials",
+      "label": "_fetchUniversalMaterials",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "staff_page.dart",
+      "file_type": "code",
+      "norm_label": "_fetchuniversalmaterials",
+      "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_departments_presentation_department_update_page_submitupdate",
+      "label": "_submitUpdate",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "staff_page.dart",
+      "file_type": "code",
+      "norm_label": "_submitupdate",
+      "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_orders_presentation_order_form_page_fetchnexttoken",
+      "label": "_fetchNextToken",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "staff_page.dart",
+      "file_type": "code",
+      "norm_label": "_fetchnexttoken",
+      "source_file": "btn_factory/lib/features/orders/presentation/order_form_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_orders_presentation_order_form_page_fetchorderdetails",
+      "label": "_fetchOrderDetails",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "staff_page.dart",
+      "file_type": "code",
+      "norm_label": "_fetchorderdetails",
+      "source_file": "btn_factory/lib/features/orders/presentation/order_form_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_orders_presentation_order_form_page_submit",
+      "label": "_submit",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "staff_page.dart",
+      "file_type": "code",
+      "norm_label": "_submit",
+      "source_file": "btn_factory/lib/features/orders/presentation/order_form_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_orders_presentation_order_list_page_confirmanddelete",
+      "label": "_confirmAndDelete",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "staff_page.dart",
+      "file_type": "code",
+      "norm_label": "_confirmanddelete",
+      "source_file": "btn_factory/lib/features/orders/presentation/order_list_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_orders_presentation_order_list_page_fetchorders",
+      "label": "_fetchOrders",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "staff_page.dart",
+      "file_type": "code",
+      "norm_label": "_fetchorders",
+      "source_file": "btn_factory/lib/features/orders/presentation/order_list_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_fetchreport",
+      "label": "_fetchReport",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "staff_page.dart",
+      "file_type": "code",
+      "norm_label": "_fetchreport",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_features_staff_presentation_staff_page",
       "label": "staff_page.dart",
       "_origin": "ast",
@@ -4395,6 +4572,17 @@
       "community_name": "staff_page.dart",
       "file_type": "code",
       "norm_label": "_error",
+      "source_file": "btn_factory/lib/features/staff/presentation/staff_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_staff_presentation_staff_page_fetchstaff",
+      "label": "_fetchStaff",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "staff_page.dart",
+      "file_type": "code",
+      "norm_label": "_fetchstaff",
       "source_file": "btn_factory/lib/features/staff/presentation/staff_page.dart",
       "source_location": null
     },
@@ -4593,6 +4781,28 @@
       "community_name": "staff_page.dart",
       "file_type": "code",
       "norm_label": "_staffpagestate",
+      "source_file": "btn_factory/lib/features/staff/presentation/staff_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_staff_presentation_staff_page_submit",
+      "label": "_submit",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "staff_page.dart",
+      "file_type": "code",
+      "norm_label": "_submit",
+      "source_file": "btn_factory/lib/features/staff/presentation/staff_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_staff_presentation_staff_page_togglestaffstatus",
+      "label": "_toggleStaffStatus",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "staff_page.dart",
+      "file_type": "code",
+      "norm_label": "_togglestaffstatus",
       "source_file": "btn_factory/lib/features/staff/presentation/staff_page.dart",
       "source_location": null
     },
@@ -4837,83 +5047,6 @@
       "norm_label": "package:btn_factory/features/staff/presentation/staff_page.dart",
       "source_file": null,
       "source_location": null
-    },
-    {
-      "id": "backend_app_repositories_base",
-      "label": "repositories/base.py",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": "repositories/base.py",
-      "source_file": "backend/app/repositories/base.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_app_repositories_base_py_session",
-      "label": "Session",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": "session",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_app_repositories_init",
-      "label": "repositories/__init__.py",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": "repositories/__init__.py",
-      "source_file": "backend/app/repositories/__init__.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_app_repositories_order_py_session",
-      "label": "Session",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": "session",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_app_services_order_service_py_session",
-      "label": "Session",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "code",
-      "norm_label": "session",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_app_api_routes_analytics_rationale_15",
-      "label": "Return real-time dashboard metrics computed from the database.",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "rationale",
-      "norm_label": "return real-time dashboard metrics computed from the database.",
-      "source_file": "backend/app/api/routes/analytics.py",
-      "source_location": "L15"
-    },
-    {
-      "id": "backend_app_repositories_order_rationale_24",
-      "label": "Return the lowest available numeric order token >= 1001. If an order is\u2026",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "Order",
-      "file_type": "rationale",
-      "norm_label": "return the lowest available numeric order token >= 1001. if an order is...",
-      "source_file": "backend/app/repositories/order.py",
-      "source_location": "L24"
     },
     {
       "id": "backend_app_core_redis_client",
@@ -5268,17 +5401,6 @@
       "source_location": null
     },
     {
-      "id": "btn_factory_lib_features_orders_presentation_order_list_page_confirmanddelete",
-      "label": "_confirmAndDelete",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "order_list_page.dart",
-      "file_type": "code",
-      "norm_label": "_confirmanddelete",
-      "source_file": "btn_factory/lib/features/orders/presentation/order_list_page.dart",
-      "source_location": null
-    },
-    {
       "id": "btn_factory_lib_features_orders_presentation_order_list_page_createstate",
       "label": "createState",
       "_origin": "ast",
@@ -5341,6 +5463,28 @@
       "community_name": "order_list_page.dart",
       "file_type": "code",
       "norm_label": "_isloading",
+      "source_file": "btn_factory/lib/features/orders/presentation/order_list_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_orders_presentation_order_list_page_orderlistpage",
+      "label": "OrderListPage",
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "order_list_page.dart",
+      "file_type": "code",
+      "norm_label": "orderlistpage",
+      "source_file": "btn_factory/lib/features/orders/presentation/order_list_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_orders_presentation_order_list_page_orderlistpagestate",
+      "label": "_OrderListPageState",
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "order_list_page.dart",
+      "file_type": "code",
+      "norm_label": "_orderlistpagestate",
       "source_file": "btn_factory/lib/features/orders/presentation/order_list_page.dart",
       "source_location": null
     },
@@ -5455,6 +5599,28 @@
       "source_location": null
     },
     {
+      "id": "btn_factory_lib_features_auth_presentation_login_page_loginpage",
+      "label": "LoginPage",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "ConsumerState",
+      "file_type": "code",
+      "norm_label": "loginpage",
+      "source_file": "btn_factory/lib/features/auth/presentation/login_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_auth_presentation_login_page_loginpagestate",
+      "label": "_LoginPageState",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "ConsumerState",
+      "file_type": "code",
+      "norm_label": "_loginpagestate",
+      "source_file": "btn_factory/lib/features/auth/presentation/login_page.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_features_auth_presentation_splash_page_splashpage",
       "label": "SplashPage",
       "_origin": "ast",
@@ -5474,28 +5640,6 @@
       "file_type": "code",
       "norm_label": "_splashpagestate",
       "source_file": "btn_factory/lib/features/auth/presentation/splash_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_dashboard_presentation_analytics_page_analyticspage",
-      "label": "AnalyticsPage",
-      "_origin": "ast",
-      "community": 16,
-      "community_name": "ConsumerState",
-      "file_type": "code",
-      "norm_label": "analyticspage",
-      "source_file": "btn_factory/lib/features/dashboard/presentation/analytics_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_dashboard_presentation_analytics_page_analyticspagestate",
-      "label": "_AnalyticsPageState",
-      "_origin": "ast",
-      "community": 16,
-      "community_name": "ConsumerState",
-      "file_type": "code",
-      "norm_label": "_analyticspagestate",
-      "source_file": "btn_factory/lib/features/dashboard/presentation/analytics_page.dart",
       "source_location": null
     },
     {
@@ -5562,72 +5706,6 @@
       "file_type": "code",
       "norm_label": "_orderdetailspagestate",
       "source_file": "btn_factory/lib/features/orders/presentation/order_details_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_orders_presentation_order_form_page_orderformpage",
-      "label": "OrderFormPage",
-      "_origin": "ast",
-      "community": 16,
-      "community_name": "ConsumerState",
-      "file_type": "code",
-      "norm_label": "orderformpage",
-      "source_file": "btn_factory/lib/features/orders/presentation/order_form_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_orders_presentation_order_form_page_orderformpagestate",
-      "label": "_OrderFormPageState",
-      "_origin": "ast",
-      "community": 16,
-      "community_name": "ConsumerState",
-      "file_type": "code",
-      "norm_label": "_orderformpagestate",
-      "source_file": "btn_factory/lib/features/orders/presentation/order_form_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_orders_presentation_order_list_page_orderlistpage",
-      "label": "OrderListPage",
-      "_origin": "ast",
-      "community": 16,
-      "community_name": "ConsumerState",
-      "file_type": "code",
-      "norm_label": "orderlistpage",
-      "source_file": "btn_factory/lib/features/orders/presentation/order_list_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_orders_presentation_order_list_page_orderlistpagestate",
-      "label": "_OrderListPageState",
-      "_origin": "ast",
-      "community": 16,
-      "community_name": "ConsumerState",
-      "file_type": "code",
-      "norm_label": "_orderlistpagestate",
-      "source_file": "btn_factory/lib/features/orders/presentation/order_list_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_reports_presentation_reports_page_reportspage",
-      "label": "ReportsPage",
-      "_origin": "ast",
-      "community": 16,
-      "community_name": "ConsumerState",
-      "file_type": "code",
-      "norm_label": "reportspage",
-      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_reports_presentation_reports_page_reportspagestate",
-      "label": "_ReportsPageState",
-      "_origin": "ast",
-      "community": 16,
-      "community_name": "ConsumerState",
-      "file_type": "code",
-      "norm_label": "_reportspagestate",
-      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
       "source_location": null
     },
     {
@@ -6016,6 +6094,28 @@
       "source_location": null
     },
     {
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_reportspage",
+      "label": "ReportsPage",
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "reports_page.dart",
+      "file_type": "code",
+      "norm_label": "reportspage",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_reports_presentation_reports_page_reportspagestate",
+      "label": "_ReportsPageState",
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "reports_page.dart",
+      "file_type": "code",
+      "norm_label": "_reportspagestate",
+      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_features_reports_presentation_reports_page_reportsummary",
       "label": "_ReportSummary",
       "_origin": "ast",
@@ -6313,125 +6413,191 @@
       "source_location": null
     },
     {
-      "id": "backend_app_models_init",
-      "label": "models/__init__.py",
+      "id": "backend_app_main_py_request",
+      "label": "Request",
       "_origin": "ast",
       "community": 2,
-      "community_name": "order_service.py",
+      "community_name": "custom_http_exception_handler",
       "file_type": "code",
-      "norm_label": "models/__init__.py",
-      "source_file": "backend/app/models/__init__.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_app_models_order",
-      "label": "models/order.py",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "models/order.py",
-      "source_file": "backend/app/models/order.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_app_models_order_py_str",
-      "label": "str",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "str",
+      "norm_label": "request",
       "source_file": "",
       "source_location": ""
     },
     {
-      "id": "backend_app_repositories_order",
-      "label": "repositories/order.py",
+      "id": "exception",
+      "label": "Exception",
       "_origin": "ast",
       "community": 2,
-      "community_name": "order_service.py",
+      "community_name": "custom_http_exception_handler",
       "file_type": "code",
-      "norm_label": "repositories/order.py",
-      "source_file": "backend/app/repositories/order.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_app_services_init",
-      "label": "services/__init__.py",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "services/__init__.py",
-      "source_file": "backend/app/services/__init__.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_app_services_order_service",
-      "label": "order_service.py",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "order_service.py",
-      "source_file": "backend/app/services/order_service.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_app_services_report_service",
-      "label": "report_service.py",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "report_service.py",
-      "source_file": "backend/app/services/report_service.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_app_services_report_service_py_session",
-      "label": "Session",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "session",
+      "norm_label": "exception",
       "source_file": "",
       "source_location": ""
     },
     {
-      "id": "backend_app_services_status_engine",
-      "label": "status_engine.py",
+      "id": "exception_handler",
+      "label": "exception_handler",
       "_origin": "ast",
       "community": 2,
-      "community_name": "order_service.py",
+      "community_name": "custom_http_exception_handler",
       "file_type": "code",
-      "norm_label": "status_engine.py",
-      "source_file": "backend/app/services/status_engine.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_tests_test_status_engine",
-      "label": "test_status_engine.py",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "test_status_engine.py",
-      "source_file": "backend/tests/test_status_engine.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "date",
-      "label": "date",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "order_service.py",
-      "file_type": "code",
-      "norm_label": "date",
+      "norm_label": "exception_handler",
       "source_file": "",
       "source_location": ""
+    },
+    {
+      "id": "jsonresponse",
+      "label": "JSONResponse",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "custom_http_exception_handler",
+      "file_type": "code",
+      "norm_label": "jsonresponse",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "middleware",
+      "label": "middleware",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "custom_http_exception_handler",
+      "file_type": "code",
+      "norm_label": "middleware",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "response",
+      "label": "Response",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "custom_http_exception_handler",
+      "file_type": "code",
+      "norm_label": "response",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "asyncvalue",
+      "label": "AsyncValue",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "order_details_page.dart",
+      "file_type": "code",
+      "norm_label": "asyncvalue",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_auth_presentation_profile_page",
+      "label": "profile_page.dart",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "order_details_page.dart",
+      "file_type": "code",
+      "norm_label": "profile_page.dart",
+      "source_file": "btn_factory/lib/features/auth/presentation/profile_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_auth_presentation_profile_page_formatdepartment",
+      "label": "_formatDepartment",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "order_details_page.dart",
+      "file_type": "code",
+      "norm_label": "_formatdepartment",
+      "source_file": "btn_factory/lib/features/auth/presentation/profile_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_auth_presentation_profile_page_formatrole",
+      "label": "_formatRole",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "order_details_page.dart",
+      "file_type": "code",
+      "norm_label": "_formatrole",
+      "source_file": "btn_factory/lib/features/auth/presentation/profile_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_auth_presentation_profile_page_icon",
+      "label": "icon",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "order_details_page.dart",
+      "file_type": "code",
+      "norm_label": "icon",
+      "source_file": "btn_factory/lib/features/auth/presentation/profile_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_auth_presentation_profile_page_label",
+      "label": "label",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "order_details_page.dart",
+      "file_type": "code",
+      "norm_label": "label",
+      "source_file": "btn_factory/lib/features/auth/presentation/profile_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_auth_presentation_profile_page_profiledetailrow",
+      "label": "_ProfileDetailRow",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "order_details_page.dart",
+      "file_type": "code",
+      "norm_label": "_profiledetailrow",
+      "source_file": "btn_factory/lib/features/auth/presentation/profile_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_auth_presentation_profile_page_value",
+      "label": "value",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "order_details_page.dart",
+      "file_type": "code",
+      "norm_label": "value",
+      "source_file": "btn_factory/lib/features/auth/presentation/profile_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_auth_presentation_splash_page",
+      "label": "splash_page.dart",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "order_details_page.dart",
+      "file_type": "code",
+      "norm_label": "splash_page.dart",
+      "source_file": "btn_factory/lib/features/auth/presentation/splash_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_auth_presentation_splash_page_createstate",
+      "label": "createState",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "order_details_page.dart",
+      "file_type": "code",
+      "norm_label": "createstate",
+      "source_file": "btn_factory/lib/features/auth/presentation/splash_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_auth_presentation_splash_page_navigated",
+      "label": "_navigated",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "order_details_page.dart",
+      "file_type": "code",
+      "norm_label": "_navigated",
+      "source_file": "btn_factory/lib/features/auth/presentation/splash_page.dart",
+      "source_location": null
     },
     {
       "id": "btn_factory_lib_features_orders_presentation_order_details_page",
@@ -6555,6 +6721,17 @@
       "source_location": null
     },
     {
+      "id": "btn_factory_lib_features_orders_presentation_order_details_page_toggledispatch",
+      "label": "_toggleDispatch",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "order_details_page.dart",
+      "file_type": "code",
+      "norm_label": "_toggledispatch",
+      "source_file": "btn_factory/lib/features/orders/presentation/order_details_page.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_features_orders_presentation_order_details_page_value",
       "label": "value",
       "_origin": "ast",
@@ -6566,6 +6743,39 @@
       "source_location": null
     },
     {
+      "id": "btn_factory_test_widget_test",
+      "label": "widget_test.dart",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "order_details_page.dart",
+      "file_type": "code",
+      "norm_label": "widget_test.dart",
+      "source_file": "btn_factory/test/widget_test.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_test_widget_test_main",
+      "label": "main",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "order_details_page.dart",
+      "file_type": "code",
+      "norm_label": "main",
+      "source_file": "btn_factory/test/widget_test.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_test_widget_test_read",
+      "label": "read",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "order_details_page.dart",
+      "file_type": "code",
+      "norm_label": "read",
+      "source_file": "btn_factory/test/widget_test.dart",
+      "source_location": null
+    },
+    {
       "id": "package_btn_factory_core_utils_pdf_export_service_dart",
       "label": "package:btn_factory/core/utils/pdf_export_service.dart",
       "_origin": "ast",
@@ -6573,6 +6783,28 @@
       "community_name": "order_details_page.dart",
       "file_type": "code",
       "norm_label": "package:btn_factory/core/utils/pdf_export_service.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "package_btn_factory_features_auth_application_auth_controller_dart",
+      "label": "package:btn_factory/features/auth/application/auth_controller.dart",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "order_details_page.dart",
+      "file_type": "code",
+      "norm_label": "package:btn_factory/features/auth/application/auth_controller.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "package_btn_factory_main_dart",
+      "label": "package:btn_factory/main.dart",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "order_details_page.dart",
+      "file_type": "code",
+      "norm_label": "package:btn_factory/main.dart",
       "source_file": null,
       "source_location": null
     },
@@ -6588,157 +6820,47 @@
       "source_location": null
     },
     {
-      "id": "btn_factory_lib_core_network_api_client_dioprovider",
-      "label": "dioProvider",
+      "id": "package_btn_factory_shared_widgets_section_card_dart",
+      "label": "package:btn_factory/shared/widgets/section_card.dart",
       "_origin": "ast",
-      "community": 21,
-      "community_name": "dioProvider",
+      "community": 20,
+      "community_name": "order_details_page.dart",
       "file_type": "code",
-      "norm_label": "dioprovider",
-      "source_file": "btn_factory/lib/core/network/api_client.dart",
+      "norm_label": "package:btn_factory/shared/widgets/section_card.dart",
+      "source_file": null,
       "source_location": null
     },
     {
-      "id": "btn_factory_lib_features_dashboard_presentation_dashboard_page_fetchdashboard",
-      "label": "_fetchDashboard",
+      "id": "package_flutter_riverpod_flutter_riverpod_dart",
+      "label": "package:flutter_riverpod/flutter_riverpod.dart",
       "_origin": "ast",
-      "community": 21,
-      "community_name": "dioProvider",
+      "community": 20,
+      "community_name": "order_details_page.dart",
       "file_type": "code",
-      "norm_label": "_fetchdashboard",
-      "source_file": "btn_factory/lib/features/dashboard/presentation/dashboard_page.dart",
+      "norm_label": "package:flutter_riverpod/flutter_riverpod.dart",
+      "source_file": null,
       "source_location": null
     },
     {
-      "id": "btn_factory_lib_features_departments_presentation_department_update_page_confirmdeleteuniversalmaterialdirect",
-      "label": "_confirmDeleteUniversalMaterialDirect",
+      "id": "package_flutter_test_flutter_test_dart",
+      "label": "package:flutter_test/flutter_test.dart",
       "_origin": "ast",
-      "community": 21,
-      "community_name": "dioProvider",
+      "community": 20,
+      "community_name": "order_details_page.dart",
       "file_type": "code",
-      "norm_label": "_confirmdeleteuniversalmaterialdirect",
-      "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
+      "norm_label": "package:flutter_test/flutter_test.dart",
+      "source_file": null,
       "source_location": null
     },
     {
-      "id": "btn_factory_lib_features_departments_presentation_department_update_page_fetchorder",
-      "label": "_fetchOrder",
+      "id": "package_go_router_go_router_dart",
+      "label": "package:go_router/go_router.dart",
       "_origin": "ast",
-      "community": 21,
-      "community_name": "dioProvider",
+      "community": 20,
+      "community_name": "order_details_page.dart",
       "file_type": "code",
-      "norm_label": "_fetchorder",
-      "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_departments_presentation_department_update_page_fetchuniversalmaterials",
-      "label": "_fetchUniversalMaterials",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "dioProvider",
-      "file_type": "code",
-      "norm_label": "_fetchuniversalmaterials",
-      "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_departments_presentation_department_update_page_submitupdate",
-      "label": "_submitUpdate",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "dioProvider",
-      "file_type": "code",
-      "norm_label": "_submitupdate",
-      "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_orders_presentation_order_form_page_fetchnexttoken",
-      "label": "_fetchNextToken",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "dioProvider",
-      "file_type": "code",
-      "norm_label": "_fetchnexttoken",
-      "source_file": "btn_factory/lib/features/orders/presentation/order_form_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_orders_presentation_order_form_page_fetchorderdetails",
-      "label": "_fetchOrderDetails",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "dioProvider",
-      "file_type": "code",
-      "norm_label": "_fetchorderdetails",
-      "source_file": "btn_factory/lib/features/orders/presentation/order_form_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_orders_presentation_order_form_page_submit",
-      "label": "_submit",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "dioProvider",
-      "file_type": "code",
-      "norm_label": "_submit",
-      "source_file": "btn_factory/lib/features/orders/presentation/order_form_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_orders_presentation_order_list_page_fetchorders",
-      "label": "_fetchOrders",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "dioProvider",
-      "file_type": "code",
-      "norm_label": "_fetchorders",
-      "source_file": "btn_factory/lib/features/orders/presentation/order_list_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_reports_presentation_reports_page_fetchreport",
-      "label": "_fetchReport",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "dioProvider",
-      "file_type": "code",
-      "norm_label": "_fetchreport",
-      "source_file": "btn_factory/lib/features/reports/presentation/reports_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_staff_presentation_staff_page_fetchstaff",
-      "label": "_fetchStaff",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "dioProvider",
-      "file_type": "code",
-      "norm_label": "_fetchstaff",
-      "source_file": "btn_factory/lib/features/staff/presentation/staff_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_staff_presentation_staff_page_submit",
-      "label": "_submit",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "dioProvider",
-      "file_type": "code",
-      "norm_label": "_submit",
-      "source_file": "btn_factory/lib/features/staff/presentation/staff_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_staff_presentation_staff_page_togglestaffstatus",
-      "label": "_toggleStaffStatus",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "dioProvider",
-      "file_type": "code",
-      "norm_label": "_togglestaffstatus",
-      "source_file": "btn_factory/lib/features/staff/presentation/staff_page.dart",
+      "norm_label": "package:go_router/go_router.dart",
+      "source_file": null,
       "source_location": null
     },
     {
@@ -6808,28 +6930,6 @@
       "source_location": null
     },
     {
-      "id": "btn_factory_lib_features_auth_presentation_login_page_loginpage",
-      "label": "LoginPage",
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "login_page.dart",
-      "file_type": "code",
-      "norm_label": "loginpage",
-      "source_file": "btn_factory/lib/features/auth/presentation/login_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_auth_presentation_login_page_loginpagestate",
-      "label": "_LoginPageState",
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "login_page.dart",
-      "file_type": "code",
-      "norm_label": "_loginpagestate",
-      "source_file": "btn_factory/lib/features/auth/presentation/login_page.dart",
-      "source_location": null
-    },
-    {
       "id": "btn_factory_lib_features_auth_presentation_login_page_passwordcontroller",
       "label": "_passwordController",
       "_origin": "ast",
@@ -6837,6 +6937,17 @@
       "community_name": "login_page.dart",
       "file_type": "code",
       "norm_label": "_passwordcontroller",
+      "source_file": "btn_factory/lib/features/auth/presentation/login_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_auth_presentation_login_page_submit",
+      "label": "_submit",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "login_page.dart",
+      "file_type": "code",
+      "norm_label": "_submit",
       "source_file": "btn_factory/lib/features/auth/presentation/login_page.dart",
       "source_location": null
     },
@@ -6885,6 +6996,17 @@
       "source_location": null
     },
     {
+      "id": "route_dashboard",
+      "label": "Route /dashboard",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "login_page.dart",
+      "file_type": "concept",
+      "norm_label": "route /dashboard",
+      "source_file": null,
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_features_auth_application_auth_controller_authcontrollerprovider",
       "label": "authControllerProvider",
       "_origin": "ast",
@@ -6903,17 +7025,6 @@
       "community_name": "authControllerProvider",
       "file_type": "code",
       "norm_label": "build",
-      "source_file": "btn_factory/lib/features/auth/presentation/login_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_auth_presentation_login_page_submit",
-      "label": "_submit",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "authControllerProvider",
-      "file_type": "code",
-      "norm_label": "_submit",
       "source_file": "btn_factory/lib/features/auth/presentation/login_page.dart",
       "source_location": null
     },
@@ -7057,17 +7168,6 @@
       "community_name": "authControllerProvider",
       "file_type": "concept",
       "norm_label": "route /casting",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "route_dashboard",
-      "label": "Route /dashboard",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "authControllerProvider",
-      "file_type": "concept",
-      "norm_label": "route /dashboard",
       "source_file": null,
       "source_location": null
     },
@@ -8062,160 +8162,6 @@
       "source_location": "L85"
     },
     {
-      "id": "asyncvalue",
-      "label": "AsyncValue",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "profile_page.dart",
-      "file_type": "code",
-      "norm_label": "asyncvalue",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_auth_presentation_profile_page",
-      "label": "profile_page.dart",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "profile_page.dart",
-      "file_type": "code",
-      "norm_label": "profile_page.dart",
-      "source_file": "btn_factory/lib/features/auth/presentation/profile_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_auth_presentation_profile_page_formatdepartment",
-      "label": "_formatDepartment",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "profile_page.dart",
-      "file_type": "code",
-      "norm_label": "_formatdepartment",
-      "source_file": "btn_factory/lib/features/auth/presentation/profile_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_auth_presentation_profile_page_formatrole",
-      "label": "_formatRole",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "profile_page.dart",
-      "file_type": "code",
-      "norm_label": "_formatrole",
-      "source_file": "btn_factory/lib/features/auth/presentation/profile_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_auth_presentation_profile_page_icon",
-      "label": "icon",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "profile_page.dart",
-      "file_type": "code",
-      "norm_label": "icon",
-      "source_file": "btn_factory/lib/features/auth/presentation/profile_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_auth_presentation_profile_page_label",
-      "label": "label",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "profile_page.dart",
-      "file_type": "code",
-      "norm_label": "label",
-      "source_file": "btn_factory/lib/features/auth/presentation/profile_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_auth_presentation_profile_page_profiledetailrow",
-      "label": "_ProfileDetailRow",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "profile_page.dart",
-      "file_type": "code",
-      "norm_label": "_profiledetailrow",
-      "source_file": "btn_factory/lib/features/auth/presentation/profile_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_auth_presentation_profile_page_value",
-      "label": "value",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "profile_page.dart",
-      "file_type": "code",
-      "norm_label": "value",
-      "source_file": "btn_factory/lib/features/auth/presentation/profile_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_auth_presentation_splash_page",
-      "label": "splash_page.dart",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "profile_page.dart",
-      "file_type": "code",
-      "norm_label": "splash_page.dart",
-      "source_file": "btn_factory/lib/features/auth/presentation/splash_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_auth_presentation_splash_page_createstate",
-      "label": "createState",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "profile_page.dart",
-      "file_type": "code",
-      "norm_label": "createstate",
-      "source_file": "btn_factory/lib/features/auth/presentation/splash_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_features_auth_presentation_splash_page_navigated",
-      "label": "_navigated",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "profile_page.dart",
-      "file_type": "code",
-      "norm_label": "_navigated",
-      "source_file": "btn_factory/lib/features/auth/presentation/splash_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "package_btn_factory_features_auth_application_auth_controller_dart",
-      "label": "package:btn_factory/features/auth/application/auth_controller.dart",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "profile_page.dart",
-      "file_type": "code",
-      "norm_label": "package:btn_factory/features/auth/application/auth_controller.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "package_btn_factory_shared_widgets_section_card_dart",
-      "label": "package:btn_factory/shared/widgets/section_card.dart",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "profile_page.dart",
-      "file_type": "code",
-      "norm_label": "package:btn_factory/shared/widgets/section_card.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "package_go_router_go_router_dart",
-      "label": "package:go_router/go_router.dart",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "profile_page.dart",
-      "file_type": "code",
-      "norm_label": "package:go_router/go_router.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
       "id": "backend_app_schemas_analytics",
       "label": "schemas/analytics.py",
       "_origin": "ast",
@@ -8454,6 +8400,17 @@
       "community_name": "secure_storage.dart",
       "file_type": "code",
       "norm_label": "secure_storage.dart",
+      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_core_storage_secure_storage_delete",
+      "label": "delete",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "secure_storage.dart",
+      "file_type": "code",
+      "norm_label": "delete",
       "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
       "source_location": null
     },
@@ -9649,11 +9606,99 @@
       "source_location": "L1"
     },
     {
+      "id": "backend_alembic_env",
+      "label": "env.py",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "env.py",
+      "source_file": "backend/alembic/env.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_app_core_migrations",
+      "label": "migrations.py",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "migrations.py",
+      "source_file": "backend/app/core/migrations.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_app_models_base",
+      "label": "models/base.py",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "models/base.py",
+      "source_file": "backend/app/models/base.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_app_models_init",
+      "label": "models/__init__.py",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "models/__init__.py",
+      "source_file": "backend/app/models/__init__.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_app_models_order",
+      "label": "models/order.py",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "models/order.py",
+      "source_file": "backend/app/models/order.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_app_models_order_py_str",
+      "label": "str",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "str",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_app_repositories_order",
+      "label": "repositories/order.py",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "repositories/order.py",
+      "source_file": "backend/app/repositories/order.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_app_repositories_order_py_session",
+      "label": "Session",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "session",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
       "id": "backend_app_schemas_department",
       "label": "department.py",
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "department.py",
       "source_file": "backend/app/schemas/department.py",
@@ -9664,7 +9709,7 @@
       "label": "BaseModel",
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "basemodel",
       "source_file": "",
@@ -9675,7 +9720,7 @@
       "label": "schemas/order.py",
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "schemas/order.py",
       "source_file": "backend/app/schemas/order.py",
@@ -9686,22 +9731,198 @@
       "label": "BaseModel",
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "basemodel",
       "source_file": "",
       "source_location": ""
     },
     {
+      "id": "backend_app_services_init",
+      "label": "services/__init__.py",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "services/__init__.py",
+      "source_file": "backend/app/services/__init__.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_app_services_order_service",
+      "label": "order_service.py",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "order_service.py",
+      "source_file": "backend/app/services/order_service.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_app_services_order_service_py_session",
+      "label": "Session",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "session",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_app_services_report_service",
+      "label": "report_service.py",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "report_service.py",
+      "source_file": "backend/app/services/report_service.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_app_services_report_service_py_session",
+      "label": "Session",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "session",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_app_services_status_engine",
+      "label": "status_engine.py",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "status_engine.py",
+      "source_file": "backend/app/services/status_engine.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_scripts_test_sanitize",
+      "label": "test_sanitize.py",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "test_sanitize.py",
+      "source_file": "backend/scripts/test_sanitize.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_tests_test_order_tokens_and_delete",
+      "label": "test_order_tokens_and_delete.py",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "test_order_tokens_and_delete.py",
+      "source_file": "backend/tests/test_order_tokens_and_delete.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_tests_test_rod_casting_and_sample",
+      "label": "test_rod_casting_and_sample.py",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "test_rod_casting_and_sample.py",
+      "source_file": "backend/tests/test_rod_casting_and_sample.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_tests_test_status_engine",
+      "label": "test_status_engine.py",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "test_status_engine.py",
+      "source_file": "backend/tests/test_status_engine.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_tests_test_universal_raw_material_delete",
+      "label": "test_universal_raw_material_delete.py",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "test_universal_raw_material_delete.py",
+      "source_file": "backend/tests/test_universal_raw_material_delete.py",
+      "source_location": "L1"
+    },
+    {
       "id": "backend_tests_test_workflow_edits",
       "label": "test_workflow_edits.py",
       "_origin": "ast",
       "community": 59,
-      "community_name": "schemas/order.py",
+      "community_name": "OrderService",
       "file_type": "code",
       "norm_label": "test_workflow_edits.py",
       "source_file": "backend/tests/test_workflow_edits.py",
       "source_location": "L1"
+    },
+    {
+      "id": "date",
+      "label": "date",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "date",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "declarativebase",
+      "label": "DeclarativeBase",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "code",
+      "norm_label": "declarativebase",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_app_models_order_rationale_61",
+      "label": "Persistent monotonic order-token sequence (1001, 1002, ...). Stored in the\u2026",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "rationale",
+      "norm_label": "persistent monotonic order-token sequence (1001, 1002, ...). stored in the...",
+      "source_file": "backend/app/models/order.py",
+      "source_location": "L61"
+    },
+    {
+      "id": "backend_app_repositories_order_rationale_24",
+      "label": "Return the lowest available numeric order token >= 1001. If an order is\u2026",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "rationale",
+      "norm_label": "return the lowest available numeric order token >= 1001. if an order is...",
+      "source_file": "backend/app/repositories/order.py",
+      "source_location": "L24"
+    },
+    {
+      "id": "backend_tests_test_order_tokens_and_delete_rationale_71",
+      "label": "Deleting an order with process rows must not leave orphans behind.",
+      "_origin": "ast",
+      "community": 59,
+      "community_name": "OrderService",
+      "file_type": "rationale",
+      "norm_label": "deleting an order with process rows must not leave orphans behind.",
+      "source_file": "backend/tests/test_order_tokens_and_delete.py",
+      "source_location": "L71"
     },
     {
       "id": "borderradius",
@@ -10089,39 +10310,6 @@
       "source_location": "L1"
     },
     {
-      "id": "backend_tests_test_order_tokens_and_delete",
-      "label": "test_order_tokens_and_delete.py",
-      "_origin": "ast",
-      "community": 61,
-      "community_name": "OrderService",
-      "file_type": "code",
-      "norm_label": "test_order_tokens_and_delete.py",
-      "source_file": "backend/tests/test_order_tokens_and_delete.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_tests_test_rod_casting_and_sample",
-      "label": "test_rod_casting_and_sample.py",
-      "_origin": "ast",
-      "community": 61,
-      "community_name": "OrderService",
-      "file_type": "code",
-      "norm_label": "test_rod_casting_and_sample.py",
-      "source_file": "backend/tests/test_rod_casting_and_sample.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_tests_test_order_tokens_and_delete_rationale_71",
-      "label": "Deleting an order with process rows must not leave orphans behind.",
-      "_origin": "ast",
-      "community": 61,
-      "community_name": "OrderService",
-      "file_type": "rationale",
-      "norm_label": "deleting an order with process rows must not leave orphans behind.",
-      "source_file": "backend/tests/test_order_tokens_and_delete.py",
-      "source_location": "L71"
-    },
-    {
       "id": "backend_app_api_router",
       "label": "router.py",
       "_origin": "ast",
@@ -10166,17 +10354,6 @@
       "source_location": ""
     },
     {
-      "id": "backend_app_main_py_request",
-      "label": "Request",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "main.py",
-      "file_type": "code",
-      "norm_label": "request",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
       "id": "backend_tests_test_media_and_redis",
       "label": "test_media_and_redis.py",
       "_origin": "ast",
@@ -10188,50 +10365,6 @@
       "source_location": "L1"
     },
     {
-      "id": "exception",
-      "label": "Exception",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "main.py",
-      "file_type": "code",
-      "norm_label": "exception",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "exception_handler",
-      "label": "exception_handler",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "main.py",
-      "file_type": "code",
-      "norm_label": "exception_handler",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "jsonresponse",
-      "label": "JSONResponse",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "main.py",
-      "file_type": "code",
-      "norm_label": "jsonresponse",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "middleware",
-      "label": "middleware",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "main.py",
-      "file_type": "code",
-      "norm_label": "middleware",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
       "id": "on_event",
       "label": "on_event",
       "_origin": "ast",
@@ -10239,17 +10372,6 @@
       "community_name": "main.py",
       "file_type": "code",
       "norm_label": "on_event",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "response",
-      "label": "Response",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "main.py",
-      "file_type": "code",
-      "norm_label": "response",
       "source_file": "",
       "source_location": ""
     },
@@ -10295,6 +10417,83 @@
       "file_type": "code",
       "norm_label": "light",
       "source_file": "btn_factory/lib/core/theme/app_theme.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_shared_widgets_feature_placeholder_page",
+      "label": "feature_placeholder_page.dart",
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "feature_placeholder_page.dart",
+      "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_shared_widgets_feature_placeholder_page_build",
+      "label": "build",
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "build",
+      "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_shared_widgets_feature_placeholder_page_featureplaceholderpage",
+      "label": "FeaturePlaceholderPage",
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "featureplaceholderpage",
+      "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_shared_widgets_feature_placeholder_page_icon",
+      "label": "icon",
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "icon",
+      "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_shared_widgets_feature_placeholder_page_selectedindex",
+      "label": "selectedIndex",
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "selectedindex",
+      "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_shared_widgets_feature_placeholder_page_subtitle",
+      "label": "subtitle",
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "subtitle",
+      "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_shared_widgets_feature_placeholder_page_title",
+      "label": "title",
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "title",
+      "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
       "source_location": null
     },
     {
@@ -10361,6 +10560,17 @@
       "file_type": "code",
       "norm_label": "trailing",
       "source_file": "btn_factory/lib/shared/widgets/section_card.dart",
+      "source_location": null
+    },
+    {
+      "id": "package_btn_factory_shared_widgets_app_scaffold_dart",
+      "label": "package:btn_factory/shared/widgets/app_scaffold.dart",
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "package:btn_factory/shared/widgets/app_scaffold.dart",
+      "source_file": null,
       "source_location": null
     },
     {
@@ -10467,7 +10677,7 @@
       "label": "routes/analytics.py",
       "_origin": "ast",
       "community": 65,
-      "community_name": "models/user.py",
+      "community_name": "routes/analytics.py",
       "file_type": "code",
       "norm_label": "routes/analytics.py",
       "source_file": "backend/app/api/routes/analytics.py",
@@ -10478,7 +10688,7 @@
       "label": "get",
       "_origin": "ast",
       "community": 65,
-      "community_name": "models/user.py",
+      "community_name": "routes/analytics.py",
       "file_type": "code",
       "norm_label": "get",
       "source_file": "",
@@ -10489,84 +10699,29 @@
       "label": "Session",
       "_origin": "ast",
       "community": 65,
-      "community_name": "models/user.py",
+      "community_name": "routes/analytics.py",
       "file_type": "code",
       "norm_label": "session",
       "source_file": "",
       "source_location": ""
     },
     {
-      "id": "backend_app_core_database_py_session",
-      "label": "Session",
+      "id": "backend_app_api_routes_analytics_rationale_15",
+      "label": "Return real-time dashboard metrics computed from the database.",
       "_origin": "ast",
       "community": 65,
-      "community_name": "models/user.py",
-      "file_type": "code",
-      "norm_label": "session",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_app_core_deps",
-      "label": "deps.py",
-      "_origin": "ast",
-      "community": 65,
-      "community_name": "models/user.py",
-      "file_type": "code",
-      "norm_label": "deps.py",
-      "source_file": "backend/app/core/deps.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_app_core_deps_py_session",
-      "label": "Session",
-      "_origin": "ast",
-      "community": 65,
-      "community_name": "models/user.py",
-      "file_type": "code",
-      "norm_label": "session",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_app_models_user",
-      "label": "models/user.py",
-      "_origin": "ast",
-      "community": 65,
-      "community_name": "models/user.py",
-      "file_type": "code",
-      "norm_label": "models/user.py",
-      "source_file": "backend/app/models/user.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_app_models_user_py_str",
-      "label": "str",
-      "_origin": "ast",
-      "community": 65,
-      "community_name": "models/user.py",
-      "file_type": "code",
-      "norm_label": "str",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "enum",
-      "label": "Enum",
-      "_origin": "ast",
-      "community": 65,
-      "community_name": "models/user.py",
-      "file_type": "code",
-      "norm_label": "enum",
-      "source_file": "",
-      "source_location": ""
+      "community_name": "routes/analytics.py",
+      "file_type": "rationale",
+      "norm_label": "return real-time dashboard metrics computed from the database.",
+      "source_file": "backend/app/api/routes/analytics.py",
+      "source_location": "L15"
     },
     {
       "id": "backend_app_api_routes_analytics_rationale_63",
       "label": "Monthly order counts from the database.",
       "_origin": "ast",
       "community": 65,
-      "community_name": "models/user.py",
+      "community_name": "routes/analytics.py",
       "file_type": "rationale",
       "norm_label": "monthly order counts from the database.",
       "source_file": "backend/app/api/routes/analytics.py",
@@ -10577,7 +10732,7 @@
       "label": "Per-status breakdown from the database.",
       "_origin": "ast",
       "community": 65,
-      "community_name": "models/user.py",
+      "community_name": "routes/analytics.py",
       "file_type": "rationale",
       "norm_label": "per-status breakdown from the database.",
       "source_file": "backend/app/api/routes/analytics.py",
@@ -10650,17 +10805,6 @@
       "source_location": ""
     },
     {
-      "id": "btn_factory_lib_core_storage_secure_storage_delete",
-      "label": "delete",
-      "_origin": "ast",
-      "community": 66,
-      "community_name": "orders.py",
-      "file_type": "code",
-      "norm_label": "delete",
-      "source_file": "btn_factory/lib/core/storage/secure_storage.dart",
-      "source_location": null
-    },
-    {
       "id": "btn_factory_lib_features_dashboard_presentation_analytics_page",
       "label": "analytics_page.dart",
       "_origin": "ast",
@@ -10668,6 +10812,28 @@
       "community_name": "analytics_page.dart",
       "file_type": "code",
       "norm_label": "analytics_page.dart",
+      "source_file": "btn_factory/lib/features/dashboard/presentation/analytics_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_dashboard_presentation_analytics_page_analyticspage",
+      "label": "AnalyticsPage",
+      "_origin": "ast",
+      "community": 67,
+      "community_name": "analytics_page.dart",
+      "file_type": "code",
+      "norm_label": "analyticspage",
+      "source_file": "btn_factory/lib/features/dashboard/presentation/analytics_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_dashboard_presentation_analytics_page_analyticspagestate",
+      "label": "_AnalyticsPageState",
+      "_origin": "ast",
+      "community": 67,
+      "community_name": "analytics_page.dart",
+      "file_type": "code",
+      "norm_label": "_analyticspagestate",
       "source_file": "btn_factory/lib/features/dashboard/presentation/analytics_page.dart",
       "source_location": null
     },
@@ -10837,44 +11003,33 @@
       "source_location": null
     },
     {
-      "id": "backend_alembic_env",
-      "label": "env.py",
+      "id": "backend_app_models_user",
+      "label": "models/user.py",
       "_origin": "ast",
       "community": 68,
-      "community_name": "Base",
+      "community_name": "models/user.py",
       "file_type": "code",
-      "norm_label": "env.py",
-      "source_file": "backend/alembic/env.py",
+      "norm_label": "models/user.py",
+      "source_file": "backend/app/models/user.py",
       "source_location": "L1"
     },
     {
-      "id": "backend_app_core_migrations",
-      "label": "migrations.py",
+      "id": "backend_app_models_user_py_str",
+      "label": "str",
       "_origin": "ast",
       "community": 68,
-      "community_name": "Base",
+      "community_name": "models/user.py",
       "file_type": "code",
-      "norm_label": "migrations.py",
-      "source_file": "backend/app/core/migrations.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_app_models_base",
-      "label": "models/base.py",
-      "_origin": "ast",
-      "community": 68,
-      "community_name": "Base",
-      "file_type": "code",
-      "norm_label": "models/base.py",
-      "source_file": "backend/app/models/base.py",
-      "source_location": "L1"
+      "norm_label": "str",
+      "source_file": "",
+      "source_location": ""
     },
     {
       "id": "backend_scripts_drop_recreate",
       "label": "drop_recreate.py",
       "_origin": "ast",
       "community": 68,
-      "community_name": "Base",
+      "community_name": "models/user.py",
       "file_type": "code",
       "norm_label": "drop_recreate.py",
       "source_file": "backend/scripts/drop_recreate.py",
@@ -10885,44 +11040,22 @@
       "label": "seed.py",
       "_origin": "ast",
       "community": 68,
-      "community_name": "Base",
+      "community_name": "models/user.py",
       "file_type": "code",
       "norm_label": "seed.py",
       "source_file": "backend/scripts/seed.py",
       "source_location": "L1"
     },
     {
-      "id": "backend_scripts_test_sanitize",
-      "label": "test_sanitize.py",
+      "id": "enum",
+      "label": "Enum",
       "_origin": "ast",
       "community": 68,
-      "community_name": "Base",
+      "community_name": "models/user.py",
       "file_type": "code",
-      "norm_label": "test_sanitize.py",
-      "source_file": "backend/scripts/test_sanitize.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "declarativebase",
-      "label": "DeclarativeBase",
-      "_origin": "ast",
-      "community": 68,
-      "community_name": "Base",
-      "file_type": "code",
-      "norm_label": "declarativebase",
+      "norm_label": "enum",
       "source_file": "",
       "source_location": ""
-    },
-    {
-      "id": "backend_app_models_order_rationale_61",
-      "label": "Persistent monotonic order-token sequence (1001, 1002, ...). Stored in the\u2026",
-      "_origin": "ast",
-      "community": 68,
-      "community_name": "Base",
-      "file_type": "rationale",
-      "norm_label": "persistent monotonic order-token sequence (1001, 1002, ...). stored in the...",
-      "source_file": "backend/app/models/order.py",
-      "source_location": "L61"
     },
     {
       "id": "backend_app_api_routes_departments",
@@ -10959,6 +11092,39 @@
     },
     {
       "id": "backend_app_api_routes_departments_py_session",
+      "label": "Session",
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "departments.py",
+      "file_type": "code",
+      "norm_label": "session",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_app_core_database_py_session",
+      "label": "Session",
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "departments.py",
+      "file_type": "code",
+      "norm_label": "session",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_app_core_deps",
+      "label": "deps.py",
+      "_origin": "ast",
+      "community": 69,
+      "community_name": "departments.py",
+      "file_type": "code",
+      "norm_label": "deps.py",
+      "source_file": "backend/app/core/deps.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_app_core_deps_py_session",
       "label": "Session",
       "_origin": "ast",
       "community": 69,
@@ -11185,6 +11351,17 @@
       "community_name": "department_update_page.dart",
       "file_type": "code",
       "norm_label": "hasunitoption",
+      "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_departments_presentation_department_update_page_initialtoken",
+      "label": "initialToken",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "department_update_page.dart",
+      "file_type": "code",
+      "norm_label": "initialtoken",
       "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
       "source_location": null
     },
@@ -11629,105 +11806,6 @@
       "source_location": null
     },
     {
-      "id": "backend_tests_test_universal_raw_material_delete",
-      "label": "test_universal_raw_material_delete.py",
-      "_origin": "ast",
-      "community": 71,
-      "community_name": "UniversalRawMaterial",
-      "file_type": "code",
-      "norm_label": "test_universal_raw_material_delete.py",
-      "source_file": "backend/tests/test_universal_raw_material_delete.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_feature_placeholder_page",
-      "label": "feature_placeholder_page.dart",
-      "_origin": "ast",
-      "community": 72,
-      "community_name": "package:btn_factory/shared/widgets/app_scaffold.dart",
-      "file_type": "code",
-      "norm_label": "feature_placeholder_page.dart",
-      "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_feature_placeholder_page_build",
-      "label": "build",
-      "_origin": "ast",
-      "community": 72,
-      "community_name": "package:btn_factory/shared/widgets/app_scaffold.dart",
-      "file_type": "code",
-      "norm_label": "build",
-      "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_feature_placeholder_page_featureplaceholderpage",
-      "label": "FeaturePlaceholderPage",
-      "_origin": "ast",
-      "community": 72,
-      "community_name": "package:btn_factory/shared/widgets/app_scaffold.dart",
-      "file_type": "code",
-      "norm_label": "featureplaceholderpage",
-      "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_feature_placeholder_page_icon",
-      "label": "icon",
-      "_origin": "ast",
-      "community": 72,
-      "community_name": "package:btn_factory/shared/widgets/app_scaffold.dart",
-      "file_type": "code",
-      "norm_label": "icon",
-      "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_feature_placeholder_page_selectedindex",
-      "label": "selectedIndex",
-      "_origin": "ast",
-      "community": 72,
-      "community_name": "package:btn_factory/shared/widgets/app_scaffold.dart",
-      "file_type": "code",
-      "norm_label": "selectedindex",
-      "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_feature_placeholder_page_subtitle",
-      "label": "subtitle",
-      "_origin": "ast",
-      "community": 72,
-      "community_name": "package:btn_factory/shared/widgets/app_scaffold.dart",
-      "file_type": "code",
-      "norm_label": "subtitle",
-      "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_lib_shared_widgets_feature_placeholder_page_title",
-      "label": "title",
-      "_origin": "ast",
-      "community": 72,
-      "community_name": "package:btn_factory/shared/widgets/app_scaffold.dart",
-      "file_type": "code",
-      "norm_label": "title",
-      "source_file": "btn_factory/lib/shared/widgets/feature_placeholder_page.dart",
-      "source_location": null
-    },
-    {
-      "id": "package_btn_factory_shared_widgets_app_scaffold_dart",
-      "label": "package:btn_factory/shared/widgets/app_scaffold.dart",
-      "_origin": "ast",
-      "community": 72,
-      "community_name": "package:btn_factory/shared/widgets/app_scaffold.dart",
-      "file_type": "code",
-      "norm_label": "package:btn_factory/shared/widgets/app_scaffold.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
       "id": "backend_app_schemas_init",
       "label": "schemas/__init__.py",
       "_origin": "ast",
@@ -11759,72 +11837,6 @@
       "norm_label": "basemodel",
       "source_file": "",
       "source_location": ""
-    },
-    {
-      "id": "btn_factory_test_widget_test",
-      "label": "widget_test.dart",
-      "_origin": "ast",
-      "community": 74,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
-      "file_type": "code",
-      "norm_label": "widget_test.dart",
-      "source_file": "btn_factory/test/widget_test.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_test_widget_test_main",
-      "label": "main",
-      "_origin": "ast",
-      "community": 74,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
-      "file_type": "code",
-      "norm_label": "main",
-      "source_file": "btn_factory/test/widget_test.dart",
-      "source_location": null
-    },
-    {
-      "id": "btn_factory_test_widget_test_read",
-      "label": "read",
-      "_origin": "ast",
-      "community": 74,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
-      "file_type": "code",
-      "norm_label": "read",
-      "source_file": "btn_factory/test/widget_test.dart",
-      "source_location": null
-    },
-    {
-      "id": "package_btn_factory_main_dart",
-      "label": "package:btn_factory/main.dart",
-      "_origin": "ast",
-      "community": 74,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
-      "file_type": "code",
-      "norm_label": "package:btn_factory/main.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "package_flutter_riverpod_flutter_riverpod_dart",
-      "label": "package:flutter_riverpod/flutter_riverpod.dart",
-      "_origin": "ast",
-      "community": 74,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
-      "file_type": "code",
-      "norm_label": "package:flutter_riverpod/flutter_riverpod.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "package_flutter_test_flutter_test_dart",
-      "label": "package:flutter_test/flutter_test.dart",
-      "_origin": "ast",
-      "community": 74,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
-      "file_type": "code",
-      "norm_label": "package:flutter_test/flutter_test.dart",
-      "source_file": null,
-      "source_location": null
     },
     {
       "id": "btn_factory_lib_features_orders_presentation_order_form_page",
@@ -11992,6 +12004,17 @@
       "source_location": null
     },
     {
+      "id": "btn_factory_lib_features_orders_presentation_order_form_page_isdispatched",
+      "label": "_isDispatched",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "order_form_page.dart",
+      "file_type": "code",
+      "norm_label": "_isdispatched",
+      "source_file": "btn_factory/lib/features/orders/presentation/order_form_page.dart",
+      "source_location": null
+    },
+    {
       "id": "btn_factory_lib_features_orders_presentation_order_form_page_isloadingorder",
       "label": "_isLoadingOrder",
       "_origin": "ast",
@@ -12076,6 +12099,28 @@
       "community_name": "order_form_page.dart",
       "file_type": "code",
       "norm_label": "orderformmode",
+      "source_file": "btn_factory/lib/features/orders/presentation/order_form_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_orders_presentation_order_form_page_orderformpage",
+      "label": "OrderFormPage",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "order_form_page.dart",
+      "file_type": "code",
+      "norm_label": "orderformpage",
+      "source_file": "btn_factory/lib/features/orders/presentation/order_form_page.dart",
+      "source_location": null
+    },
+    {
+      "id": "btn_factory_lib_features_orders_presentation_order_form_page_orderformpagestate",
+      "label": "_OrderFormPageState",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "order_form_page.dart",
+      "file_type": "code",
+      "norm_label": "_orderformpagestate",
       "source_file": "btn_factory/lib/features/orders/presentation/order_form_page.dart",
       "source_location": null
     },
@@ -12749,6 +12794,18 @@
       "weight": 1.0
     },
     {
+      "source": "backend_app_api_routes_orders_dispatch_order",
+      "target": "backend_app_services_status_engine_recompute_order_status",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "backend/app/api/routes/orders.py",
+      "source_location": "L101",
+      "weight": 1.0
+    },
+    {
       "source": "backend_app_api_routes_orders_get_order",
       "target": "backend_app_api_routes_orders_scrub_order_by_role",
       "relation": "calls",
@@ -12757,7 +12814,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L56",
+      "source_location": "L58",
       "weight": 1.0
     },
     {
@@ -12769,7 +12826,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L47",
+      "source_location": "L49",
       "weight": 1.0
     },
     {
@@ -14057,6 +14114,42 @@
       "weight": 1.0
     },
     {
+      "source": "backend_tests_test_status_engine_test_dispatch_toggle_and_recompute",
+      "target": "backend_app_models_order_order",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "backend/tests/test_status_engine.py",
+      "source_location": "L169",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_tests_test_status_engine_test_dispatch_toggle_and_recompute",
+      "target": "backend_app_models_order_packingprocess",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "backend/tests/test_status_engine.py",
+      "source_location": "L180",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_tests_test_status_engine_test_dispatch_toggle_and_recompute",
+      "target": "backend_app_services_status_engine_recompute_order_status",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "backend/tests/test_status_engine.py",
+      "source_location": "L192",
+      "weight": 1.0
+    },
+    {
       "source": "backend_tests_test_status_engine_test_reports_summary_with_completed_order",
       "target": "backend_app_models_order_order",
       "relation": "calls",
@@ -14953,7 +15046,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L20",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -14965,7 +15058,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L73",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
@@ -14977,7 +15070,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L82",
+      "source_location": "L84",
       "weight": 1.0
     },
     {
@@ -14989,7 +15082,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L38",
+      "source_location": "L40",
       "weight": 1.0
     },
     {
@@ -15001,7 +15094,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L50",
+      "source_location": "L52",
       "weight": 1.0
     },
     {
@@ -15013,7 +15106,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L44",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -15025,7 +15118,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L59",
+      "source_location": "L61",
       "weight": 1.0
     },
     {
@@ -16269,6 +16362,30 @@
     },
     {
       "source": "backend_app_api_routes_orders",
+      "target": "backend_app_services_order_service_orderservice",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "backend/app/api/routes/orders.py",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_app_api_routes_orders",
+      "target": "backend_app_services_status_engine_recompute_order_status",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "backend/app/api/routes/orders.py",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_app_api_routes_orders",
       "target": "backend_app_core_database_get_db",
       "relation": "imports",
       "_origin": "ast",
@@ -16276,7 +16393,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -16288,7 +16405,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0
     },
     {
@@ -16300,7 +16417,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0
     },
     {
@@ -16312,7 +16429,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0
     },
     {
@@ -16324,7 +16441,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L8",
+      "source_location": "L9",
       "weight": 1.0
     },
     {
@@ -16336,24 +16453,12 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L8",
+      "source_location": "L9",
       "weight": 1.0
     },
     {
       "source": "backend_app_api_routes_orders",
       "target": "backend_app_schemas_order_orderupdate",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L8",
-      "weight": 1.0
-    },
-    {
-      "source": "backend_app_api_routes_orders",
-      "target": "backend_app_services_order_service_orderservice",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18249,6 +18354,18 @@
     },
     {
       "source": "backend_tests_test_status_engine",
+      "target": "backend_app_services_status_engine_recompute_order_status",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "backend/tests/test_status_engine.py",
+      "source_location": "L162",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_tests_test_status_engine",
       "target": "backend_app_models_order_orderstatus",
       "relation": "imports",
       "_origin": "ast",
@@ -19089,19 +19206,31 @@
     },
     {
       "source": "backend_app_api_routes_orders",
-      "target": "backend_app_models_user",
+      "target": "backend_app_services_order_service",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L7",
+      "source_location": "L10",
       "weight": 1.0
     },
     {
       "source": "backend_app_api_routes_orders",
-      "target": "backend_app_schemas_order",
+      "target": "backend_app_services_status_engine",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "backend/app/api/routes/orders.py",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_app_api_routes_orders",
+      "target": "backend_app_models_user",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19113,7 +19242,7 @@
     },
     {
       "source": "backend_app_api_routes_orders",
-      "target": "backend_app_services_order_service",
+      "target": "backend_app_schemas_order",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19888,7 +20017,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L21",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -19900,7 +20029,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L21",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -19912,7 +20041,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L74",
+      "source_location": "L76",
       "weight": 1.0
     },
     {
@@ -19924,7 +20053,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L83",
+      "source_location": "L85",
       "weight": 1.0
     },
     {
@@ -19936,7 +20065,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L39",
+      "source_location": "L41",
       "weight": 1.0
     },
     {
@@ -19948,7 +20077,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L51",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
@@ -19960,7 +20089,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L45",
+      "source_location": "L47",
       "weight": 1.0
     },
     {
@@ -19972,7 +20101,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L60",
+      "source_location": "L62",
       "weight": 1.0
     },
     {
@@ -21559,6 +21688,18 @@
     {
       "source": "btn_factory_lib_features_orders_presentation_order_details_page_orderdetailspagestate",
       "target": "btn_factory_lib_features_auth_application_auth_controller_authcontrollerprovider",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "riverpod_reference",
+      "source_file": "btn_factory/lib/features/orders/presentation/order_details_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_orders_presentation_order_details_page_toggledispatch",
+      "target": "btn_factory_lib_core_network_api_client_dioprovider",
       "relation": "references",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -23218,7 +23359,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L14",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -23229,7 +23370,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L21",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -23240,7 +23381,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L39",
+      "source_location": "L41",
       "weight": 1.0
     },
     {
@@ -23251,7 +23392,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L45",
+      "source_location": "L47",
       "weight": 1.0
     },
     {
@@ -23262,7 +23403,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L51",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
@@ -23273,7 +23414,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L60",
+      "source_location": "L62",
       "weight": 1.0
     },
     {
@@ -23284,7 +23425,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L74",
+      "source_location": "L76",
       "weight": 1.0
     },
     {
@@ -23295,7 +23436,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L83",
+      "source_location": "L85",
       "weight": 1.0
     },
     {
@@ -24737,6 +24878,17 @@
       "confidence_score": 1.0,
       "source_file": "backend/tests/test_rod_casting_and_sample.py",
       "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_tests_test_status_engine",
+      "target": "backend_tests_test_status_engine_test_dispatch_toggle_and_recompute",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "backend/tests/test_status_engine.py",
+      "source_location": "L156",
       "weight": 1.0
     },
     {
@@ -27183,6 +27335,17 @@
     },
     {
       "source": "btn_factory_lib_features_departments_presentation_department_update_page",
+      "target": "btn_factory_lib_features_departments_presentation_department_update_page_initialtoken",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/departments/presentation/department_update_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_departments_presentation_department_update_page",
       "target": "btn_factory_lib_features_departments_presentation_department_update_page_initstate",
       "relation": "defines",
       "_origin": "ast",
@@ -27667,6 +27830,17 @@
     },
     {
       "source": "btn_factory_lib_features_orders_presentation_order_details_page",
+      "target": "btn_factory_lib_features_orders_presentation_order_details_page_toggledispatch",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/orders/presentation/order_details_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_orders_presentation_order_details_page",
       "target": "btn_factory_lib_features_orders_presentation_order_details_page_value",
       "relation": "defines",
       "_origin": "ast",
@@ -27855,6 +28029,17 @@
     {
       "source": "btn_factory_lib_features_orders_presentation_order_form_page",
       "target": "btn_factory_lib_features_orders_presentation_order_form_page_initstate",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "btn_factory/lib/features/orders/presentation/order_form_page.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "btn_factory_lib_features_orders_presentation_order_form_page",
+      "target": "btn_factory_lib_features_orders_presentation_order_form_page_isdispatched",
       "relation": "defines",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -34354,7 +34539,7 @@
       "confidence_score": 0.85,
       "context": "call",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L24",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
@@ -34366,7 +34551,7 @@
       "confidence_score": 0.85,
       "context": "call",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L78",
+      "source_location": "L80",
       "weight": 1.0
     },
     {
@@ -34378,7 +34563,7 @@
       "confidence_score": 0.85,
       "context": "call",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L87",
+      "source_location": "L94",
       "weight": 1.0
     },
     {
@@ -34390,7 +34575,7 @@
       "confidence_score": 0.85,
       "context": "call",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L55",
+      "source_location": "L57",
       "weight": 1.0
     },
     {
@@ -34402,7 +34587,7 @@
       "confidence_score": 0.85,
       "context": "call",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L64",
+      "source_location": "L66",
       "weight": 1.0
     },
     {
@@ -34666,7 +34851,7 @@
       "confidence_score": 0.95,
       "context": "generic_arg",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L45",
+      "source_location": "L47",
       "weight": 0.8
     },
     {
@@ -34918,7 +35103,7 @@
       "confidence_score": 0.95,
       "context": "parameter_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L21",
+      "source_location": "L23",
       "weight": 0.8
     },
     {
@@ -34930,7 +35115,7 @@
       "confidence_score": 0.95,
       "context": "parameter_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L74",
+      "source_location": "L76",
       "weight": 0.8
     },
     {
@@ -34942,7 +35127,7 @@
       "confidence_score": 0.95,
       "context": "parameter_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L83",
+      "source_location": "L89",
       "weight": 0.8
     },
     {
@@ -34954,7 +35139,7 @@
       "confidence_score": 0.95,
       "context": "parameter_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L39",
+      "source_location": "L41",
       "weight": 0.8
     },
     {
@@ -34966,7 +35151,7 @@
       "confidence_score": 0.95,
       "context": "parameter_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L51",
+      "source_location": "L53",
       "weight": 0.8
     },
     {
@@ -34978,7 +35163,7 @@
       "confidence_score": 0.95,
       "context": "parameter_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L45",
+      "source_location": "L47",
       "weight": 0.8
     },
     {
@@ -34990,7 +35175,7 @@
       "confidence_score": 0.95,
       "context": "parameter_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L60",
+      "source_location": "L62",
       "weight": 0.8
     },
     {
@@ -35002,7 +35187,7 @@
       "confidence_score": 0.95,
       "context": "parameter_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L60",
+      "source_location": "L62",
       "weight": 0.8
     },
     {
@@ -35086,7 +35271,7 @@
       "confidence_score": 0.95,
       "context": "return_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L21",
+      "source_location": "L23",
       "weight": 0.8
     },
     {
@@ -35098,7 +35283,7 @@
       "confidence_score": 0.95,
       "context": "return_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L83",
+      "source_location": "L90",
       "weight": 0.8
     },
     {
@@ -35110,7 +35295,7 @@
       "confidence_score": 0.95,
       "context": "return_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L51",
+      "source_location": "L53",
       "weight": 0.8
     },
     {
@@ -35122,7 +35307,7 @@
       "confidence_score": 0.95,
       "context": "return_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L14",
+      "source_location": "L16",
       "weight": 0.8
     },
     {
@@ -35134,7 +35319,7 @@
       "confidence_score": 0.95,
       "context": "return_type",
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L60",
+      "source_location": "L62",
       "weight": 0.8
     },
     {
@@ -35388,7 +35573,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L29",
+      "source_location": "L31",
       "weight": 0.8
     },
     {
@@ -35399,7 +35584,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L75",
+      "source_location": "L77",
       "weight": 0.8
     },
     {
@@ -35410,7 +35595,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L84",
+      "source_location": "L91",
       "weight": 0.8
     },
     {
@@ -35421,7 +35606,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L40",
+      "source_location": "L42",
       "weight": 0.8
     },
     {
@@ -35432,7 +35617,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L52",
+      "source_location": "L54",
       "weight": 0.8
     },
     {
@@ -35443,7 +35628,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L46",
+      "source_location": "L48",
       "weight": 0.8
     },
     {
@@ -35454,7 +35639,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "backend/app/api/routes/orders.py",
-      "source_location": "L61",
+      "source_location": "L63",
       "weight": 0.8
     },
     {
@@ -36140,6 +36325,28 @@
       "weight": 0.8
     },
     {
+      "source": "backend_tests_test_status_engine_test_dispatch_toggle_and_recompute",
+      "target": "backend_app_core_database_base",
+      "relation": "uses",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "backend/tests/test_status_engine.py",
+      "source_location": "L165",
+      "weight": 0.8
+    },
+    {
+      "source": "backend_tests_test_status_engine_test_dispatch_toggle_and_recompute",
+      "target": "backend_app_models_order_orderstatus",
+      "relation": "uses",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "backend/tests/test_status_engine.py",
+      "source_location": "L174",
+      "weight": 0.8
+    },
+    {
       "source": "backend_tests_test_status_engine_test_reports_summary_with_completed_order",
       "target": "backend_app_core_database_base",
       "relation": "uses",
@@ -36464,5 +36671,5 @@
       "source_file": "DEPLOYMENT_GUIDE.md"
     }
   ],
-  "built_at_commit": "92395bbab717ef386d553f21e7e71ed4ec4fac53"
+  "built_at_commit": "9121eea6c753fd2697710572d2fa5e1bf24bb0fd"
 }

@@ -49,6 +49,35 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
     }
   }
 
+  Future<void> _toggleDispatch(bool dispatched) async {
+    try {
+      final dio = ref.read(dioProvider);
+      final response = await dio.post(
+        '/orders/dispatch/${widget.orderToken}',
+        queryParameters: {'dispatched': dispatched},
+      );
+      if (!mounted) return;
+      setState(() {
+        _order = response.data as Map<String, dynamic>;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            dispatched
+                ? 'Order #${widget.orderToken} marked as Dispatched'
+                : 'Order #${widget.orderToken} dispatch status reverted to active production',
+          ),
+          backgroundColor: dispatched ? const Color(0xFF10B981) : const Color(0xFFD97706),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update dispatch status: $e'), backgroundColor: Colors.red),
+      );
+    }
+  }
+
   String _formatDate(String? dateStr) {
     if (dateStr == null || dateStr.isEmpty) return 'N/A';
     try {
@@ -159,10 +188,16 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                   onPressed: () => PdfExportService.exportOrderPdf(order),
                 ),
                 if (isAdmin) ...[
-                  const SizedBox(width: 4),
-                  IconButton(
-                    icon: const Icon(Icons.edit_outlined, color: Color(0xFF14B8A6)),
-                    tooltip: 'Edit Order',
+                  const SizedBox(width: 6),
+                  FilledButton.icon(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFF2563EB),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    icon: const Icon(Icons.edit, size: 14),
+                    label: const Text('Edit Order', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                     onPressed: () async {
                       final result = await context.push('/orders/${widget.orderToken}/edit');
                       if (result == true) {
@@ -212,12 +247,78 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
           const SizedBox(height: 18),
           // Dispatch details Card
           SectionCard(
-            title: 'Dispatch Information',
-            child: Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: <Widget>[
-                _DetailChip(label: 'Dispatch Date', value: _formatDate(order['dispatch_date'] as String?)),
+            title: 'Dispatch Status & Information',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: (order['status'] == 'Dispatched')
+                        ? const Color(0xFF064E3B).withValues(alpha: 0.25)
+                        : const Color(0xFF1E293B),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: (order['status'] == 'Dispatched')
+                          ? const Color(0xFF10B981)
+                          : const Color(0xFF475569),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: CheckboxListTile(
+                    value: order['status'] == 'Dispatched',
+                    activeColor: const Color(0xFF10B981),
+                    checkColor: Colors.black,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    title: Row(
+                      children: [
+                        Text(
+                          order['status'] == 'Dispatched' ? 'Order Dispatched' : 'Mark as Dispatched',
+                          style: TextStyle(
+                            color: order['status'] == 'Dispatched' ? const Color(0xFF10B981) : const Color(0xFFF8FAFC),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: order['status'] == 'Dispatched'
+                                ? const Color(0xFF10B981).withValues(alpha: 0.2)
+                                : const Color(0xFFF59E0B).withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            order['status'] == 'Dispatched' ? 'DISPATCHED' : 'NOT DISPATCHED',
+                            style: TextStyle(
+                              color: order['status'] == 'Dispatched' ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    subtitle: Text(
+                      order['status'] == 'Dispatched'
+                          ? 'Ticked: Order has left the factory and is marked as Dispatched. Untick to revert to production.'
+                          : 'Unticked: Order is not dispatched yet. Tick this box when the order leaves the factory.',
+                      style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
+                    ),
+                    onChanged: isAdmin
+                        ? (bool? val) => _toggleDispatch(val ?? false)
+                        : null,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: <Widget>[
+                    _DetailChip(label: 'Dispatch Date', value: _formatDate(order['dispatch_date'] as String?)),
+                    _DetailChip(label: 'Order Status', value: order['status'] as String? ?? 'Created'),
+                  ],
+                ),
               ],
             ),
           ),
@@ -246,11 +347,33 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
           const SizedBox(height: 18),
           SectionCard(
             title: 'Raw Materials Logs',
-            trailing: TextButton.icon(
-              onPressed: () => PdfExportService.exportRawMaterialsAndImagePdf(order),
-              icon: const Icon(Icons.picture_as_pdf_outlined, size: 16),
-              label: const Text('Export RM & Image PDF'),
-              style: TextButton.styleFrom(foregroundColor: const Color(0xFF14B8A6)),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (isAdmin) ...[
+                  OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF14B8A6),
+                      side: const BorderSide(color: Color(0xFF14B8A6)),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    icon: const Icon(Icons.edit_note, size: 14),
+                    label: const Text('Edit RM Logs', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                    onPressed: () async {
+                      await context.push('/raw-material?token=${widget.orderToken}');
+                      _fetchOrder();
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                ],
+                TextButton.icon(
+                  onPressed: () => PdfExportService.exportRawMaterialsAndImagePdf(order),
+                  icon: const Icon(Icons.picture_as_pdf_outlined, size: 16),
+                  label: const Text('Export RM & Image PDF'),
+                  style: TextButton.styleFrom(foregroundColor: const Color(0xFF14B8A6)),
+                ),
+              ],
             ),
             child: rawMaterials.isEmpty
                 ? const Padding(
@@ -323,6 +446,22 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
           const SizedBox(height: 18),
           SectionCard(
             title: 'Casting Process Logs',
+            trailing: isAdmin
+                ? OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF14B8A6),
+                      side: const BorderSide(color: Color(0xFF14B8A6)),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    icon: const Icon(Icons.edit_note, size: 14),
+                    label: const Text('Edit Casting Logs', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                    onPressed: () async {
+                      await context.push('/casting?token=${widget.orderToken}');
+                      _fetchOrder();
+                    },
+                  )
+                : null,
             child: casting == null
                 ? const Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
@@ -364,6 +503,22 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
           const SizedBox(height: 18),
           SectionCard(
             title: 'Blanking Process Logs',
+            trailing: isAdmin
+                ? OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF14B8A6),
+                      side: const BorderSide(color: Color(0xFF14B8A6)),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    icon: const Icon(Icons.edit_note, size: 14),
+                    label: const Text('Edit Blanking Logs', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                    onPressed: () async {
+                      await context.push('/blanking?token=${widget.orderToken}');
+                      _fetchOrder();
+                    },
+                  )
+                : null,
             child: blanking == null
                 ? const Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
@@ -386,6 +541,22 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
           const SizedBox(height: 18),
           SectionCard(
             title: 'Turning Process Logs',
+            trailing: isAdmin
+                ? OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF14B8A6),
+                      side: const BorderSide(color: Color(0xFF14B8A6)),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    icon: const Icon(Icons.edit_note, size: 14),
+                    label: const Text('Edit Turning Logs', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                    onPressed: () async {
+                      await context.push('/turning?token=${widget.orderToken}');
+                      _fetchOrder();
+                    },
+                  )
+                : null,
             child: turning == null
                 ? const Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
@@ -413,6 +584,22 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
           const SizedBox(height: 18),
           SectionCard(
             title: 'Polishing Process Logs',
+            trailing: isAdmin
+                ? OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF14B8A6),
+                      side: const BorderSide(color: Color(0xFF14B8A6)),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    icon: const Icon(Icons.edit_note, size: 14),
+                    label: const Text('Edit Polish Logs', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                    onPressed: () async {
+                      await context.push('/polish?token=${widget.orderToken}');
+                      _fetchOrder();
+                    },
+                  )
+                : null,
             child: polish == null
                 ? const Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
@@ -437,7 +624,23 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
           const SizedBox(height: 18),
           SectionCard(
             title: 'Packing Process Logs',
-              child: packing == null
+            trailing: isAdmin
+                ? OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF14B8A6),
+                      side: const BorderSide(color: Color(0xFF14B8A6)),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    icon: const Icon(Icons.edit_note, size: 14),
+                    label: const Text('Edit Packing Logs', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                    onPressed: () async {
+                      await context.push('/packing?token=${widget.orderToken}');
+                      _fetchOrder();
+                    },
+                  )
+                : null,
+            child: packing == null
                   ? const Padding(
                       padding: EdgeInsets.symmetric(vertical: 12),
                       child: Text('Packing details not submitted yet.', style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B))),

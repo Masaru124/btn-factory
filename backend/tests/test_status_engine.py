@@ -151,3 +151,44 @@ def test_reports_summary_with_completed_order() -> None:
     assert prod['turning_output'] == 475
     assert prod['polishing_output'] == 470
     assert prod['packing_output'] == 460
+
+
+def test_dispatch_toggle_and_recompute() -> None:
+    from datetime import date
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    from app.core.database import Base
+    from app.models.order import Order, PackingProcess
+    from app.services.status_engine import recompute_order_status
+
+    engine = create_engine('sqlite:///:memory:', echo=False)
+    Base.metadata.create_all(bind=engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    order = Order(
+        token='BTN-DISP-001',
+        order_type='Production',
+        company_name='Dispatch Test Co',
+        po_date=date.today(),
+        status=OrderStatus.CREATED.value,
+    )
+    session.add(order)
+    session.commit()
+
+    # Add packing to simulate finished production
+    packing = PackingProcess(order_id=order.id, packed_qty=100, in_gross=100)
+    session.add(packing)
+    session.commit()
+
+    # Toggle dispatch ON
+    order.status = 'Dispatched'
+    order.dispatch_date = date.today()
+    session.commit()
+    assert order.status == 'Dispatched'
+
+    # Toggle dispatch OFF -> clear dispatch_date and recompute status
+    order.dispatch_date = None
+    order.status = recompute_order_status(order)
+    session.commit()
+    assert order.status == OrderStatus.READY_TO_DISPATCH.value
