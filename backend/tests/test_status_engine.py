@@ -73,7 +73,8 @@ def test_status_progression_matches_workflow() -> None:
         packing_process=SimpleNamespace(id=4, packed_qty=100, rejected_qty=10, short_qty=5, excess_qty=0),
         dispatch_date=date.today() - timedelta(days=1),
     )
-    assert determine_order_status(order) == OrderStatus.DISPATCHED.value
+    # Dispatch is never auto-completed even if dispatch_date is reached; stays READY_TO_DISPATCH
+    assert determine_order_status(order) == OrderStatus.READY_TO_DISPATCH.value
 
 
 def test_status_with_null_end_time_progresses_correctly() -> None:

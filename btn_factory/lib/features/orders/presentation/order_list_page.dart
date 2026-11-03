@@ -22,6 +22,7 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
   bool _isLoading = true;
   String? _error;
   String? _deletingToken;
+  String? _dispatchingToken;
 
   @override
   void initState() {
@@ -159,6 +160,82 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
     }
   }
 
+  /// Shows confirmation and marks the order as dispatched or reverts status.
+  Future<void> _confirmAndDispatch(_OrderRow order, {required bool dispatched}) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: const Color(0xFF111827),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: Color(0xFF1F2937)),
+        ),
+        title: Text(
+          dispatched ? 'Mark order as Dispatched?' : 'Revert dispatch status?',
+          style: const TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          dispatched
+              ? 'Order ${order.token} for ${order.companyName} will be marked as Dispatched with today\'s date.'
+              : 'Order ${order.token} will be reverted from Dispatched back to active production.',
+          style: const TextStyle(color: Color(0xFF94A3B8), height: 1.4),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancel', style: TextStyle(color: Color(0xFF94A3B8))),
+          ),
+          FilledButton.icon(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            style: FilledButton.styleFrom(
+              backgroundColor: dispatched ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+              foregroundColor: Colors.black,
+            ),
+            icon: Icon(dispatched ? Icons.local_shipping : Icons.undo, size: 18),
+            label: Text(dispatched ? 'Mark Dispatched' : 'Revert'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _dispatchingToken = order.token);
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.post(
+        '/orders/dispatch/${order.token}',
+        queryParameters: {'dispatched': dispatched},
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            dispatched
+                ? 'Order ${order.token} marked as Dispatched'
+                : 'Order ${order.token} dispatch status reverted',
+          ),
+          backgroundColor: dispatched ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+        ),
+      );
+      await _fetchOrders();
+    } catch (e) {
+      if (!mounted) return;
+      String message = 'Failed to update dispatch status';
+      if (e is DioException) {
+        final detail = e.response?.data;
+        if (detail is Map && detail['detail'] is String) {
+          message = detail['detail'] as String;
+        }
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message), backgroundColor: const Color(0xFFEF4444)),
+      );
+    } finally {
+      if (mounted) setState(() => _dispatchingToken = null);
+    }
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -177,7 +254,12 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
           order.poNumber.toLowerCase().contains(search) ||
           order.companyName.toLowerCase().contains(search);
 
-      final matchesFilter = _selectedFilter == 'All' || order.status.contains(_selectedFilter);
+      final matchesFilter = _selectedFilter == 'All' ||
+          (_selectedFilter == 'Ready To Dispatch'
+              ? order.status == 'Ready To Dispatch'
+              : _selectedFilter == 'Dispatched'
+                  ? order.status == 'Dispatched'
+                  : order.status.contains(_selectedFilter));
       return matchesSearch && matchesFilter;
     }).toList(growable: false);
 
@@ -246,7 +328,17 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Row(
-              children: <String>['All', 'Created', 'Raw Material', 'Casting', 'Turning', 'Polishing', 'Packing', 'Dispatch']
+              children: const <String>[
+                'All',
+                'Created',
+                'Raw Material',
+                'Casting',
+                'Turning',
+                'Polishing',
+                'Packing',
+                'Ready To Dispatch',
+                'Dispatched',
+              ]
                   .map(
                     (filter) {
                       final isSelected = _selectedFilter == filter;
@@ -401,22 +493,73 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: <Widget>[
                                         Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                           decoration: BoxDecoration(
-                                            color: order.statusColor.withValues(alpha: 0.1),
+                                            color: order.statusColor.withValues(alpha: 0.12),
                                             borderRadius: BorderRadius.circular(20),
-                                          ),
-                                          child: Text(
-                                            order.status,
-                                            style: TextStyle(
-                                              color: order.statusColor,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
+                                            border: Border.all(
+                                              color: order.statusColor.withValues(alpha: 0.3),
+                                              width: 1,
                                             ),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              if (order.status == 'Dispatched') ...[
+                                                const Icon(Icons.check_circle, color: Color(0xFF10B981), size: 13),
+                                                const SizedBox(width: 4),
+                                              ],
+                                              Text(
+                                                order.status,
+                                                style: TextStyle(
+                                                  color: order.statusColor,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                         if (isAdmin) ...[
                                           const SizedBox(width: 8),
+                                          if (order.status != 'Dispatched') ...[
+                                            _dispatchingToken == order.token
+                                                ? const SizedBox(
+                                                    width: 20,
+                                                    height: 20,
+                                                    child: CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                      color: Color(0xFF10B981),
+                                                    ),
+                                                  )
+                                                : FilledButton.icon(
+                                                    onPressed: () => _confirmAndDispatch(order, dispatched: true),
+                                                    style: FilledButton.styleFrom(
+                                                      backgroundColor: const Color(0xFF10B981),
+                                                      foregroundColor: const Color(0xFF0F172A),
+                                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                                      visualDensity: VisualDensity.compact,
+                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                                    ),
+                                                    icon: const Icon(Icons.local_shipping, size: 14),
+                                                    label: const Text(
+                                                      'Mark Dispatched',
+                                                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                                                    ),
+                                                  ),
+                                            const SizedBox(width: 6),
+                                          ] else ...[
+                                            IconButton(
+                                              onPressed: () => _confirmAndDispatch(order, dispatched: false),
+                                              icon: const Icon(Icons.undo, size: 16),
+                                              tooltip: 'Revert dispatch status',
+                                              color: const Color(0xFFF59E0B),
+                                              visualDensity: VisualDensity.compact,
+                                              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                                              padding: EdgeInsets.zero,
+                                            ),
+                                            const SizedBox(width: 4),
+                                          ],
                                           _deletingToken == order.token
                                               ? const SizedBox(
                                                   width: 20,

@@ -248,6 +248,31 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
           // Dispatch details Card
           SectionCard(
             title: 'Dispatch Status & Information',
+            trailing: isAdmin
+                ? (order['status'] == 'Dispatched'
+                    ? OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFFF59E0B),
+                          side: const BorderSide(color: Color(0xFFF59E0B)),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          visualDensity: VisualDensity.compact,
+                        ),
+                        icon: const Icon(Icons.undo, size: 14),
+                        label: const Text('Revert to Production', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                        onPressed: () => _toggleDispatch(false),
+                      )
+                    : FilledButton.icon(
+                        style: FilledButton.styleFrom(
+                          backgroundColor: const Color(0xFF10B981),
+                          foregroundColor: const Color(0xFF0F172A),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          visualDensity: VisualDensity.compact,
+                        ),
+                        icon: const Icon(Icons.local_shipping, size: 14),
+                        label: const Text('Mark Dispatched', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                        onPressed: () => _toggleDispatch(true),
+                      ))
+                : null,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

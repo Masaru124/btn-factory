@@ -24,10 +24,8 @@ def determine_order_status(order: Order) -> str:
     if not has_packing:
         return OrderStatus.POLISHING_COMPLETED.value
 
-    # Packing process is recorded and completed
-    if order.dispatch_date is not None and order.dispatch_date <= datetime.now(timezone.utc).date():
-        return OrderStatus.DISPATCHED.value
-
+    # Packing process is recorded and completed.
+    # Dispatch is never auto-completed: Admin must explicitly mark as Dispatched.
     return OrderStatus.READY_TO_DISPATCH.value
 
 

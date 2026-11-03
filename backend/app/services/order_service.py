@@ -9,6 +9,7 @@ from app.models.order import (
     BlankingProcess,
     CastingProcess,
     Order,
+    OrderStatus,
     PackingProcess,
     PolishingProcess,
     RawMaterial,
@@ -101,7 +102,8 @@ class OrderService:
             setattr(order, field, value)
 
         if 'status' not in payload_data:
-            order.status = recompute_order_status(order)
+            if order.status != OrderStatus.DISPATCHED.value:
+                order.status = recompute_order_status(order)
         self.session.flush()
         self.session.commit()
         self.session.refresh(order)
