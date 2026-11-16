@@ -143,7 +143,7 @@ if not "%1"=="--silent" if not "%1"=="--startup" (
 :SUMMARY
 echo.
 echo ====================================================================
-echo  Button Factory Backend is running (Backend Only):
+echo  Button Factory Backend is running (IIS Only):
 echo   - DuckDNS Access: http://%PUBLIC_DOMAIN%:%IIS_PORT% (API Docs: /docs)
 echo   - Local Proxy   : http://localhost:%IIS_PORT% (API Docs: /docs)
 echo   - Direct Backend: http://127.0.0.1:8000 (API Docs: /docs)

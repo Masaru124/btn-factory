@@ -54,10 +54,12 @@ class Settings(BaseSettings):
     database_url: str = Field(default='sqlite:///./btn_factory.db', alias='DATABASE_URL')
 
     # -------------------------------------------------------------------------
-    # Public Domain / DuckDNS Configuration
+    # Public Domain, DuckDNS & Cloudflare Tunnel Configuration
     # -------------------------------------------------------------------------
     public_domain: str = Field(default='testtt234e.duckdns.org', alias='PUBLIC_DOMAIN')
     duckdns_domain: str | None = Field(default=None, alias='DUCKDNS_DOMAIN')
+    duckdns_token: str | None = Field(default=None, alias='DUCKDNS_TOKEN')
+    cloudflare_tunnel_token: str | None = Field(default=None, alias='CLOUDFLARE_TUNNEL_TOKEN')
 
     # -------------------------------------------------------------------------
     # Local On-Premise Storage & Automated Hourly Backup Folders

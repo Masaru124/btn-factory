@@ -109,7 +109,7 @@ if defined NGINX_EXE (
 
 echo.
 echo ====================================================================
-echo  Button Factory Backend is running (Backend Only):
+echo  Button Factory Backend is running (Nginx Only):
 echo   - DuckDNS Access: %PUBLIC_URL% (API Docs: %PUBLIC_URL%/docs)
 echo   - Local Proxy   : %LOCAL_URL% (API Docs: %LOCAL_URL%/docs)
 echo   - Direct Backend: http://127.0.0.1:8000 (API Docs: /docs)

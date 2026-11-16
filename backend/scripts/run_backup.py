@@ -60,6 +60,14 @@ def main():
     else:
         print(f"[WARN] Neon Cloud DR Sync    : FAILED ({neon.get('error')})")
 
+    duck = res.get('duckdns_sync', {})
+    if duck.get('status') == 'SUCCESS':
+        print(f"[PASS] DuckDNS Dynamic Sync  : {duck.get('domain')} -> UPDATED TO CURRENT IP")
+    elif duck.get('status') == 'SKIPPED':
+        print(f"[INFO] DuckDNS Dynamic Sync  : SKIPPED ({duck.get('message')})")
+    else:
+        print(f"[WARN] DuckDNS Dynamic Sync  : FAILED ({duck.get('error')})")
+
     print('-' * 80)
     print(f"Total Elapsed Time : {res.get('elapsed_ms')} ms")
     print('=' * 80)

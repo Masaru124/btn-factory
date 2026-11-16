@@ -388,13 +388,38 @@ class BackupService:
         """Sync schema and data from local database to Neon Cloud PostgreSQL."""
         return self.sync_to_postgres(self.settings.neon_database_url, target_name='Neon Cloud')
 
+    def sync_duckdns_ip(self) -> dict:
+        """Automatically keep DuckDNS domain pointed to the system's current public IP."""
+        token = self.settings.duckdns_token
+        domain = self.settings.duckdns_domain or self.settings.public_domain
+        if not token or not domain or 'duckdns.org' not in domain:
+            return {'status': 'SKIPPED', 'message': 'DuckDNS token not configured in .env'}
+
+        subdomain = domain.replace('.duckdns.org', '').strip()
+        url = f"https://www.duckdns.org/update?domains={subdomain}&token={token}&ip="
+
+        try:
+            import urllib.request
+            req = urllib.request.Request(url, headers={'User-Agent': 'ButtonFactoryMES-DuckDNS-Sync/1.0'})
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                result = resp.read().decode('utf-8').strip()
+            if result == 'OK':
+                logger.info('DuckDNS IP updated successfully for %s', domain)
+                return {'status': 'SUCCESS', 'domain': domain, 'result': result}
+            logger.warning('DuckDNS update returned: %s', result)
+            return {'status': 'FAILED', 'domain': domain, 'error': result}
+        except Exception as e:
+            logger.error('Failed to update DuckDNS IP: %s', e)
+            return {'status': 'FAILED', 'domain': domain, 'error': str(e)}
+
     def run_full_backup(self) -> dict:
-        """Run local SQLite snapshot, media files backup, Local Postgres sync, and Neon cloud sync."""
+        """Run local SQLite snapshot, media files backup, Local Postgres sync, Neon cloud sync, and DuckDNS IP sync."""
         start = time.perf_counter()
         snapshot_res = self.create_local_snapshot()
         media_res = self.backup_media_files()
         local_pg_res = self.sync_to_local_postgres()
         neon_res = self.sync_to_neon()
+        duckdns_res = self.sync_duckdns_ip()
         elapsed = round((time.perf_counter() - start) * 1000, 2)
 
         summary = {
@@ -404,6 +429,7 @@ class BackupService:
             'media_backup': media_res,
             'local_postgres_sync': local_pg_res,
             'neon_cloud_sync': neon_res,
+            'duckdns_sync': duckdns_res,
         }
 
         # Write to backup log in the backup directory
@@ -413,6 +439,7 @@ class BackupService:
                 f.write(
                     f"[{datetime.now().isoformat()}] DB Snapshot: {snapshot_res.get('status')} | "
                     f"Media: {media_res.get('status')} ({media_res.get('files_copied', 0)} copied) | "
+                    f"DuckDNS: {duckdns_res.get('status')} | "
                     f"Local PG: {local_pg_res.get('status')} | "
                     f"Neon Sync: {neon_res.get('status')} ({elapsed}ms)\n"
                 )

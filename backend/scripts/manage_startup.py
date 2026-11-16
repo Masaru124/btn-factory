@@ -57,7 +57,10 @@ def add_to_startup(server_type: str = 'nginx') -> bool:
     if server_type in ('iis', '2'):
         target_bat = os.path.join(PROJECT_ROOT, 'Launch_With_IIS.bat')
         server_name = 'IIS Reverse Proxy'
-    elif server_type in ('button_factory', 'buttonfactory', 'triple', 'tunnel', '3'):
+    elif server_type in ('cloudflare', 'cloudflared', 'cloudflare_tunnel', '3'):
+        target_bat = os.path.join(PROJECT_ROOT, 'Launch_With_Cloudflare_Tunnel.bat')
+        server_name = 'Cloudflare Tunnel (DuckDNS Host Mode)'
+    elif server_type in ('button_factory', 'buttonfactory', 'triple', 'tunnel', '4'):
         target_bat = os.path.join(PROJECT_ROOT, 'Launch_Button_Factory.bat')
         server_name = 'Button Factory (FastAPI + Cloudflare/ngrok Tunnels)'
     else:
