@@ -17,6 +17,20 @@ from app.models.user import User, UserRole
 
 
 def restore_admin(email: str = 'admin@example.com', password: str = 'password', name: str = 'Super Admin') -> None:
+    # Ensure database is healed from any corruption first
+    try:
+        from scripts.fix_and_restore_admin import heal_sqlite_database
+        from app.core.config import get_settings
+        settings = get_settings()
+        raw_url = settings.get_effective_database_url() if hasattr(settings, 'get_effective_database_url') else settings.database_url
+        if (raw_url or '').startswith('sqlite:///'):
+            rel_path = raw_url[len('sqlite:///'):]
+            if rel_path and not rel_path.startswith(':memory:'):
+                db_path = rel_path if os.path.isabs(rel_path) else os.path.join(backend_dir, rel_path)
+                heal_sqlite_database(db_path)
+    except Exception as e:
+        print(f"[NOTE] Pre-check note: {e}")
+
     # Ensure tables exist
     Base.metadata.create_all(bind=engine)
 

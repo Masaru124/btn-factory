@@ -49,6 +49,10 @@ Desktop.ini
 **/.env.*
 !**/.env.example
 **/btn_factory.db
+**/btn_factory.db-wal
+**/btn_factory.db-shm
+**/*.db-wal
+**/*.db-shm
 **/*.sqlite
 **/*.sqlite3
 **/htmlcov/
