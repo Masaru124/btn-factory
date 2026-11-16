@@ -12,20 +12,7 @@ echo ====================================================================
 echo        FABRICANA SUPREME - RESTORE SUPER ADMIN ACCOUNT
 echo ====================================================================
 echo.
-echo [1/2] Releasing active database locks...
-
-:: Stop any process occupying backend port 8000
-for /f "tokens=5" %%a in ('netstat -aon 2^>nul ^| findstr /r ":8000 .*LISTENING"') do (
-    echo   - Closing server process on port 8000 (PID %%a)...
-    taskkill /F /PID %%a >nul 2>&1
-)
-taskkill /F /FI "WINDOWTITLE eq *Auto Backup*" >nul 2>&1
-taskkill /F /FI "WINDOWTITLE eq Backend Server*" >nul 2>&1
-
-:: Pause 1 second for Windows OS to release all file handles
-ping 127.0.0.1 -n 2 >nul
-
-echo [2/2] Restoring default super admin...
+echo Connecting to database and restoring default super admin...
 echo.
 
 :: Detect Python executable
