@@ -15,7 +15,6 @@ class PdfExportService {
     final materials = reportData['materials'] as List<dynamic>? ?? [];
     final universalMaterials = reportData['universal_materials'] as List<dynamic>? ?? [];
     final rejection = reportData['rejection'] as Map<String, dynamic>? ?? {};
-    final revenue = reportData['revenue'] as Map<String, dynamic>? ?? {};
 
     final formattedDate = DateFormat('dd MMM yyyy, hh:mm a').format(DateTime.now());
 
@@ -61,7 +60,7 @@ class PdfExportService {
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
-                      'BUTTON FACTORY',
+                      'FABRICANA SUPREME',
                       style: pw.TextStyle(
                         color: PdfColors.white,
                         fontSize: 20,
@@ -88,12 +87,15 @@ class PdfExportService {
           pw.SizedBox(height: 16),
 
           // Production Report Section
-          _buildSectionHeader('Production Summary'),
+          _buildSectionHeader('Production & Dispatch Summary'),
           pw.SizedBox(height: 6),
           pw.TableHelper.fromTextArray(
             headers: ['Metric', 'Output / Value'],
             data: [
-              ['Completed Orders', '${production['completed_orders'] ?? 0}'],
+              ['Production Completed', '${production['production_completed_orders'] ?? production['completed_orders'] ?? 0} orders'],
+              ['Dispatch Pending', '${production['dispatch_pending_orders'] ?? 0} orders'],
+              ['Dispatched Orders', '${production['dispatched_orders'] ?? 0} orders'],
+              ['In Production', '${production['in_production_orders'] ?? 0} orders'],
               ['Casting Output', '${production['casting_output'] ?? 0} gross qty'],
               ['Turning Output', '${production['turning_output'] ?? 0} gross qty'],
               ['Packing Output', '${production['packing_output'] ?? 0} packed qty'],
@@ -113,14 +115,12 @@ class PdfExportService {
             _buildSectionHeader('Universal Raw Material Stock & Balance'),
             pw.SizedBox(height: 6),
             pw.TableHelper.fromTextArray(
-              headers: ['Material Name', 'Remaining', 'Consumed', 'Rate (INR)', 'Valuation (INR)'],
+              headers: ['Material Name', 'Remaining', 'Consumed'],
               data: universalMaterials
                   .map((item) => [
                         item['name'] as String? ?? 'N/A',
                         '${item['remaining_quantity'] ?? 0} ${item['unit'] as String? ?? ''}',
                         '${item['consumed_quantity'] ?? 0} ${item['unit'] as String? ?? ''}',
-                        'INR ${item['price'] ?? 0}',
-                        'INR ${item['total_value'] ?? 0}',
                       ])
                   .toList(),
               headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
@@ -164,21 +164,6 @@ class PdfExportService {
             cellHeight: 22,
           ),
           pw.SizedBox(height: 14),
-
-          // Revenue Section
-          _buildSectionHeader('Revenue Overview'),
-          pw.SizedBox(height: 6),
-          pw.TableHelper.fromTextArray(
-            headers: ['Financial Metric', 'Amount (INR) / Count'],
-            data: [
-              ['Total Order Value', 'INR ${revenue['total_revenue'] ?? 0.0}'],
-              ['Completed Orders Count', '${revenue['completed_count'] ?? 0}'],
-              ['Pending Revenue Value', 'INR ${revenue['pending_revenue'] ?? 0.0}'],
-            ],
-            headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
-            headerDecoration: const pw.BoxDecoration(color: PdfColors.teal700),
-            cellHeight: 22,
-          ),
         ],
       ),
     );

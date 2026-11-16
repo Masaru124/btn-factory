@@ -22,7 +22,7 @@ void main() {
 
     // Initial pump shows the loading splash screen
     await tester.pump();
-    expect(find.text('Button Factory MES'), findsOneWidget);
+    expect(find.text('Fabricana Supreme'), findsOneWidget);
 
     // Wait for the delayed future and animations to settle
     await tester.pumpAndSettle(const Duration(milliseconds: 100));

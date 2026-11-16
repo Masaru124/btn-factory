@@ -1,11 +1,11 @@
 {
-    "name": "btn_factory",
-    "short_name": "btn_factory",
+    "name": "Fabricana Supreme",
+    "short_name": "Fabricana Supreme",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#111827",
+    "theme_color": "#14B8A6",
+    "description": "Fabricana Supreme Management Platform",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

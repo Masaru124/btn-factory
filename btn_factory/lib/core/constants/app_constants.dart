@@ -2,7 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 class AppConstants {
-  static const String appName = 'Button Factory MES';
+  static const String appName = 'Fabricana Supreme';
+  static const String logoAsset = 'assets/images/logo.jpeg';
 
   static String? _configuredApiBaseUrl;
   static String? _selectedBackendUrl;

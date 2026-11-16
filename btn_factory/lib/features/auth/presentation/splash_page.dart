@@ -54,27 +54,42 @@ class _SplashPageState extends ConsumerState<SplashPage> {
             children: <Widget>[
               // Animated or decorated circular loading area
               Container(
-                padding: const EdgeInsets.all(20),
+                width: 96,
+                height: 96,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF14B8A6).withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: const Color(0xFF14B8A6).withValues(alpha: 0.15),
+                    color: const Color(0xFF14B8A6).withValues(alpha: 0.3),
                     width: 2,
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF14B8A6).withValues(alpha: 0.15),
+                      blurRadius: 20,
+                    ),
+                  ],
                 ),
-                child: const Icon(
-                  Icons.precision_manufacturing_outlined,
-                  size: 64,
-                  color: Color(0xFF14B8A6),
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/images/logo.jpeg',
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: const Color(0xFF14B8A6).withValues(alpha: 0.1),
+                      child: const Icon(
+                        Icons.business,
+                        size: 56,
+                        color: Color(0xFF14B8A6),
+                      ),
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
               const Text(
-                'Button Factory MES',
+                'Fabricana Supreme',
                 style: TextStyle(
                   color: Color(0xFFF8FAFC),
-                  fontSize: 26,
+                  fontSize: 28,
                   fontWeight: FontWeight.w800,
                   letterSpacing: -0.5,
                 ),

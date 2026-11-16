@@ -188,34 +188,45 @@ class AppScaffold extends ConsumerWidget {
                     alignment: Alignment.centerLeft,
                     child: Row(
                       children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF14B8A6).withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(
-                            Icons.precision_manufacturing_outlined,
-                            color: Color(0xFF14B8A6),
-                            size: 28,
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.asset(
+                            'assets/images/logo.jpeg',
+                            width: 38,
+                            height: 38,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF14B8A6).withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(
+                                Icons.business,
+                                color: Color(0xFF14B8A6),
+                                size: 24,
+                              ),
+                            ),
                           ),
                         ),
-                        const SizedBox(width: 14),
+                        const SizedBox(width: 12),
                         const Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Button Factory',
+                                'Fabricana Supreme',
                                 style: TextStyle(
                                   color: Color(0xFFF8FAFC),
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                  letterSpacing: -0.5,
+                                  fontSize: 16,
+                                  letterSpacing: -0.3,
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                               Text(
-                                'MES PLATFORM',
+                                'BUTTONS INDUSTRIES',
                                 style: TextStyle(
                                   color: Color(0xFF64748B),
                                   fontSize: 10,

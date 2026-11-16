@@ -67,18 +67,6 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
     }
   }
 
-  String _formatCurrency(num value) {
-    try {
-      return NumberFormat.currency(
-        locale: 'en_IN',
-        symbol: '₹',
-        decimalDigits: 0,
-      ).format(value);
-    } catch (_) {
-      return '₹$value';
-    }
-  }
-
   String _formatCount(num value) {
     try {
       return NumberFormat.decimalPattern().format(value);
@@ -132,7 +120,6 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
     final materials = data['materials'] as List<dynamic>? ?? [];
     final universalMaterials = data['universal_materials'] as List<dynamic>? ?? [];
     final rejection = data['rejection'] as Map<String, dynamic>? ?? {};
-    final revenue = data['revenue'] as Map<String, dynamic>? ?? {};
     final orderReports = data['order_reports'] as List<dynamic>? ?? [];
 
     final filteredOrderReports = orderReports.where((item) {
@@ -140,11 +127,24 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
       final query = _orderSearchController.text.trim().toLowerCase();
       final status = orderMap['status']?.toString().toLowerCase() ?? '';
 
+      final isDispatched = (orderMap['is_dispatched'] == true) || (status == 'dispatched');
+      final isProdCompleted = (orderMap['is_production_completed'] == true) ||
+          status == 'packing completed' ||
+          status == 'ready to dispatch' ||
+          isDispatched;
+      final isDispatchPending = (orderMap['is_dispatch_pending'] == true) ||
+          (isProdCompleted && !isDispatched);
+      final isInProduction = (orderMap['is_in_production'] == true) || !isProdCompleted;
+
       if (_selectedStatusFilter != 'All') {
-        if (_selectedStatusFilter == 'Completed / Dispatched') {
-          if (status != 'ready to dispatch' && status != 'dispatched') return false;
-        } else if (_selectedStatusFilter == 'In Progress') {
-          if (status == 'ready to dispatch' || status == 'dispatched') return false;
+        if (_selectedStatusFilter == 'In Production') {
+          if (!isInProduction) return false;
+        } else if (_selectedStatusFilter == 'Production Completed') {
+          if (!isProdCompleted) return false;
+        } else if (_selectedStatusFilter == 'Dispatch Pending') {
+          if (!isDispatchPending) return false;
+        } else if (_selectedStatusFilter == 'Dispatched') {
+          if (!isDispatched) return false;
         }
       }
 
@@ -181,7 +181,7 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
             ),
             const SizedBox(height: 6),
             const Text(
-              'Generate details on production output, raw materials consumed, rejections, and revenue.',
+              'Generate details on production output, raw materials consumed, rejections, and dispatch status.',
               style: TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
             ),
             const SizedBox(height: 24),
@@ -195,12 +195,47 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
                   foregroundColor: const Color(0xFF14B8A6),
                 ),
               ),
-              child: _ReportSummary(
-                rows: <_ReportRow>[
-                  _ReportRow(label: 'Orders completed', value: _formatCount(production['completed_orders'] ?? 0)),
-                  _ReportRow(label: 'Casting output', value: '${_formatCount(production['casting_output'] ?? 0)} gross qty'),
-                  _ReportRow(label: 'Turning output', value: '${_formatCount(production['turning_output'] ?? 0)} gross qty'),
-                  _ReportRow(label: 'Packing output', value: '${_formatCount(production['packing_output'] ?? 0)} packed qty'),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: [
+                      _SummaryTile(
+                        label: 'Production Completed',
+                        value: _formatCount(production['production_completed_orders'] ?? production['completed_orders'] ?? 0),
+                        tint: const Color(0xFF14B8A6),
+                      ),
+                      _SummaryTile(
+                        label: 'Dispatch Pending',
+                        value: _formatCount(production['dispatch_pending_orders'] ?? 0),
+                        tint: const Color(0xFFF59E0B),
+                      ),
+                      _SummaryTile(
+                        label: 'Dispatched',
+                        value: _formatCount(production['dispatched_orders'] ?? 0),
+                        tint: const Color(0xFF10B981),
+                      ),
+                      _SummaryTile(
+                        label: 'In Production',
+                        value: _formatCount(production['in_production_orders'] ?? 0),
+                        tint: const Color(0xFF6366F1),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  _ReportSummary(
+                    rows: <_ReportRow>[
+                      _ReportRow(label: 'Production Completed', value: '${_formatCount(production['production_completed_orders'] ?? production['completed_orders'] ?? 0)} orders'),
+                      _ReportRow(label: 'Dispatch Pending', value: '${_formatCount(production['dispatch_pending_orders'] ?? 0)} orders'),
+                      _ReportRow(label: 'Dispatched', value: '${_formatCount(production['dispatched_orders'] ?? 0)} orders'),
+                      _ReportRow(label: 'In Production', value: '${_formatCount(production['in_production_orders'] ?? 0)} orders'),
+                      _ReportRow(label: 'Casting output', value: '${_formatCount(production['casting_output'] ?? 0)} gross qty'),
+                      _ReportRow(label: 'Turning output', value: '${_formatCount(production['turning_output'] ?? 0)} gross qty'),
+                      _ReportRow(label: 'Packing output', value: '${_formatCount(production['packing_output'] ?? 0)} packed qty'),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -234,8 +269,6 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
                         final consumed = (item['consumed_quantity'] as num?)?.toDouble() ?? 0.0;
                         final initial = (item['initial_quantity'] as num?)?.toDouble() ?? (remaining + consumed);
                         final unit = item['unit'] as String? ?? '';
-                        final price = (item['price'] as num?)?.toDouble() ?? 0.0;
-                        final totalVal = (item['total_value'] as num?)?.toDouble() ?? (remaining * price);
 
                         final ratio = initial > 0 ? (remaining / initial).clamp(0.0, 1.0) : 0.0;
                         final badgeColor = remaining <= 0
@@ -313,14 +346,9 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
                                     color: const Color(0xFFF59E0B),
                                   ),
                                   _InfoBadge(
-                                    label: 'Rate',
-                                    value: '₹$price / $unit',
+                                    label: 'Total Stock',
+                                    value: '$initial $unit',
                                     color: const Color(0xFF94A3B8),
-                                  ),
-                                  _InfoBadge(
-                                    label: 'Valuation',
-                                    value: _formatCurrency(totalVal),
-                                    color: const Color(0xFF8B5CF6),
                                   ),
                                 ],
                               ),
@@ -373,31 +401,6 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
                   _SummaryTile(
                     label: 'Total Rejected',
                     value: _formatCount(rejection['total_rejected'] ?? 0),
-                    tint: const Color(0xFFF59E0B),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 18),
-            SectionCard(
-              title: 'Revenue Report',
-              child: Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children: <Widget>[
-                  _SummaryTile(
-                    label: 'Total Order Value',
-                    value: _formatCurrency(revenue['total_revenue'] ?? 0.0),
-                    tint: const Color(0xFF8B5CF6),
-                  ),
-                  _SummaryTile(
-                    label: 'Completed Orders',
-                    value: _formatCount(revenue['completed_count'] ?? 0),
-                    tint: const Color(0xFF10B981),
-                  ),
-                  _SummaryTile(
-                    label: 'Pending Value',
-                    value: _formatCurrency(revenue['pending_revenue'] ?? 0.0),
                     tint: const Color(0xFFF59E0B),
                   ),
                 ],
@@ -462,7 +465,7 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: ['All', 'In Progress', 'Completed / Dispatched'].map((filter) {
+                      children: ['All', 'In Production', 'Production Completed', 'Dispatch Pending', 'Dispatched'].map((filter) {
                         final isSelected = _selectedStatusFilter == filter;
                         return Padding(
                           padding: const EdgeInsets.only(right: 8),
@@ -691,7 +694,6 @@ class _IndividualOrderCard extends StatelessWidget {
     final status = order['status'] as String? ?? 'Created';
     final qty = order['quantity'] ?? 0;
     final unit = order['unit'] as String? ?? 'Gross';
-    final rate = order['rate'];
     final casting = order['casting_process'] as Map<String, dynamic>?;
     final blanking = order['blanking_process'] as Map<String, dynamic>?;
     final turning = (order['turning_process'] ?? order['turning']) as Map<String, dynamic>?;
@@ -700,6 +702,25 @@ class _IndividualOrderCard extends StatelessWidget {
     final rawMaterials = order['raw_materials'] as List<dynamic>? ?? [];
 
     final statusColor = _getStatusColor(status);
+
+    final isDispatched = (order['is_dispatched'] == true) || (status.toLowerCase() == 'dispatched');
+    final isProdCompleted = (order['is_production_completed'] == true) ||
+        status.toLowerCase() == 'packing completed' ||
+        status.toLowerCase() == 'ready to dispatch' ||
+        isDispatched;
+    final isDispatchPending = (order['is_dispatch_pending'] == true) ||
+        (isProdCompleted && !isDispatched);
+
+    final stageText = isDispatched
+        ? 'Dispatched'
+        : (isDispatchPending
+            ? 'Dispatch Pending'
+            : (isProdCompleted ? 'Production Completed' : 'In Production'));
+    final stageColor = isDispatched
+        ? const Color(0xFF10B981)
+        : (isDispatchPending
+            ? const Color(0xFFF59E0B)
+            : (isProdCompleted ? const Color(0xFF14B8A6) : const Color(0xFF6366F1)));
 
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
@@ -724,7 +745,10 @@ class _IndividualOrderCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 8,
+                        runSpacing: 4,
                         children: [
                           Text(
                             token,
@@ -734,7 +758,6 @@ class _IndividualOrderCard extends StatelessWidget {
                               fontSize: 16,
                             ),
                           ),
-                          const SizedBox(width: 8),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
@@ -745,6 +768,18 @@ class _IndividualOrderCard extends StatelessWidget {
                             child: Text(
                               status,
                               style: TextStyle(color: statusColor, fontSize: 11, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: stageColor.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(color: stageColor.withValues(alpha: 0.4)),
+                            ),
+                            child: Text(
+                              stageText.toUpperCase(),
+                              style: TextStyle(color: stageColor, fontSize: 10, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ],
@@ -789,9 +824,8 @@ class _IndividualOrderCard extends StatelessWidget {
                   spacing: 8,
                   runSpacing: 8,
                   children: [
+                    _MetricChip(label: 'Stage', value: stageText, color: stageColor),
                     _MetricChip(label: 'Ordered', value: '$qty $unit', color: const Color(0xFF94A3B8)),
-                    if (rate != null)
-                      _MetricChip(label: 'Rate', value: '₹$rate', color: const Color(0xFF8B5CF6)),
                     _MetricChip(
                       label: 'Casting',
                       value: casting != null

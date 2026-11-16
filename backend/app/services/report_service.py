@@ -22,7 +22,7 @@ class ReportService:
         self.db = db
 
     def production_summary(self, start_date: date, end_date: date) -> dict:
-        completed_orders = (
+        production_completed_orders = (
             self.db.query(func.count(Order.id))
             .filter(
                 Order.created_at >= start_date,
@@ -32,17 +32,40 @@ class ReportService:
             )
             .scalar()
         ) or 0
+        dispatch_pending_orders = (
+            self.db.query(func.count(Order.id))
+            .filter(
+                Order.created_at >= start_date,
+                Order.created_at <= end_date,
+                (
+                    Order.status.in_([OrderStatus.PACKING_COMPLETED.value, OrderStatus.READY_TO_DISPATCH.value])
+                    | ((Order.packing_process != None) & (Order.status != OrderStatus.DISPATCHED.value))
+                ),
+            )
+            .scalar()
+        ) or 0
+        dispatched_orders = (
+            self.db.query(func.count(Order.id))
+            .filter(
+                Order.created_at >= start_date,
+                Order.created_at <= end_date,
+                Order.status == OrderStatus.DISPATCHED.value,
+            )
+            .scalar()
+        ) or 0
 
         return {
             'title': 'Production Report',
             'metrics': [
-                {'label': 'Orders completed', 'value': float(completed_orders), 'unit': 'orders'},
-                {'label': 'Department output', 'value': float(completed_orders), 'unit': 'batches'},
+                {'label': 'Production Completed', 'value': float(production_completed_orders), 'unit': 'orders'},
+                {'label': 'Dispatch Pending', 'value': float(dispatch_pending_orders), 'unit': 'orders'},
+                {'label': 'Dispatched', 'value': float(dispatched_orders), 'unit': 'orders'},
+                {'label': 'Department output', 'value': float(production_completed_orders), 'unit': 'batches'},
             ],
         }
 
     def revenue_summary(self) -> dict:
-        completed_count = (
+        production_completed_orders = (
             self.db.query(func.count(Order.id))
             .filter(
                 (Order.status.in_([OrderStatus.PACKING_COMPLETED.value, OrderStatus.READY_TO_DISPATCH.value, OrderStatus.DISPATCHED.value]))
@@ -50,19 +73,27 @@ class ReportService:
             )
             .scalar()
         ) or 0
-        pending_count = (
+        dispatch_pending = (
             self.db.query(func.count(Order.id))
             .filter(
-                ~Order.status.in_([OrderStatus.PACKING_COMPLETED.value, OrderStatus.READY_TO_DISPATCH.value, OrderStatus.DISPATCHED.value]),
-                Order.packing_process == None,  # noqa: E711
+                (
+                    Order.status.in_([OrderStatus.PACKING_COMPLETED.value, OrderStatus.READY_TO_DISPATCH.value])
+                    | ((Order.packing_process != None) & (Order.status != OrderStatus.DISPATCHED.value))
+                )
             )
             .scalar()
         ) or 0
+        dispatched = (
+            self.db.query(func.count(Order.id))
+            .filter(Order.status == OrderStatus.DISPATCHED.value)
+            .scalar()
+        ) or 0
         return {
-            'title': 'Revenue Report',
+            'title': 'Dispatch & Production Summary',
             'metrics': [
-                {'label': 'Completed orders', 'value': float(completed_count), 'unit': 'orders'},
-                {'label': 'Pending orders', 'value': float(pending_count), 'unit': 'orders'},
+                {'label': 'Production Completed', 'value': float(production_completed_orders), 'unit': 'orders'},
+                {'label': 'Dispatch Pending', 'value': float(dispatch_pending), 'unit': 'orders'},
+                {'label': 'Dispatched', 'value': float(dispatched), 'unit': 'orders'},
             ],
         }
 
@@ -78,7 +109,15 @@ class ReportService:
         if status_updated:
             self.db.commit()
 
-        completed_orders = (
+        # 1. Dispatched orders
+        dispatched_orders = (
+            self.db.query(func.count(Order.id))
+            .filter(Order.status == OrderStatus.DISPATCHED.value)
+            .scalar()
+        ) or 0
+
+        # 2. Production completed orders (packing finished or marked ready/dispatched)
+        production_completed_orders = (
             self.db.query(func.count(Order.id))
             .filter(
                 (Order.status.in_([OrderStatus.PACKING_COMPLETED.value, OrderStatus.READY_TO_DISPATCH.value, OrderStatus.DISPATCHED.value]))
@@ -86,6 +125,22 @@ class ReportService:
             )
             .scalar()
         ) or 0
+
+        # 3. Dispatch pending orders (production finished, but not yet dispatched)
+        dispatch_pending_orders = (
+            self.db.query(func.count(Order.id))
+            .filter(
+                (
+                    Order.status.in_([OrderStatus.PACKING_COMPLETED.value, OrderStatus.READY_TO_DISPATCH.value])
+                    | ((Order.packing_process != None) & (Order.status != OrderStatus.DISPATCHED.value))
+                )
+            )
+            .scalar()
+        ) or 0
+
+        # 4. Total orders and in-production orders
+        total_orders = self.db.query(func.count(Order.id)).scalar() or 0
+        in_production_orders = max(0, total_orders - production_completed_orders)
         
         # Casting output: accounts for Rod casting gross, Sheet blanking gross, and Order gross qty
         casting_output = (
@@ -188,23 +243,6 @@ class ReportService:
         total_produced = total_packed + total_rejected
         rejection_rate = (total_rejected / total_produced * 100) if total_produced > 0 else 0.0
 
-        total_revenue = (
-            self.db.query(func.sum(Order.rate * Order.quantity))
-            .filter(Order.rate.isnot(None), Order.quantity.isnot(None))
-            .scalar()
-        ) or 0.0
-
-        pending_revenue = (
-            self.db.query(func.sum(Order.rate * Order.quantity))
-            .filter(
-                Order.rate.isnot(None),
-                Order.quantity.isnot(None),
-                ~Order.status.in_([OrderStatus.PACKING_COMPLETED.value, OrderStatus.READY_TO_DISPATCH.value, OrderStatus.DISPATCHED.value]),
-                Order.packing_process == None,  # noqa: E711
-            )
-            .scalar()
-        ) or 0.0
-
         universal_rows = self.db.query(UniversalRawMaterial).order_by(UniversalRawMaterial.material_name).all()
         universal_materials = []
         for u in universal_rows:
@@ -215,7 +253,6 @@ class ReportService:
             ) or 0.0
             rem = float(u.total_available_quantity or 0.0)
             cons = float(consumed)
-            unit_price = float(u.price or 0.0)
             universal_materials.append({
                 'id': u.id,
                 'name': u.material_name,
@@ -223,8 +260,6 @@ class ReportService:
                 'consumed_quantity': round(cons, 3),
                 'initial_quantity': round(rem + cons, 3),
                 'unit': u.unit,
-                'price': round(unit_price, 2),
-                'total_value': round(rem * unit_price, 2),
             })
 
         all_orders = self.db.query(Order).order_by(Order.id.desc()).all()
@@ -236,15 +271,46 @@ class ReportService:
             order_data['company_name'] = o.company_name
             order_data['sample_image_url'] = o.button_image
             order_data['button_image'] = o.button_image
-            order_data['total_amount'] = round(float(o.rate * o.quantity), 2) if (o.rate is not None and o.quantity is not None) else None
+            # Remove financial metrics from reports
+            order_data.pop('rate', None)
+            order_data.pop('total_amount', None)
+
+            # Production and dispatch flags
+            is_dispatched = (o.status == OrderStatus.DISPATCHED.value)
+            is_prod_completed = (
+                o.status in [OrderStatus.PACKING_COMPLETED.value, OrderStatus.READY_TO_DISPATCH.value, OrderStatus.DISPATCHED.value]
+                or o.packing_process is not None
+            )
+            is_dispatch_pending = is_prod_completed and not is_dispatched
+            is_in_production = not is_prod_completed
+
+            order_data['is_production_completed'] = is_prod_completed
+            order_data['is_dispatch_pending'] = is_dispatch_pending
+            order_data['is_dispatched'] = is_dispatched
+            order_data['is_in_production'] = is_in_production
+
+            if is_dispatched:
+                stage = 'Dispatched'
+            elif is_dispatch_pending:
+                stage = 'Dispatch Pending'
+            elif is_prod_completed:
+                stage = 'Production Completed'
+            else:
+                stage = 'In Production'
+            order_data['production_stage'] = stage
+
             for rm in order_data.get('raw_materials', []):
                 rm['name'] = rm.get('material_name', '')
+                rm.pop('price', None)
             order_reports.append(order_data)
-
 
         return {
             'production': {
-                'completed_orders': int(completed_orders),
+                'production_completed_orders': int(production_completed_orders),
+                'completed_orders': int(production_completed_orders),
+                'dispatch_pending_orders': int(dispatch_pending_orders),
+                'dispatched_orders': int(dispatched_orders),
+                'in_production_orders': int(in_production_orders),
                 'casting_output': int(casting_output),
                 'turning_output': int(turning_output),
                 'polishing_output': int(polishing_output),
@@ -257,11 +323,7 @@ class ReportService:
                 'total_rejected': int(total_rejected),
                 'rejection_rate': round(float(rejection_rate), 2),
             },
-            'revenue': {
-                'total_revenue': round(float(total_revenue), 2),
-                'completed_count': int(completed_orders),
-                'pending_revenue': round(float(pending_revenue), 2),
-            },
+            'revenue': {},
             'order_reports': order_reports,
         }
 

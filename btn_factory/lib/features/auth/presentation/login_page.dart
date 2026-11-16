@@ -104,29 +104,44 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         // Logo / Icon
                         Center(
                           child: Container(
-                            padding: const EdgeInsets.all(16),
+                            width: 84,
+                            height: 84,
                             decoration: BoxDecoration(
-                              color: const Color(0xFF14B8A6).withValues(alpha: 0.1),
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: const Color(0xFF14B8A6).withValues(alpha: 0.2),
-                                width: 1.5,
+                                color: const Color(0xFF14B8A6).withValues(alpha: 0.3),
+                                width: 2,
                               ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(0xFF14B8A6).withValues(alpha: 0.15),
+                                  blurRadius: 16,
+                                ),
+                              ],
                             ),
-                            child: const Icon(
-                              Icons.precision_manufacturing_outlined,
-                              size: 44,
-                              color: Color(0xFF14B8A6),
+                            child: ClipOval(
+                              child: Image.asset(
+                                'assets/images/logo.jpeg',
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) => Container(
+                                  color: const Color(0xFF14B8A6).withValues(alpha: 0.1),
+                                  child: const Icon(
+                                    Icons.business,
+                                    size: 44,
+                                    color: Color(0xFF14B8A6),
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
                         const SizedBox(height: 24),
                         const Center(
                           child: Text(
-                            'Button Factory MES',
+                            'Fabricana Supreme',
                             style: TextStyle(
                               color: Color(0xFFF8FAFC),
-                              fontSize: 24,
+                              fontSize: 26,
                               fontWeight: FontWeight.w800,
                               letterSpacing: -0.5,
                             ),

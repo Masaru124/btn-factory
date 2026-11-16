@@ -262,8 +262,16 @@ def test_reports_summary_with_universal_materials():
     assert u['remaining_quantity'] == 880.0
     assert u['initial_quantity'] == 1000.0
     assert u['unit'] == 'kg'
-    assert u['price'] == 150.0
-    assert u['total_value'] == 880.0 * 150.0
+    # Financial metrics removed from reports
+    assert 'price' not in u
+    assert 'total_value' not in u
+
+    # Check production summary keys
+    prod = summary['production']
+    assert 'production_completed_orders' in prod
+    assert 'dispatch_pending_orders' in prod
+    assert 'dispatched_orders' in prod
+    assert 'in_production_orders' in prod
 
     # 5. Check order_reports
     assert 'order_reports' in summary

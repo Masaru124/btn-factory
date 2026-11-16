@@ -148,10 +148,23 @@ def test_reports_summary_with_completed_order() -> None:
     # 2. Production output metrics are non-zero and accurate
     prod = summary['production']
     assert prod['completed_orders'] == 1
+    assert prod['production_completed_orders'] == 1
+    assert prod['dispatch_pending_orders'] == 1
+    assert prod['dispatched_orders'] == 0
+    assert prod['in_production_orders'] == 0
     assert prod['casting_output'] == 480  # Coalesced from blanking gross
     assert prod['turning_output'] == 475
     assert prod['polishing_output'] == 470
     assert prod['packing_output'] == 460
+
+    # 3. Order reports have production status and no financial metrics
+    ord_rep = summary['order_reports'][0]
+    assert ord_rep['is_production_completed'] is True
+    assert ord_rep['is_dispatch_pending'] is True
+    assert ord_rep['is_dispatched'] is False
+    assert ord_rep['production_stage'] == 'Dispatch Pending'
+    assert 'rate' not in ord_rep
+    assert 'total_amount' not in ord_rep
 
 
 def test_dispatch_toggle_and_recompute() -> None:
