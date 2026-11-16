@@ -98,16 +98,22 @@ class ReportService:
         }
 
     def reports_summary(self) -> dict:
-        # Auto-repair order statuses so orders never get stuck at Raw Material Updated
-        all_orders = self.db.query(Order).order_by(Order.id.desc()).all()
-        status_updated = False
-        for o in all_orders:
-            calculated_status = determine_order_status(o)
-            if o.status != calculated_status:
-                o.status = calculated_status
-                status_updated = True
-        if status_updated:
-            self.db.commit()
+        # Auto-repair order statuses safely
+        try:
+            all_orders = self.db.query(Order).order_by(Order.id.desc()).all()
+            status_updated = False
+            for o in all_orders:
+                try:
+                    calculated_status = determine_order_status(o)
+                    if o.status != calculated_status:
+                        o.status = calculated_status
+                        status_updated = True
+                except Exception:
+                    continue
+            if status_updated:
+                self.db.commit()
+        except Exception:
+            self.db.rollback()
 
         # 1. Dispatched orders
         dispatched_orders = (
