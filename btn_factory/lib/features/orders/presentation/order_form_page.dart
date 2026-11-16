@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 enum OrderFormMode { create, edit }
@@ -39,6 +40,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _poDateController = TextEditingController();
   final TextEditingController _dispatchDateController = TextEditingController();
+  final TextEditingController _dispatchQuantityController = TextEditingController();
   String _orderType = 'Production';
   String? _castingType;
   String? _linings;
@@ -128,6 +130,9 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
           final s = order['dispatch_date'].toString();
           _dispatchDateController.text = s.contains('T') ? s.split('T').first : s;
         }
+        if (order['dispatch_quantity'] != null) {
+          _dispatchQuantityController.text = order['dispatch_quantity'].toString();
+        }
         _poImageName = order['po_image'] as String?;
         _buttonImageName = order['button_image'] as String?;
         _isLoadingOrder = false;
@@ -156,6 +161,7 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
     _weightController.dispose();
     _poDateController.dispose();
     _dispatchDateController.dispose();
+    _dispatchQuantityController.dispose();
     super.dispose();
   }
 
@@ -351,6 +357,9 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
             : (_dispatchDateController.text.trim().isNotEmpty
                 ? _formatDateForPayload(_dispatchDateController.text)
                 : null),
+        'dispatch_quantity': _isDispatched
+            ? int.tryParse(_dispatchQuantityController.text.trim())
+            : null,
         'po_image': _poImageName,
         'button_image': _buttonImageName,
         if (_isDispatched)
@@ -745,6 +754,9 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                           if (_dispatchDateController.text.trim().isEmpty) {
                             _dispatchDateController.text = DateTime.now().toIso8601String().split('T').first;
                           }
+                          if (_dispatchQuantityController.text.trim().isEmpty && _quantityController.text.trim().isNotEmpty) {
+                            _dispatchQuantityController.text = _quantityController.text.trim();
+                          }
                         } else {
                           if (_status == 'Dispatched') {
                             _status = 'Ready To Dispatch';
@@ -756,6 +768,25 @@ class _OrderFormPageState extends ConsumerState<OrderFormPage> {
                 ),
                 const SizedBox(height: 16),
                 _buildDateField('Dispatch Date (Manual Entry or Pick)', _dispatchDateController, () => _pickDate(false)),
+                if (_isDispatched) ...[
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _dispatchQuantityController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    style: const TextStyle(color: Color(0xFFF8FAFC)),
+                    decoration: InputDecoration(
+                      labelText: 'Dispatch Quantity (Pcs / Gross)',
+                      labelStyle: const TextStyle(color: Color(0xFF94A3B8)),
+                      hintText: 'Enter quantity dispatched',
+                      hintStyle: const TextStyle(color: Color(0xFF64748B)),
+                      filled: true,
+                      fillColor: const Color(0xFF1E293B),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                      prefixIcon: const Icon(Icons.inventory_2_outlined, color: Color(0xFF10B981)),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 16),
                 AppImageUploadCard(
                   label: 'Button Sample Image',

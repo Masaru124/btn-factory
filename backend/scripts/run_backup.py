@@ -26,6 +26,16 @@ def main():
     else:
         print(f"[WARN] Local Snapshot        : {snapshot.get('status')} - {snapshot.get('message') or snapshot.get('error')}")
 
+    media_res = res.get('media_backup', {})
+    if media_res.get('status') == 'SUCCESS':
+        print(f"[PASS] Media Files Backup    : {media_res.get('files_copied', 0)} copied ({media_res.get('copied_kb', 0)} KB), {media_res.get('files_skipped', 0)} up-to-date (Total: {media_res.get('total_files', 0)})")
+        print(f"       Source Folder         : {media_res.get('source_dir')}")
+        print(f"       Backup Folder         : {media_res.get('target_dir')}")
+    elif media_res.get('status') == 'SKIPPED':
+        print(f"[INFO] Media Files Backup    : SKIPPED ({media_res.get('message')})")
+    else:
+        print(f"[WARN] Media Files Backup    : FAILED ({media_res.get('error')})")
+
     local_pg = res.get('local_postgres_sync', {})
     if local_pg.get('status') == 'SUCCESS':
         print(f"[PASS] Local PostgreSQL Sync : CONNECTED & SYNCED")

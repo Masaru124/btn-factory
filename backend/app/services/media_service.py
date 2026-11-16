@@ -17,7 +17,7 @@ ALLOWED_FORMATS = {'JPEG', 'PNG', 'WEBP', 'BMP', 'TIFF', 'MPO'}
 
 class MediaService:
     def __init__(self, media_dir: str | None = None) -> None:
-        self.media_dir = os.path.abspath(media_dir or settings.media_dir)
+        self.media_dir = os.path.abspath(media_dir or settings.get_resolved_media_dir())
         os.makedirs(self.media_dir, exist_ok=True)
 
     def process_and_save_image(self, file_bytes: bytes, filename: str = 'image.png') -> dict:

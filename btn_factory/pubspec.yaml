@@ -44,6 +44,7 @@ dependencies:
   printing: ^5.14.3
   shared_preferences: ^2.5.5
   image_picker: ^1.2.4
+  web: ^1.1.1
 
 dev_dependencies:
   flutter_test:

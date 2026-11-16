@@ -74,6 +74,7 @@ class OrderService:
             polish_type=payload.polish_type,
             packing_option=payload.packing_option,
             dispatch_date=payload.dispatch_date,
+            dispatch_quantity=payload.dispatch_quantity,
             po_image=payload.po_image,
             button_image=payload.button_image,
             order_type=payload.order_type or 'Production',

@@ -39,6 +39,7 @@ class Order(Base):
     polish_type: Mapped[str | None] = mapped_column(String(80), nullable=True)
     packing_option: Mapped[str | None] = mapped_column(String(80), nullable=True)
     dispatch_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    dispatch_quantity: Mapped[int | None] = mapped_column(Integer, nullable=True)
     po_image: Mapped[str | None] = mapped_column(Text, nullable=True)
     button_image: Mapped[str | None] = mapped_column(Text, nullable=True)
     order_type: Mapped[str] = mapped_column(String(50), nullable=False, default='Production')

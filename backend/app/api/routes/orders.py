@@ -1,12 +1,12 @@
 from datetime import date
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Query, Request, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.deps import get_current_user, require_roles
 from app.core.redis_client import cache_client
 from app.models.user import User
-from app.schemas.order import OrderCreate, OrderRead, OrderUpdate
+from app.schemas.order import OrderCreate, OrderDispatchRequest, OrderRead, OrderUpdate
 from app.services.order_service import OrderService
 from app.services.status_engine import recompute_order_status
 
@@ -84,7 +84,9 @@ def delete_order(token: str, db: Session = Depends(get_db), current_user: User =
 @router.post('/dispatch/{token}', response_model=OrderRead, dependencies=[Depends(require_roles('super_admin'))])
 def dispatch_order(
     token: str,
-    dispatched: bool = True,
+    dispatched: bool = Query(True),
+    dispatch_quantity: int | None = Query(None),
+    payload: OrderDispatchRequest | None = Body(None),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> OrderRead:
@@ -92,12 +94,25 @@ def dispatch_order(
     order = service.get_order(token)
     if order is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Order not found')
-    if dispatched:
+
+    is_dispatched = payload.dispatched if (payload and payload.dispatched is not None) else dispatched
+    qty = payload.dispatch_quantity if (payload and payload.dispatch_quantity is not None) else dispatch_quantity
+
+    if is_dispatched:
         order.status = 'Dispatched'
         if not order.dispatch_date:
             order.dispatch_date = date.today()
+        if qty is not None:
+            order.dispatch_quantity = qty
+        elif order.dispatch_quantity is None:
+            order.dispatch_quantity = (
+                order.packing_process.packed_qty
+                if order.packing_process and order.packing_process.packed_qty
+                else order.quantity
+            )
     else:
         order.dispatch_date = None
+        order.dispatch_quantity = None
         order.status = recompute_order_status(order)
     db.commit()
     db.refresh(order)

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'session_storage_adapter.dart';
 
 abstract class SecureStorage {
   Future<String?> read(String key);
@@ -80,7 +81,7 @@ class InMemorySecureStorage implements SecureStorage {
 
 final secureStorageProvider = Provider<SecureStorage>((ref) {
   if (kIsWeb) {
-    return SharedPreferencesStorageAdapter();
+    return createWebSessionStorage();
   }
   return FlutterSecureStorageAdapter();
 });

@@ -35,9 +35,34 @@ class BackupService:
         self.settings = get_settings()
         if not backend_dir:
             backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        self.backend_dir = backend_dir
-        self.backups_dir = os.path.join(self.backend_dir, 'backups')
+        self.backend_dir = os.path.abspath(backend_dir)
+
+        # Resolve folders from settings (supporting absolute and relative paths)
+        self.backups_dir = self.settings.get_resolved_backup_dir(self.backend_dir)
+        self.media_dir = self.settings.get_resolved_media_dir(self.backend_dir)
+        self.backup_media_dir = self.settings.get_resolved_backup_media_dir(self.backend_dir)
+
         os.makedirs(self.backups_dir, exist_ok=True)
+        os.makedirs(self.backup_media_dir, exist_ok=True)
+
+    def get_source_sqlite_path(self) -> str:
+        """Find the active local SQLite database file."""
+        for candidate_url in [self.settings.sqlite_database_url, self.settings.database_url]:
+            if candidate_url and candidate_url.startswith('sqlite:///'):
+                p = candidate_url[len('sqlite:///'):]
+                if p and not p.startswith(':memory:'):
+                    if not os.path.isabs(p):
+                        p_backend = os.path.abspath(os.path.join(self.backend_dir, p))
+                        if os.path.exists(p_backend):
+                            return p_backend
+                        p_abs = os.path.abspath(p)
+                        if os.path.exists(p_abs):
+                            return p_abs
+                    elif os.path.exists(p):
+                        return p
+
+        # Default fallback to backend/btn_factory.db
+        return os.path.join(self.backend_dir, 'btn_factory.db')
 
     @staticmethod
     def _sanitize_val_for_postgres(col, val):
@@ -93,13 +118,19 @@ class BackupService:
     def create_local_snapshot(self) -> dict:
         """Create a safe timestamped copy of the local SQLite database."""
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        db_path = os.path.join(self.backend_dir, 'btn_factory.db')
+        db_path = self.get_source_sqlite_path()
+        os.makedirs(self.backups_dir, exist_ok=True)
 
         if not os.path.exists(db_path):
-            return {'status': 'SKIPPED', 'message': f'Local SQLite file not found at {db_path}'}
+            return {
+                'status': 'SKIPPED',
+                'message': f'Local SQLite file not found at {db_path}',
+                'target_dir': self.backups_dir,
+            }
 
         snapshot_name = f'btn_factory_{timestamp}.db'
         snapshot_path = os.path.join(self.backups_dir, snapshot_name)
+        latest_path = os.path.join(self.backups_dir, 'btn_factory_latest.db')
 
         try:
             # Use SQLite backup API if possible for online hot consistency
@@ -110,15 +141,22 @@ class BackupService:
             dst_conn.close()
             src_conn.close()
 
+            # Maintain latest snapshot copy
+            try:
+                shutil.copy2(snapshot_path, latest_path)
+            except Exception:
+                pass
+
             # Rotate old backups - keep latest 20
             self._prune_old_snapshots(keep=20)
 
             size_kb = round(os.path.getsize(snapshot_path) / 1024, 2)
-            logger.info('Created local snapshot: %s (%s KB)', snapshot_name, size_kb)
+            logger.info('Created local database snapshot: %s (%s KB) in %s', snapshot_name, size_kb, self.backups_dir)
             return {
                 'status': 'SUCCESS',
                 'file': snapshot_name,
                 'path': snapshot_path,
+                'target_dir': self.backups_dir,
                 'size_kb': size_kb,
                 'timestamp': timestamp,
             }
@@ -127,9 +165,92 @@ class BackupService:
             # Fallback to copy
             try:
                 shutil.copy2(db_path, snapshot_path)
-                return {'status': 'SUCCESS_COPY', 'file': snapshot_name, 'path': snapshot_path}
+                size_kb = round(os.path.getsize(snapshot_path) / 1024, 2)
+                try:
+                    shutil.copy2(snapshot_path, latest_path)
+                except Exception:
+                    pass
+                return {
+                    'status': 'SUCCESS_COPY',
+                    'file': snapshot_name,
+                    'path': snapshot_path,
+                    'target_dir': self.backups_dir,
+                    'size_kb': size_kb,
+                    'timestamp': timestamp,
+                }
             except Exception as copy_err:
-                return {'status': 'FAILED', 'error': str(copy_err)}
+                return {'status': 'FAILED', 'error': str(copy_err), 'target_dir': self.backups_dir}
+
+    def backup_media_files(self) -> dict:
+        """Incrementally sync/copy all files from media_dir to backup_media_dir."""
+        if not os.path.exists(self.media_dir):
+            return {
+                'status': 'SKIPPED',
+                'message': f'Media directory not found at {self.media_dir}',
+                'source_dir': self.media_dir,
+                'target_dir': self.backup_media_dir,
+                'files_copied': 0,
+            }
+
+        copied_count = 0
+        skipped_count = 0
+        copied_bytes = 0
+        total_files = 0
+
+        try:
+            for root, _, files in os.walk(self.media_dir):
+                for filename in files:
+                    total_files += 1
+                    src_file = os.path.join(root, filename)
+                    rel_path = os.path.relpath(src_file, self.media_dir)
+                    dst_file = os.path.join(self.backup_media_dir, rel_path)
+
+                    dst_dir = os.path.dirname(dst_file)
+                    os.makedirs(dst_dir, exist_ok=True)
+
+                    needs_copy = True
+                    if os.path.exists(dst_file):
+                        try:
+                            src_stat = os.stat(src_file)
+                            dst_stat = os.stat(dst_file)
+                            if src_stat.st_size == dst_stat.st_size and int(src_stat.st_mtime) <= int(dst_stat.st_mtime):
+                                needs_copy = False
+                        except OSError:
+                            needs_copy = True
+
+                    if needs_copy:
+                        shutil.copy2(src_file, dst_file)
+                        copied_count += 1
+                        copied_bytes += os.path.getsize(src_file)
+                    else:
+                        skipped_count += 1
+
+            size_kb = round(copied_bytes / 1024, 2)
+            logger.info(
+                'Media backup complete: %d copied (%s KB), %d up-to-date, %d total -> %s',
+                copied_count,
+                size_kb,
+                skipped_count,
+                total_files,
+                self.backup_media_dir,
+            )
+            return {
+                'status': 'SUCCESS',
+                'source_dir': self.media_dir,
+                'target_dir': self.backup_media_dir,
+                'total_files': total_files,
+                'files_copied': copied_count,
+                'files_skipped': skipped_count,
+                'copied_kb': size_kb,
+            }
+        except Exception as e:
+            logger.error('Failed to backup media files: %s', e)
+            return {
+                'status': 'FAILED',
+                'error': str(e),
+                'source_dir': self.media_dir,
+                'target_dir': self.backup_media_dir,
+            }
 
     def _prune_old_snapshots(self, keep: int = 20) -> None:
         """Keep only the latest N snapshot files."""
@@ -268,9 +389,10 @@ class BackupService:
         return self.sync_to_postgres(self.settings.neon_database_url, target_name='Neon Cloud')
 
     def run_full_backup(self) -> dict:
-        """Run local snapshot creation, Local Postgres sync, and Neon cloud sync."""
+        """Run local SQLite snapshot, media files backup, Local Postgres sync, and Neon cloud sync."""
         start = time.perf_counter()
         snapshot_res = self.create_local_snapshot()
+        media_res = self.backup_media_files()
         local_pg_res = self.sync_to_local_postgres()
         neon_res = self.sync_to_neon()
         elapsed = round((time.perf_counter() - start) * 1000, 2)
@@ -279,16 +401,20 @@ class BackupService:
             'timestamp': datetime.now(timezone.utc).isoformat(),
             'elapsed_ms': elapsed,
             'local_snapshot': snapshot_res,
+            'media_backup': media_res,
             'local_postgres_sync': local_pg_res,
             'neon_cloud_sync': neon_res,
         }
 
-        # Write to backup log
+        # Write to backup log in the backup directory
         log_file = os.path.join(self.backups_dir, 'backup.log')
         try:
             with open(log_file, 'a', encoding='utf-8') as f:
                 f.write(
-                    f"[{datetime.now().isoformat()}] Snapshot: {snapshot_res.get('status')} | Local PG: {local_pg_res.get('status')} | Neon Sync: {neon_res.get('status')} ({elapsed}ms)\n"
+                    f"[{datetime.now().isoformat()}] DB Snapshot: {snapshot_res.get('status')} | "
+                    f"Media: {media_res.get('status')} ({media_res.get('files_copied', 0)} copied) | "
+                    f"Local PG: {local_pg_res.get('status')} | "
+                    f"Neon Sync: {neon_res.get('status')} ({elapsed}ms)\n"
                 )
         except Exception:
             pass
@@ -296,14 +422,74 @@ class BackupService:
         return summary
 
 
-def run_background_backup():
-    """Helper to launch backup in a separate thread so it never blocks startup."""
-    def _worker():
-        try:
-            service = BackupService()
-            service.run_full_backup()
-        except Exception as e:
-            logger.warning('Background backup task error: %s', e)
+class HourlyBackupScheduler:
+    """Recurring background backup daemon that runs every hour as long as the server is running."""
 
-    t = threading.Thread(target=_worker, daemon=True, name='DbAutoBackupWorker')
-    t.start()
+    _thread: threading.Thread | None = None
+    _stop_event: threading.Event = threading.Event()
+    _is_running: bool = False
+    _lock: threading.Lock = threading.Lock()
+
+    @classmethod
+    def start(cls, interval_minutes: int | None = None) -> None:
+        """Start the background recurring backup worker if not already running."""
+        with cls._lock:
+            if cls._is_running and cls._thread and cls._thread.is_alive():
+                logger.info('HourlyBackupScheduler is already running.')
+                return
+
+            settings = get_settings()
+            interval = interval_minutes if interval_minutes is not None else getattr(settings, 'backup_interval_minutes', 60)
+            if interval <= 0:
+                interval = 60
+            interval_seconds = interval * 60
+
+            cls._stop_event.clear()
+            cls._is_running = True
+
+            def _worker_loop():
+                logger.info(
+                    'HourlyBackupScheduler started (interval: %d minutes / %d seconds).',
+                    interval,
+                    interval_seconds,
+                )
+                # 1. Immediate backup run on startup
+                try:
+                    svc = BackupService()
+                    svc.run_full_backup()
+                except Exception as err:
+                    logger.warning('HourlyBackupScheduler initial backup error: %s', err)
+
+                # 2. Recurring loop while server runs
+                while not cls._stop_event.is_set():
+                    if cls._stop_event.wait(timeout=interval_seconds):
+                        break
+                    try:
+                        svc = BackupService()
+                        svc.run_full_backup()
+                    except Exception as err:
+                        logger.warning('HourlyBackupScheduler recurring backup error: %s', err)
+
+                logger.info('HourlyBackupScheduler stopped.')
+
+            cls._thread = threading.Thread(target=_worker_loop, daemon=True, name='HourlyBackupScheduler')
+            cls._thread.start()
+
+    @classmethod
+    def stop(cls) -> None:
+        """Stop the background recurring backup worker."""
+        with cls._lock:
+            if not cls._is_running:
+                return
+            cls._stop_event.set()
+            cls._is_running = False
+
+    @classmethod
+    def is_running(cls) -> bool:
+        """Check if the scheduler thread is currently running."""
+        return cls._is_running and cls._thread is not None and cls._thread.is_alive()
+
+
+def run_background_backup() -> None:
+    """Helper to start the recurring backup scheduler daemon."""
+    HourlyBackupScheduler.start()

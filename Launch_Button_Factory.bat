@@ -52,6 +52,8 @@ echo   2. ngrok Tunnel     : Public HTTPS URL via ngrok
 echo   3. Cloudflare Tunnel: Free Unlimited Public HTTPS URL via Cloudflare
 echo ====================================================================
 echo.
+if "%1"=="--startup" exit /b 0
+if "%1"=="--silent" exit /b 0
 echo Closing this launcher in 3 seconds...
 timeout /t 3 >nul
 exit

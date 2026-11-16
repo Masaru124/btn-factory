@@ -90,7 +90,7 @@ async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONR
 
 
 # 4. Mount Static Media Directory for Local Media Storage
-media_dir = os.path.abspath(settings.media_dir)
+media_dir = settings.get_resolved_media_dir()
 os.makedirs(media_dir, exist_ok=True)
 app.mount('/media', StaticFiles(directory=media_dir), name='media')
 
@@ -112,9 +112,15 @@ def on_startup() -> None:
     finally:
         db.close()
 
-    # Trigger automated local snapshot & cloud disaster recovery sync in background
-    from app.services.backup_service import run_background_backup
-    run_background_backup()
+    # Trigger automated local snapshot & hourly background backup scheduler
+    from app.services.backup_service import HourlyBackupScheduler
+    HourlyBackupScheduler.start()
+
+
+@app.on_event('shutdown')
+def on_shutdown() -> None:
+    from app.services.backup_service import HourlyBackupScheduler
+    HourlyBackupScheduler.stop()
 
 
 # 7. Comprehensive Health & Readiness Check

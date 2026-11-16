@@ -1,5 +1,6 @@
 from functools import lru_cache
 import json
+import os
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -53,10 +54,19 @@ class Settings(BaseSettings):
     database_url: str = Field(default='sqlite:///./btn_factory.db', alias='DATABASE_URL')
 
     # -------------------------------------------------------------------------
-    # Local On-Premise Storage (Zero Cloud)
+    # Public Domain / DuckDNS Configuration
+    # -------------------------------------------------------------------------
+    public_domain: str = Field(default='testtt234e.duckdns.org', alias='PUBLIC_DOMAIN')
+    duckdns_domain: str | None = Field(default=None, alias='DUCKDNS_DOMAIN')
+
+    # -------------------------------------------------------------------------
+    # Local On-Premise Storage & Automated Hourly Backup Folders
     # -------------------------------------------------------------------------
     media_dir: str = Field(default='./media', alias='MEDIA_DIR')
     media_base_url: str = Field(default='/media', alias='MEDIA_BASE_URL')
+    backup_dir: str = Field(default='./backups', alias='BACKUP_DIR')
+    backup_media_dir: str | None = Field(default=None, alias='BACKUP_MEDIA_DIR')
+    backup_interval_minutes: int = Field(default=60, alias='BACKUP_INTERVAL_MINUTES')
 
     # -------------------------------------------------------------------------
     # Redis Cache & Background Sync
@@ -84,6 +94,35 @@ class Settings(BaseSettings):
         if self.database_url and not self.database_url.startswith('sqlite:///./btn_factory.db'):
             return self.database_url
         return self.sqlite_database_url or self.database_url
+
+    def get_resolved_media_dir(self, base_dir: str | None = None) -> str:
+        """Resolve active media directory as an absolute path."""
+        p = self.media_dir or './media'
+        if os.path.isabs(p):
+            return os.path.abspath(p)
+        if not base_dir:
+            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        return os.path.abspath(os.path.join(base_dir, p))
+
+    def get_resolved_backup_dir(self, base_dir: str | None = None) -> str:
+        """Resolve backup directory for database snapshots as an absolute path."""
+        p = self.backup_dir or './backups'
+        if os.path.isabs(p):
+            return os.path.abspath(p)
+        if not base_dir:
+            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        return os.path.abspath(os.path.join(base_dir, p))
+
+    def get_resolved_backup_media_dir(self, base_dir: str | None = None) -> str:
+        """Resolve backup directory for media files as an absolute path."""
+        if self.backup_media_dir:
+            p = self.backup_media_dir
+            if os.path.isabs(p):
+                return os.path.abspath(p)
+            if not base_dir:
+                base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            return os.path.abspath(os.path.join(base_dir, p))
+        return os.path.join(self.get_resolved_backup_dir(base_dir), 'media')
 
 
 @lru_cache

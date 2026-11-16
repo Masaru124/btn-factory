@@ -19,6 +19,7 @@ class OrderBase(BaseModel):
     polish_type: str | None = None
     packing_option: str | None = None
     dispatch_date: date | None = None
+    dispatch_quantity: int | None = None
     po_image: str | None = None
     button_image: str | None = None
     order_type: str | None = 'Production'
@@ -47,6 +48,7 @@ class OrderUpdate(BaseModel):
     polish_type: str | None = None
     packing_option: str | None = None
     dispatch_date: date | None = None
+    dispatch_quantity: int | None = None
     po_image: str | None = None
     button_image: str | None = None
     order_type: str | None = None
@@ -350,3 +352,8 @@ class OrderStatusResponse(BaseModel):
     token: str
     status: str
     message: str = Field(default='Status updated')
+
+
+class OrderDispatchRequest(BaseModel):
+    dispatched: bool = True
+    dispatch_quantity: int | None = None

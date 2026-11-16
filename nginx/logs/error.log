@@ -1,0 +1,4 @@
+2026/11/16 09:08:49 [emerg] 25080#32504: bind() to 0.0.0.0:80 failed (10013: An attempt was made to access a socket in a way forbidden by its access permissions)
+2026/11/16 09:10:03 [emerg] 9616#1508: bind() to 0.0.0.0:80 failed (10013: An attempt was made to access a socket in a way forbidden by its access permissions)
+2026/11/16 09:10:39 [error] 7580#10124: *2 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: testtt234e.duckdns.org, request: "GET /health HTTP/1.1", upstream: "http://127.0.0.1:8000/health", host: "localhost:8080"
+2026/11/16 09:10:51 [notice] 31844#30588: signal process started

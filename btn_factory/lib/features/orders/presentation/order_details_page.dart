@@ -5,6 +5,7 @@ import 'package:btn_factory/shared/widgets/section_card.dart';
 import 'package:btn_factory/core/network/api_client.dart';
 import 'package:btn_factory/features/auth/application/auth_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
@@ -50,11 +51,193 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
   }
 
   Future<void> _toggleDispatch(bool dispatched) async {
+    int? dispatchQuantity;
+    if (dispatched) {
+      final packing = _order?['packing_process'] as Map<String, dynamic>?;
+      final defaultQty = _order?['dispatch_quantity'] ?? packing?['packed_qty'] ?? _order?['quantity'] ?? 0;
+      final controller = TextEditingController(text: defaultQty > 0 ? defaultQty.toString() : '');
+      final formKey = GlobalKey<FormState>();
+
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          backgroundColor: const Color(0xFF111827),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Color(0xFF1F2937)),
+          ),
+          title: const Row(
+            children: [
+              Icon(Icons.local_shipping, color: Color(0xFF10B981), size: 22),
+              SizedBox(width: 8),
+              Text(
+                'Dispatch Order',
+                style: TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          content: Form(
+            key: formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Order #${widget.orderToken} • ${_order?['company_name'] ?? ''}',
+                    style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      if (_order?['quantity'] != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1E293B),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            'Order Qty: ${_order!['quantity']}',
+                            style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 12),
+                          ),
+                        ),
+                      if (packing?['packed_qty'] != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF064E3B).withValues(alpha: 0.3),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            'Packed Qty: ${packing!['packed_qty']}',
+                            style: const TextStyle(color: Color(0xFF10B981), fontSize: 12),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Dispatch Quantity (Pcs / Gross)',
+                    style: TextStyle(color: Color(0xFFE2E8F0), fontSize: 13, fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 6),
+                  TextFormField(
+                    controller: controller,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    autofocus: true,
+                    style: const TextStyle(color: Color(0xFFF8FAFC), fontSize: 16),
+                    decoration: InputDecoration(
+                      hintText: 'Enter dispatch quantity',
+                      hintStyle: const TextStyle(color: Color(0xFF64748B)),
+                      filled: true,
+                      fillColor: const Color(0xFF1E293B),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: Color(0xFF334155)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: Color(0xFF334155)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: Color(0xFF10B981), width: 1.5),
+                      ),
+                      prefixIcon: const Icon(Icons.inventory_2_outlined, color: Color(0xFF94A3B8), size: 20),
+                    ),
+                    validator: (val) {
+                      if (val == null || val.trim().isEmpty) {
+                        return 'Please enter dispatch quantity';
+                      }
+                      final parsed = int.tryParse(val.trim());
+                      if (parsed == null || parsed <= 0) {
+                        return 'Quantity must be greater than 0';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Order will be marked as Dispatched with today\'s date.',
+                    style: TextStyle(color: Color(0xFF64748B), fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel', style: TextStyle(color: Color(0xFF94A3B8))),
+            ),
+            FilledButton.icon(
+              onPressed: () {
+                if (formKey.currentState?.validate() ?? false) {
+                  dispatchQuantity = int.tryParse(controller.text.trim());
+                  Navigator.of(dialogContext).pop(true);
+                }
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: const Color(0xFF10B981),
+                foregroundColor: const Color(0xFF0F172A),
+              ),
+              icon: const Icon(Icons.local_shipping, size: 18),
+              label: const Text('Mark Dispatched', style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+      );
+
+      if (confirmed != true || !mounted) return;
+    } else {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          backgroundColor: const Color(0xFF111827),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Color(0xFF1F2937)),
+          ),
+          title: const Text(
+            'Revert dispatch status?',
+            style: TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            'Order #${widget.orderToken} will be reverted from Dispatched back to active production, clearing its dispatch date and quantity.',
+            style: const TextStyle(color: Color(0xFF94A3B8), height: 1.4),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel', style: TextStyle(color: Color(0xFF94A3B8))),
+            ),
+            FilledButton.icon(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              style: FilledButton.styleFrom(
+                backgroundColor: const Color(0xFFF59E0B),
+                foregroundColor: Colors.black,
+              ),
+              icon: const Icon(Icons.undo, size: 18),
+              label: const Text('Revert'),
+            ),
+          ],
+        ),
+      );
+
+      if (confirmed != true || !mounted) return;
+    }
+
     try {
       final dio = ref.read(dioProvider);
       final response = await dio.post(
         '/orders/dispatch/${widget.orderToken}',
-        queryParameters: {'dispatched': dispatched},
+        queryParameters: {
+          'dispatched': dispatched,
+          'dispatch_quantity': ?dispatchQuantity,
+        },
       );
       if (!mounted) return;
       setState(() {
@@ -64,7 +247,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
         SnackBar(
           content: Text(
             dispatched
-                ? 'Order #${widget.orderToken} marked as Dispatched'
+                ? 'Order #${widget.orderToken} marked as Dispatched (${dispatchQuantity ?? ''} pcs)'
                 : 'Order #${widget.orderToken} dispatch status reverted to active production',
           ),
           backgroundColor: dispatched ? const Color(0xFF10B981) : const Color(0xFFD97706),
@@ -341,6 +524,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                   runSpacing: 12,
                   children: <Widget>[
                     _DetailChip(label: 'Dispatch Date', value: _formatDate(order['dispatch_date'] as String?)),
+                    _DetailChip(label: 'Dispatch Quantity', value: order['dispatch_quantity'] != null ? '${order['dispatch_quantity']}' : 'N/A'),
                     _DetailChip(label: 'Order Status', value: order['status'] as String? ?? 'Created'),
                   ],
                 ),

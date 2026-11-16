@@ -182,14 +182,78 @@ def test_dispatch_toggle_and_recompute() -> None:
     session.add(packing)
     session.commit()
 
-    # Toggle dispatch ON
+    # Toggle dispatch ON with quantity
     order.status = 'Dispatched'
     order.dispatch_date = date.today()
+    order.dispatch_quantity = 95
     session.commit()
     assert order.status == 'Dispatched'
+    assert order.dispatch_quantity == 95
 
-    # Toggle dispatch OFF -> clear dispatch_date and recompute status
+    # Toggle dispatch OFF -> clear dispatch_date, dispatch_quantity, and recompute status
     order.dispatch_date = None
+    order.dispatch_quantity = None
     order.status = recompute_order_status(order)
     session.commit()
     assert order.status == OrderStatus.READY_TO_DISPATCH.value
+    assert order.dispatch_quantity is None
+
+
+def test_dispatch_api_endpoint_with_quantity() -> None:
+    from fastapi.testclient import TestClient
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    from sqlalchemy.pool import StaticPool
+    from app.main import app
+    from app.core.database import Base, get_db
+    from app.core.deps import get_current_user
+    from app.models.user import User
+
+    engine = create_engine('sqlite:///:memory:', connect_args={'check_same_thread': False}, poolclass=StaticPool)
+    Base.metadata.create_all(bind=engine)
+    TestingSession = sessionmaker(bind=engine)
+
+    def override_get_db():
+        db = TestingSession()
+        try:
+            yield db
+        finally:
+            db.close()
+
+    mock_admin = User(id=1, email='admin@test.com', name='Admin', password_hash='hash', role='super_admin', is_active=True)
+    app.dependency_overrides[get_current_user] = lambda: mock_admin
+    app.dependency_overrides[get_db] = override_get_db
+
+    client = TestClient(app)
+
+    # 1. Create order
+    create_res = client.post('/api/orders/create', json={
+        'company_name': 'Quantity Test Corp',
+        'po_date': '2026-11-16',
+        'quantity': 500,
+    })
+    assert create_res.status_code == 200, create_res.text
+    token = create_res.json()['token']
+
+    # 2. Dispatch with specific dispatch_quantity via query param
+    disp_res = client.post(f'/api/orders/dispatch/{token}?dispatched=true&dispatch_quantity=480')
+    assert disp_res.status_code == 200, disp_res.text
+    assert disp_res.json()['status'] == 'Dispatched'
+    assert disp_res.json()['dispatch_quantity'] == 480
+
+    # 3. Revert dispatch
+    rev_res = client.post(f'/api/orders/dispatch/{token}?dispatched=false')
+    assert rev_res.status_code == 200, rev_res.text
+    assert rev_res.json()['status'] != 'Dispatched'
+    assert rev_res.json()['dispatch_quantity'] is None
+
+    # 4. Dispatch with JSON payload
+    disp_res2 = client.post(f'/api/orders/dispatch/{token}', json={
+        'dispatched': True,
+        'dispatch_quantity': 495,
+    })
+    assert disp_res2.status_code == 200, disp_res2.text
+    assert disp_res2.json()['status'] == 'Dispatched'
+    assert disp_res2.json()['dispatch_quantity'] == 495
+
+    app.dependency_overrides.clear()

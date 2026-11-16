@@ -509,7 +509,7 @@ class PdfExportService {
                     ['Order Type', '${order['order_type'] ?? 'Production'}', 'Casting Type', '${order['casting_type'] ?? 'N/A'}'],
                     ['Sample', '${order['sample'] ?? 'N/A'}', 'Thickness', '${order['thickness'] ?? 'N/A'}'],
                     ['Holes', '${order['holes'] ?? 'N/A'}', 'Box Type', '${order['box_type'] ?? 'N/A'}'],
-                    ['Rate', 'INR ${order['rate'] ?? 'N/A'}', 'Quantity', '${order['quantity'] ?? 'N/A'}'],
+                    ['Rate', 'INR ${order['rate'] ?? 'N/A'}', 'Quantity', '${order['quantity'] ?? 'N/A'}${order['dispatch_quantity'] != null ? ' (Disp: ${order['dispatch_quantity']})' : ''}'],
                     ['Linings', '${order['linings'] ?? 'N/A'}', 'Laser', '${order['laser'] ?? 'N/A'}'],
                     ['Polish Type', '${order['polish_type'] ?? 'N/A'}', 'Packing Option', '${order['packing_option'] ?? 'N/A'}'],
                     ['Status', status, 'Order Weight', order['weight'] != null ? '${order['weight']} kg' : 'N/A'],

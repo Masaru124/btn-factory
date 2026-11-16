@@ -4,6 +4,7 @@ import 'package:btn_factory/core/network/api_client.dart';
 import 'package:btn_factory/features/auth/application/auth_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -44,6 +45,7 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
         _orders = data.map((item) {
           final map = item as Map<String, dynamic>;
           final status = map['status'] as String? ?? 'Created';
+          final packing = map['packing_process'] as Map<String, dynamic>?;
           return _OrderRow(
             token: map['token'] as String? ?? '',
             companyName: map['company_name'] as String? ?? '',
@@ -53,6 +55,9 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
             statusColor: _statusColor(status),
             buttonImage: map['button_image'] as String?,
             poImage: map['po_image'] as String?,
+            quantity: map['quantity'] as int?,
+            packedQty: packing?['packed_qty'] as int?,
+            dispatchQuantity: map['dispatch_quantity'] as int?,
           );
         }).toList();
         _isLoading = false;
@@ -160,59 +165,204 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
     }
   }
 
-  /// Shows confirmation and marks the order as dispatched or reverts status.
+  /// Shows confirmation and marks the order as dispatched (with quantity input) or reverts status.
   Future<void> _confirmAndDispatch(_OrderRow order, {required bool dispatched}) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: const Color(0xFF111827),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: Color(0xFF1F2937)),
-        ),
-        title: Text(
-          dispatched ? 'Mark order as Dispatched?' : 'Revert dispatch status?',
-          style: const TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold),
-        ),
-        content: Text(
-          dispatched
-              ? 'Order ${order.token} for ${order.companyName} will be marked as Dispatched with today\'s date.'
-              : 'Order ${order.token} will be reverted from Dispatched back to active production.',
-          style: const TextStyle(color: Color(0xFF94A3B8), height: 1.4),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Cancel', style: TextStyle(color: Color(0xFF94A3B8))),
-          ),
-          FilledButton.icon(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            style: FilledButton.styleFrom(
-              backgroundColor: dispatched ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
-              foregroundColor: Colors.black,
-            ),
-            icon: Icon(dispatched ? Icons.local_shipping : Icons.undo, size: 18),
-            label: Text(dispatched ? 'Mark Dispatched' : 'Revert'),
-          ),
-        ],
-      ),
-    );
+    int? dispatchQuantity;
+    if (dispatched) {
+      final defaultQty = order.dispatchQuantity ?? order.packedQty ?? order.quantity ?? 0;
+      final controller = TextEditingController(text: defaultQty > 0 ? defaultQty.toString() : '');
+      final formKey = GlobalKey<FormState>();
 
-    if (confirmed != true || !mounted) return;
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          backgroundColor: const Color(0xFF111827),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Color(0xFF1F2937)),
+          ),
+          title: const Row(
+            children: [
+              Icon(Icons.local_shipping, color: Color(0xFF10B981), size: 22),
+              SizedBox(width: 8),
+              Text(
+                'Dispatch Order',
+                style: TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          content: Form(
+            key: formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Order #${order.token} • ${order.companyName}',
+                    style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
+                  ),
+                  const SizedBox(height: 12),
+                  if (order.quantity != null || order.packedQty != null) ...[
+                    Wrap(
+                      spacing: 8,
+                      children: [
+                        if (order.quantity != null)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF1E293B),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              'Order Qty: ${order.quantity}',
+                              style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 12),
+                            ),
+                          ),
+                        if (order.packedQty != null)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF064E3B).withValues(alpha: 0.3),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              'Packed Qty: ${order.packedQty}',
+                              style: const TextStyle(color: Color(0xFF10B981), fontSize: 12),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                  const Text(
+                    'Dispatch Quantity (Pcs / Gross)',
+                    style: TextStyle(color: Color(0xFFE2E8F0), fontSize: 13, fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 6),
+                  TextFormField(
+                    controller: controller,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    autofocus: true,
+                    style: const TextStyle(color: Color(0xFFF8FAFC), fontSize: 16),
+                    decoration: InputDecoration(
+                      hintText: 'Enter dispatch quantity',
+                      hintStyle: const TextStyle(color: Color(0xFF64748B)),
+                      filled: true,
+                      fillColor: const Color(0xFF1E293B),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: Color(0xFF334155)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: Color(0xFF334155)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: Color(0xFF10B981), width: 1.5),
+                      ),
+                      prefixIcon: const Icon(Icons.inventory_2_outlined, color: Color(0xFF94A3B8), size: 20),
+                    ),
+                    validator: (val) {
+                      if (val == null || val.trim().isEmpty) {
+                        return 'Please enter dispatch quantity';
+                      }
+                      final parsed = int.tryParse(val.trim());
+                      if (parsed == null || parsed <= 0) {
+                        return 'Quantity must be greater than 0';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Order will be marked as Dispatched with today\'s date.',
+                    style: TextStyle(color: Color(0xFF64748B), fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel', style: TextStyle(color: Color(0xFF94A3B8))),
+            ),
+            FilledButton.icon(
+              onPressed: () {
+                if (formKey.currentState?.validate() ?? false) {
+                  dispatchQuantity = int.tryParse(controller.text.trim());
+                  Navigator.of(dialogContext).pop(true);
+                }
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: const Color(0xFF10B981),
+                foregroundColor: const Color(0xFF0F172A),
+              ),
+              icon: const Icon(Icons.local_shipping, size: 18),
+              label: const Text('Mark Dispatched', style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+      );
+
+      if (confirmed != true || !mounted) return;
+    } else {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          backgroundColor: const Color(0xFF111827),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Color(0xFF1F2937)),
+          ),
+          title: const Text(
+            'Revert dispatch status?',
+            style: TextStyle(color: Color(0xFFF8FAFC), fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            'Order ${order.token} will be reverted from Dispatched back to active production, clearing its dispatch date and quantity.',
+            style: const TextStyle(color: Color(0xFF94A3B8), height: 1.4),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel', style: TextStyle(color: Color(0xFF94A3B8))),
+            ),
+            FilledButton.icon(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              style: FilledButton.styleFrom(
+                backgroundColor: const Color(0xFFF59E0B),
+                foregroundColor: Colors.black,
+              ),
+              icon: const Icon(Icons.undo, size: 18),
+              label: const Text('Revert'),
+            ),
+          ],
+        ),
+      );
+
+      if (confirmed != true || !mounted) return;
+    }
 
     setState(() => _dispatchingToken = order.token);
     try {
       final dio = ref.read(dioProvider);
       await dio.post(
         '/orders/dispatch/${order.token}',
-        queryParameters: {'dispatched': dispatched},
+        queryParameters: {
+          'dispatched': dispatched,
+          'dispatch_quantity': ?dispatchQuantity,
+        },
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
             dispatched
-                ? 'Order ${order.token} marked as Dispatched'
+                ? 'Order ${order.token} dispatched (${dispatchQuantity ?? ''} pcs)'
                 : 'Order ${order.token} dispatch status reverted',
           ),
           backgroundColor: dispatched ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
@@ -486,7 +636,7 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
                                       ],
                                     ),
                                     subtitle: Text(
-                                      'PO ${order.poNumber}',
+                                      'PO ${order.poNumber}${order.quantity != null ? ' • Qty: ${order.quantity}' : ''}${order.dispatchQuantity != null ? ' • Dispatched: ${order.dispatchQuantity}' : ''}',
                                       style: const TextStyle(color: Color(0xFF64748B), fontSize: 13),
                                     ),
                                     trailing: Row(
@@ -603,6 +753,9 @@ class _OrderRow {
     this.orderType = 'Production',
     this.buttonImage,
     this.poImage,
+    this.quantity,
+    this.packedQty,
+    this.dispatchQuantity,
   });
 
   final String token;
@@ -613,5 +766,8 @@ class _OrderRow {
   final String orderType;
   final String? buttonImage;
   final String? poImage;
+  final int? quantity;
+  final int? packedQty;
+  final int? dispatchQuantity;
 }
 
