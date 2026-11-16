@@ -390,11 +390,16 @@ class BackupService:
 
     def sync_duckdns_ip(self) -> dict:
         """Automatically keep DuckDNS domain pointed to the system's current public IP."""
-        token = self.settings.duckdns_token
-        domain = self.settings.duckdns_domain or self.settings.public_domain
-        if not token or not domain or 'duckdns.org' not in domain:
+        raw_token = self.settings.duckdns_token
+        raw_domain = self.settings.duckdns_domain or self.settings.public_domain
+        if not raw_token or not raw_domain or 'duckdns.org' not in raw_domain:
             return {'status': 'SKIPPED', 'message': 'DuckDNS token not configured in .env'}
 
+        token = raw_token.strip().strip('"').strip("'")
+        if not token:
+            return {'status': 'SKIPPED', 'message': 'DuckDNS token empty in .env'}
+
+        domain = raw_domain.lower().replace('http://', '').replace('https://', '').split('/')[0].split(':')[0].strip()
         subdomain = domain.replace('.duckdns.org', '').strip()
         url = f"https://www.duckdns.org/update?domains={subdomain}&token={token}&ip="
 
@@ -404,10 +409,11 @@ class BackupService:
             with urllib.request.urlopen(req, timeout=10) as resp:
                 result = resp.read().decode('utf-8').strip()
             if result == 'OK':
-                logger.info('DuckDNS IP updated successfully for %s', domain)
-                return {'status': 'SUCCESS', 'domain': domain, 'result': result}
+                logger.info('DuckDNS IP updated successfully for %s (%s)', subdomain, domain)
+                return {'status': 'SUCCESS', 'domain': domain, 'subdomain': subdomain, 'result': result}
+            err_msg = f"KO (DuckDNS rejected update for '{subdomain}'. Check token and confirm '{subdomain}' is created under your duckdns.org account)"
             logger.warning('DuckDNS update returned: %s', result)
-            return {'status': 'FAILED', 'domain': domain, 'error': result}
+            return {'status': 'FAILED', 'domain': domain, 'subdomain': subdomain, 'error': err_msg}
         except Exception as e:
             logger.error('Failed to update DuckDNS IP: %s', e)
             return {'status': 'FAILED', 'domain': domain, 'error': str(e)}

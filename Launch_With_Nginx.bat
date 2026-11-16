@@ -96,6 +96,16 @@ if %errorlevel% equ 0 (
 
 if defined NGINX_EXE (
     echo [Nginx Found] Using: %NGINX_EXE%
+    :: Ensure all required Nginx runtime directories exist
+    if not exist "%NGINX_DIR%\temp" mkdir "%NGINX_DIR%\temp" >nul 2>&1
+    if not exist "%NGINX_DIR%\temp\client_body_temp" mkdir "%NGINX_DIR%\temp\client_body_temp" >nul 2>&1
+    if not exist "%NGINX_DIR%\temp\proxy_temp" mkdir "%NGINX_DIR%\temp\proxy_temp" >nul 2>&1
+    if not exist "%NGINX_DIR%\temp\fastcgi_temp" mkdir "%NGINX_DIR%\temp\fastcgi_temp" >nul 2>&1
+    if not exist "%NGINX_DIR%\temp\uwsgi_temp" mkdir "%NGINX_DIR%\temp\uwsgi_temp" >nul 2>&1
+    if not exist "%NGINX_DIR%\temp\scgi_temp" mkdir "%NGINX_DIR%\temp\scgi_temp" >nul 2>&1
+    if not exist "%NGINX_DIR%\logs" mkdir "%NGINX_DIR%\logs" >nul 2>&1
+    if not exist "%NGINX_DIR%\html" mkdir "%NGINX_DIR%\html" >nul 2>&1
+
     echo Testing Nginx configuration...
     "%NGINX_EXE%" -t -p "%NGINX_DIR%" -c "%NGINX_CONF%"
     echo Starting Nginx backend reverse proxy on port %NGINX_PORT%...

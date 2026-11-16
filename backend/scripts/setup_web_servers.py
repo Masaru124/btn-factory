@@ -87,6 +87,20 @@ def ensure_nginx_binary() -> str | None:
 def generate_nginx_config(port: int | None = None, backend_port: int = 8000) -> str:
     """Generate self-contained nginx.conf as pure backend reverse proxy to FastAPI."""
     os.makedirs(NGINX_DIR, exist_ok=True)
+    temp_dir = os.path.join(NGINX_DIR, 'temp')
+    logs_dir = os.path.join(NGINX_DIR, 'logs')
+    for d in [
+        temp_dir,
+        os.path.join(temp_dir, 'client_body_temp'),
+        os.path.join(temp_dir, 'proxy_temp'),
+        os.path.join(temp_dir, 'fastcgi_temp'),
+        os.path.join(temp_dir, 'uwsgi_temp'),
+        os.path.join(temp_dir, 'scgi_temp'),
+        logs_dir,
+        os.path.join(NGINX_DIR, 'html'),
+    ]:
+        os.makedirs(d, exist_ok=True)
+
     if port is None:
         port = get_web_port()
     domain = get_public_domain()
@@ -105,6 +119,13 @@ events {{
 http {{
     include       mime.types;
     default_type  application/octet-stream;
+
+    # Temp directories for portable execution on any drive/PC
+    client_body_temp_path  temp/client_body_temp;
+    proxy_temp_path        temp/proxy_temp;
+    fastcgi_temp_path      temp/fastcgi_temp;
+    uwsgi_temp_path        temp/uwsgi_temp;
+    scgi_temp_path         temp/scgi_temp;
 
     sendfile        on;
     keepalive_timeout  65;
