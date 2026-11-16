@@ -19,14 +19,28 @@ if exist "%BACKEND_DIR%\.env" (
     )
 )
 
-:: Locate Python executable
+:: Locate or bootstrap Python executable
 set "PYTHON_EXE="
 if exist "%BACKEND_DIR%\venv\Scripts\python.exe" (
     set "PYTHON_EXE=%BACKEND_DIR%\venv\Scripts\python.exe"
 ) else if exist "%PROJECT_ROOT%venv\Scripts\python.exe" (
     set "PYTHON_EXE=%PROJECT_ROOT%venv\Scripts\python.exe"
 ) else (
-    set "PYTHON_EXE=python"
+    where python >nul 2>&1
+    if %errorlevel% equ 0 (
+        echo [NEW SYSTEM DETECTED] Creating Python virtual environment...
+        python -m venv "%BACKEND_DIR%\venv"
+        "%BACKEND_DIR%\venv\Scripts\pip" install -r "%BACKEND_DIR%\requirements.txt"
+        if exist "%BACKEND_DIR%\venv\Scripts\python.exe" (
+            set "PYTHON_EXE=%BACKEND_DIR%\venv\Scripts\python.exe"
+        ) else (
+            set "PYTHON_EXE=python"
+        )
+    ) else (
+        echo [ERROR] Python is not installed or not in PATH. Install Python 3.10+ from python.org
+        pause
+        exit /b 1
+    )
 )
 
 echo ====================================================================

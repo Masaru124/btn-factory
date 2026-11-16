@@ -10,8 +10,25 @@ if %errorlevel% neq 0 (
     exit /b
 )
 
+set "PROJECT_ROOT=%~dp0"
+set "BACKEND_DIR=%~dp0backend"
+if not exist "%BACKEND_DIR%" set "BACKEND_DIR=%CD%"
 set "HOSTS_FILE=%SystemRoot%\System32\drivers\etc\hosts"
+
+:: Read PUBLIC_DOMAIN from backend\.env or .env if present
 set "DOMAIN=testtt234e.duckdns.org"
+if exist "%BACKEND_DIR%\.env" (
+    for /f "usebackq tokens=1,2 delims==" %%A in ("%BACKEND_DIR%\.env") do (
+        if /i "%%A"=="PUBLIC_DOMAIN" set "DOMAIN=%%B"
+    )
+) else if exist "%PROJECT_ROOT%\.env" (
+    for /f "usebackq tokens=1,2 delims==" %%A in ("%PROJECT_ROOT%\.env") do (
+        if /i "%%A"=="PUBLIC_DOMAIN" set "DOMAIN=%%B"
+    )
+)
+
+:: Clean DOMAIN string (remove spaces, http://, etc.)
+for /f "tokens=* delims= " %%A in ("%DOMAIN%") do set "DOMAIN=%%A"
 
 echo ====================================================================
 echo      BUTTON FACTORY MES - SETUP DUCKDNS DOMAIN & FIREWALL
@@ -39,6 +56,14 @@ echo  [PASS] DNS cache flushed.
 :: 3. Open Windows Defender Firewall for ports 8080 and 8088
 echo.
 echo [3/3] Configuring Windows Defender Firewall...
+netsh advfirewall firewall show rule name="Button Factory MES Nginx (80)" >nul 2>&1
+if %errorlevel% neq 0 (
+    netsh advfirewall firewall add rule name="Button Factory MES Nginx (80)" dir=in action=allow protocol=TCP localport=80 >nul 2>&1
+    echo  [PASS] Added inbound firewall rule for Port 80 (HTTP).
+) else (
+    echo  [OK] Firewall rule for Port 80 already exists.
+)
+
 netsh advfirewall firewall show rule name="Button Factory MES Nginx (8080)" >nul 2>&1
 if %errorlevel% neq 0 (
     netsh advfirewall firewall add rule name="Button Factory MES Nginx (8080)" dir=in action=allow protocol=TCP localport=8080 >nul 2>&1
@@ -55,17 +80,23 @@ if %errorlevel% neq 0 (
     echo  [OK] Firewall rule for Port 8088 already exists.
 )
 
+:: Detect current local LAN IP
+set "LOCAL_LAN_IP=localhost"
+for /f "tokens=3" %%i in ('powershell -NoProfile -Command "(Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -notlike '*Loopback*' -and $_.IPAddress -notlike '169.254*' -and $_.IPAddress -notlike '127.*' }).IPAddress[0]" 2^>nul') do (
+    if not "%%i"=="" set "LOCAL_LAN_IP=%%i"
+)
+
 echo.
 echo ====================================================================
 echo  [SUCCESS] Configuration Complete!
 echo.
 echo  You can now access Button Factory MES:
 echo   - On this PC:
-echo       http://%DOMAIN%:8080/
-echo       http://localhost:8080/
+echo       http://%DOMAIN%:8080/docs
+echo       http://localhost:8080/docs
 echo.
 echo   - From phones/tablets on the same Wi-Fi:
-echo       http://192.168.29.94:8080/
+echo       http://%LOCAL_LAN_IP%:8080/docs
 echo ====================================================================
 echo.
 pause
