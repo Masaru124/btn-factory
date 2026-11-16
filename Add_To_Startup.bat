@@ -26,15 +26,16 @@ echo Project Root : %PROJECT_ROOT%
 echo.
 echo Choose which configuration to start automatically on Windows boot / restart:
 echo.
-echo   [1] Launch with Nginx          (Recommended - Fast, lightweight)
-echo   [2] Launch with IIS            (Uses IIS on port 8088)
-echo   [3] Launch Button Factory      (FastAPI + Cloudflare / ngrok Tunnels)
-echo   [4] Cancel
+echo   [1] Launch with Nginx              (Fast, lightweight reverse proxy)
+echo   [2] Launch with IIS                (Windows IIS reverse proxy)
+echo   [3] Launch with Cloudflare Tunnel  (DuckDNS Host Mode, bypasses routers)
+echo   [4] Launch Button Factory          (FastAPI + ngrok / Cloudflare triple)
+echo   [5] Cancel
 echo.
-set /p CHOICE="Select option [1-4] (Default is 1): "
+set /p CHOICE="Select option [1-5] (Default is 1): "
 
 if "%CHOICE%"=="" set "CHOICE=1"
-if "%CHOICE%"=="4" (
+if "%CHOICE%"=="5" (
     echo Operation cancelled.
     timeout /t 2 >nul
     exit /b 0
@@ -42,7 +43,8 @@ if "%CHOICE%"=="4" (
 
 set "SERVER_TYPE=nginx"
 if "%CHOICE%"=="2" set "SERVER_TYPE=iis"
-if "%CHOICE%"=="3" set "SERVER_TYPE=button_factory"
+if "%CHOICE%"=="3" set "SERVER_TYPE=cloudflare"
+if "%CHOICE%"=="4" set "SERVER_TYPE=button_factory"
 
 echo.
 "%PYTHON_EXE%" "%BACKEND_DIR%\scripts\manage_startup.py" add %SERVER_TYPE%
