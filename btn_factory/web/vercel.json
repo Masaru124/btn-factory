@@ -1,5 +1,6 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.sh/vercel.json",
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
   "rewrites": [
     {
       "source": "/api/(.*)",
@@ -8,11 +9,15 @@
     {
       "source": "/media/(.*)",
       "destination": "https://aptly-nearly-footnote.ngrok-free.dev/media/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [
     {
-      "source": "/media/(.*)",
+      "source": "/(.*)",
       "headers": [
         {
           "key": "ngrok-skip-browser-warning",

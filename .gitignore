@@ -47,6 +47,7 @@ Desktop.ini
 **/venv/
 **/.env
 **/.env.*
+!**/.env.example
 **/btn_factory.db
 **/*.sqlite
 **/*.sqlite3

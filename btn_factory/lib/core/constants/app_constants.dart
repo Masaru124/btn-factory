@@ -17,8 +17,22 @@ class AppConstants {
   ];
   static String defaultDuckDnsDomain = 'fasti2.duckdns.org';
 
-  /// Loads configuration from frontend .env file in assets
+  /// Loads configuration from compile-time defines or optional local .env
   static Future<void> loadEnv() async {
+    // 1. Check official Flutter compile-time defines (Vercel / CI)
+    const dartDefineApi = String.fromEnvironment('API_BASE_URL');
+    if (dartDefineApi.trim().isNotEmpty) {
+      _configuredApiBaseUrl = dartDefineApi.trim();
+    }
+    const dartDefineBackends = String.fromEnvironment('BACKEND_URLS');
+    if (dartDefineBackends.trim().isNotEmpty) {
+      final list = dartDefineBackends.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+      if (list.isNotEmpty) {
+        backendUrls = list;
+      }
+    }
+
+    // 2. Safe optional local .env reading (never crashes if .env is missing)
     try {
       final content = await rootBundle.loadString('.env');
       final lines = content.split('\n');
@@ -42,7 +56,7 @@ class AppConstants {
         }
       }
     } catch (_) {
-      // In development or if .env is missing, defaults are preserved safely
+      // Safely ignored on Vercel or any environment without a local .env file
     }
   }
 

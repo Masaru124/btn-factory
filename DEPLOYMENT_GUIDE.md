@@ -82,10 +82,12 @@ Run everything 24/7 in the cloud without keeping your personal computer turned o
      cd build/web
      npx vercel deploy --prod
      ```
-   - Alternatively, link your GitHub repository to Vercel or Netlify:
+   - Alternatively, link your GitHub repository to Vercel (Root Directory: `btn_factory`):
      - **Framework Preset**: Other
-     - **Build Command**: `flutter/bin/flutter build web --release --dart-define=API_BASE_URL=https://btn-factory-api.onrender.com/api`
-     - **Output Directory**: `btn_factory/build/web`
+     - **Root Directory**: `btn_factory`
+     - **Install Command**: `if [ -d "flutter" ]; then cd flutter && git pull && cd ..; else git clone -b stable --depth 1 https://github.com/flutter/flutter.git; fi && flutter/bin/flutter config --enable-web`
+     - **Build Command**: `test -f .env || touch .env && flutter/bin/flutter build web --release --no-wasm-dry-run --dart-define=API_BASE_URL=https://aptly-nearly-footnote.ngrok-free.dev/api`
+     - **Output Directory**: `build/web`
 
 #### Using GitHub Pages:
 You can also enable GitHub Pages for `Masaru124/btn-factory`:
