@@ -42,7 +42,7 @@ if "%PYTHON_EXE%"=="" (
 )
 
 cd /d "%BACKEND_DIR%"
-"%PYTHON_EXE%" scripts\restore_super_admin.py %*
+"%PYTHON_EXE%" scripts\fix_and_restore_admin.py %*
 
 echo.
 echo ====================================================================
