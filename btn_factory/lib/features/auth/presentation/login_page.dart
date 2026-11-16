@@ -1,3 +1,4 @@
+import 'package:btn_factory/core/constants/app_constants.dart';
 import 'package:btn_factory/features/auth/application/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -211,6 +212,41 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                   ),
                                 ),
                         ),
+                        const SizedBox(height: 20),
+                        // Backend Server Selector
+                        Center(
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(12),
+                            onTap: _showServerSelectionDialog,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF1E293B),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: const Color(0xFF334155)),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.cloud_sync_outlined, size: 16, color: Color(0xFF14B8A6)),
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      'Server: ${AppConstants.apiBaseUrl}',
+                                      style: const TextStyle(
+                                        fontSize: 11,
+                                        color: Color(0xFF94A3B8),
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  const Icon(Icons.tune, size: 14, color: Color(0xFF64748B)),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -220,6 +256,100 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showServerSelectionDialog() {
+    final customController = TextEditingController();
+    showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF0F172A),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text('Select Backend Server', style: TextStyle(color: Colors.white, fontSize: 18)),
+          content: SizedBox(
+            width: 480,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Available Backend URLs (from frontend .env):',
+                      style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12)),
+                  const SizedBox(height: 12),
+                  ...AppConstants.backendUrls.map((url) {
+                    final isSelected = AppConstants.apiBaseUrl.startsWith(url);
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 6),
+                      decoration: BoxDecoration(
+                        color: isSelected ? const Color(0xFF1E293B) : Colors.transparent,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: ListTile(
+                        dense: true,
+                        leading: Icon(
+                          isSelected ? Icons.check_circle : Icons.radio_button_off,
+                          color: isSelected ? const Color(0xFF14B8A6) : const Color(0xFF64748B),
+                          size: 18,
+                        ),
+                        title: Text(
+                          url,
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : const Color(0xFFCBD5E1),
+                            fontSize: 13,
+                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                          ),
+                        ),
+                        onTap: () {
+                          AppConstants.selectBackendUrl(url);
+                          Navigator.pop(ctx);
+                          setState(() {});
+                        },
+                      ),
+                    );
+                  }),
+                  const Divider(color: Color(0xFF334155), height: 28),
+                  const Text('Or enter custom backend URL:',
+                      style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12)),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: customController,
+                    style: const TextStyle(color: Colors.white, fontSize: 13),
+                    decoration: InputDecoration(
+                      hintText: 'https://aptly-nearly-footnote.ngrok-free.dev',
+                      hintStyle: const TextStyle(color: Color(0xFF64748B)),
+                      isDense: true,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel', style: TextStyle(color: Color(0xFF94A3B8))),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF14B8A6),
+                foregroundColor: Colors.black,
+              ),
+              onPressed: () {
+                final text = customController.text.trim();
+                if (text.isNotEmpty) {
+                  AppConstants.selectBackendUrl(text);
+                }
+                Navigator.pop(ctx);
+                setState(() {});
+              },
+              child: const Text('Connect', style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+          ],
+        );
+      },
     );
   }
 }

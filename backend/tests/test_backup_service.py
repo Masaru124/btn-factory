@@ -95,3 +95,46 @@ def test_hourly_backup_scheduler_start_and_stop():
     HourlyBackupScheduler.stop()
     time.sleep(0.3)
     assert not HourlyBackupScheduler.is_running()
+
+
+def test_sync_duckdns_ip_handling(monkeypatch):
+    service = BackupService()
+
+    # 1. Skipped when token is missing
+    service.settings.duckdns_token = ""
+    service.settings.public_domain = "fasti2.duckdns.org"
+    res = service.sync_duckdns_ip()
+    assert res["status"] == "SKIPPED"
+
+    # 2. Mock urllib to simulate DuckDNS returning OK
+    class DummyResponseOK:
+        def __enter__(self):
+            return self
+        def __exit__(self, *args):
+            pass
+        def read(self):
+            return b"OK\n"
+
+    class DummyResponseKO:
+        def __enter__(self):
+            return self
+        def __exit__(self, *args):
+            pass
+        def read(self):
+            return b"KO\n"
+
+    service.settings.duckdns_token = "fake-token-123"
+    service.settings.duckdns_domain = "fasti2.duckdns.org"
+    service.settings.public_domain = "http://fasti2.duckdns.org:8080"
+
+    import urllib.request
+    monkeypatch.setattr(urllib.request, "urlopen", lambda req, timeout=10: DummyResponseOK())
+    res_ok = service.sync_duckdns_ip()
+    assert res_ok["status"] == "SUCCESS"
+    assert res_ok["subdomain"] == "fasti2"
+
+    monkeypatch.setattr(urllib.request, "urlopen", lambda req, timeout=10: DummyResponseKO())
+    res_ko = service.sync_duckdns_ip()
+    assert res_ko["status"] == "FAILED"
+    assert "KO" in res_ko["error"]
+

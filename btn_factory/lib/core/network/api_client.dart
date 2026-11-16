@@ -24,6 +24,7 @@ final dioProvider = Provider<Dio>((ref) {
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (options, handler) async {
+        options.baseUrl = AppConstants.apiBaseUrl;
         final token = await storage.read(AppStorageKeys.accessToken);
         if (token != null && token.isNotEmpty) {
           options.headers['Authorization'] = 'Bearer $token';

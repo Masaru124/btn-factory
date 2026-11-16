@@ -15,20 +15,26 @@ set "BACKEND_DIR=%~dp0backend"
 if not exist "%BACKEND_DIR%" set "BACKEND_DIR=%CD%"
 set "HOSTS_FILE=%SystemRoot%\System32\drivers\etc\hosts"
 
-:: Read PUBLIC_DOMAIN from backend\.env or .env if present
-set "DOMAIN=testtt234e.duckdns.org"
+:: Read PUBLIC_DOMAIN or DUCKDNS_DOMAIN from backend\.env or .env if present
+set "DOMAIN=fasti2.duckdns.org"
 if exist "%BACKEND_DIR%\.env" (
     for /f "usebackq tokens=1,2 delims==" %%A in ("%BACKEND_DIR%\.env") do (
         if /i "%%A"=="PUBLIC_DOMAIN" set "DOMAIN=%%B"
+        if /i "%%A"=="DUCKDNS_DOMAIN" if not "%%B"=="" set "DOMAIN=%%B"
     )
 ) else if exist "%PROJECT_ROOT%\.env" (
     for /f "usebackq tokens=1,2 delims==" %%A in ("%PROJECT_ROOT%\.env") do (
         if /i "%%A"=="PUBLIC_DOMAIN" set "DOMAIN=%%B"
+        if /i "%%A"=="DUCKDNS_DOMAIN" if not "%%B"=="" set "DOMAIN=%%B"
     )
 )
 
-:: Clean DOMAIN string (remove spaces, http://, etc.)
-for /f "tokens=* delims= " %%A in ("%DOMAIN%") do set "DOMAIN=%%A"
+:: Clean DOMAIN string (remove quotes, spaces, http://, https://, trailing slashes)
+set "DOMAIN=%DOMAIN:"=%"
+set "DOMAIN=%DOMAIN: =%"
+set "DOMAIN=%DOMAIN:http://=%"
+set "DOMAIN=%DOMAIN:https://=%"
+for /f "tokens=1 delims=/: " %%A in ("%DOMAIN%") do set "DOMAIN=%%A"
 
 echo ====================================================================
 echo      BUTTON FACTORY MES - SETUP DUCKDNS DOMAIN & FIREWALL
