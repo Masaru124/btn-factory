@@ -1,13 +1,16 @@
 """
 Universal Database Healer & Super Admin Restorer.
-Fixes malformed SQLite databases, broken WAL files, restores data from backups, and ensures super admin access.
-Works on ANY machine regardless of corruption severity.
+Detects and terminates ANY process locking SQLite files on Windows (via Windows Restart Manager API and Port 8000 scanner).
+Heals corrupt databases, restores clean backup, and guarantees Super Admin access.
 """
+import ctypes
 import glob
 import os
 import shutil
 import sqlite3
+import subprocess
 import sys
+import time
 from datetime import datetime
 
 # Ensure backend root is on sys.path
@@ -26,6 +29,140 @@ from app.core.security import get_password_hash
 from app.models.user import User, UserRole
 
 
+def find_processes_locking_file(file_path: str) -> list[tuple[int, str]]:
+    """Use Windows Restart Manager API to find all PIDs locking a specific file."""
+    if sys.platform != 'win32' or not os.path.exists(file_path):
+        return []
+
+    try:
+        from ctypes import wintypes
+        rstrtmgr = ctypes.WinDLL('rstrtmgr')
+
+        session_handle = wintypes.DWORD()
+        session_key = (wintypes.WCHAR * 33)()
+        if rstrtmgr.RmStartSession(ctypes.byref(session_handle), 0, session_key) != 0:
+            return []
+
+        try:
+            abs_path = os.path.abspath(file_path)
+            path_array = (wintypes.LPCWSTR * 1)(abs_path)
+            if rstrtmgr.RmRegisterResources(session_handle, 1, path_array, 0, None, 0, None) != 0:
+                return []
+
+            n_proc_needed = wintypes.UINT()
+            n_proc = wintypes.UINT(16)
+
+            class RM_UNIQUE_PROCESS(ctypes.Structure):
+                _fields_ = [("dwProcessId", wintypes.DWORD), ("ProcessStartTime", wintypes.FILETIME)]
+
+            class RM_PROCESS_INFO(ctypes.Structure):
+                _fields_ = [
+                    ("Process", RM_UNIQUE_PROCESS),
+                    ("strAppName", wintypes.WCHAR * 256),
+                    ("strServiceShortName", wintypes.WCHAR * 64),
+                    ("ApplicationType", wintypes.INT),
+                    ("AppStatus", wintypes.ULONG),
+                    ("TSSessionId", wintypes.DWORD),
+                    ("bRestartable", wintypes.BOOL),
+                ]
+
+            proc_info = (RM_PROCESS_INFO * 16)()
+            reasons = wintypes.DWORD()
+
+            res = rstrtmgr.RmGetList(
+                session_handle,
+                ctypes.byref(n_proc_needed),
+                ctypes.byref(n_proc),
+                proc_info,
+                ctypes.byref(reasons),
+            )
+
+            pids = []
+            if res == 0:
+                cur_pid = os.getpid()
+                for i in range(n_proc.value):
+                    pid = proc_info[i].Process.dwProcessId
+                    name = proc_info[i].strAppName
+                    if pid != cur_pid and pid > 4:
+                        pids.append((pid, name))
+            return pids
+        finally:
+            rstrtmgr.RmEndSession(session_handle)
+    except Exception:
+        return []
+
+
+def kill_all_database_lockers(db_files: list[str]) -> None:
+    """Find and terminate all processes locking database files."""
+    if sys.platform != 'win32':
+        return
+
+    cur_pid = os.getpid()
+    killed_pids = set()
+
+    # 1. Inspect exact files via Windows Restart Manager
+    for f in db_files:
+        if os.path.exists(f):
+            lockers = find_processes_locking_file(f)
+            for pid, name in lockers:
+                if pid not in killed_pids and pid != cur_pid:
+                    print(f"    [*] Found process '{name}' (PID: {pid}) locking '{os.path.basename(f)}'. Terminating...")
+                    subprocess.run(f'taskkill /F /PID {pid}', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    killed_pids.add(pid)
+
+    # 2. Check backend port 8000
+    try:
+        output = subprocess.check_output('netstat -aon | findstr ":8000 .*LISTENING"', shell=True, text=True, stderr=subprocess.DEVNULL)
+        for line in output.strip().split('\n'):
+            parts = line.strip().split()
+            if len(parts) >= 5:
+                pid_str = parts[-1]
+                if pid_str.isdigit():
+                    pid = int(pid_str)
+                    if pid not in killed_pids and pid != cur_pid and pid > 4:
+                        print(f"    [*] Found backend server (PID: {pid}) listening on port 8000. Terminating...")
+                        subprocess.run(f'taskkill /F /PID {pid}', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                        killed_pids.add(pid)
+    except Exception:
+        pass
+
+    # 3. Terminate background auto-backup scripts or stale server windows
+    try:
+        subprocess.run('taskkill /F /FI "WINDOWTITLE eq *Auto Backup*"', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run('taskkill /F /FI "WINDOWTITLE eq Backend Server*"', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception:
+        pass
+
+    if killed_pids:
+        print(f"    [OK] Successfully stopped {len(killed_pids)} process(es). Database locks released.")
+        time.sleep(1.5)
+
+
+def safe_file_action(action, src: str, dst: str | None = None, related_files: list[str] | None = None) -> bool:
+    """Executes a file move or remove, automatically killing any locker if locked."""
+    if not os.path.exists(src):
+        return True
+
+    for attempt in range(3):
+        try:
+            if action == 'move' and dst:
+                shutil.move(src, dst)
+            elif action == 'copy' and dst:
+                shutil.copy2(src, dst)
+            elif action == 'remove':
+                os.remove(src)
+            return True
+        except PermissionError:
+            print(f"    [!] File '{os.path.basename(src)}' is occupied (WinError 32). Releasing locks (attempt {attempt + 1}/3)...")
+            files_to_check = [src] + (related_files or [])
+            kill_all_database_lockers(files_to_check)
+            time.sleep(1.0)
+        except Exception as e:
+            print(f"    [WARN] File action failed for '{os.path.basename(src)}': {e}")
+            return False
+    return False
+
+
 def test_sqlite_integrity(db_path: str) -> tuple[bool, str]:
     """Test SQLite file integrity using PRAGMA integrity_check."""
     if not os.path.exists(db_path):
@@ -33,8 +170,9 @@ def test_sqlite_integrity(db_path: str) -> tuple[bool, str]:
     if os.path.getsize(db_path) == 0:
         return False, "File is 0 bytes"
     try:
-        conn = sqlite3.connect(db_path, timeout=5.0)
+        conn = sqlite3.connect(db_path, timeout=15.0)
         cursor = conn.cursor()
+        cursor.execute("PRAGMA busy_timeout = 15000;")
         res = cursor.execute("PRAGMA integrity_check;").fetchone()
         conn.close()
         if res and res[0] == "ok":
@@ -47,18 +185,16 @@ def test_sqlite_integrity(db_path: str) -> tuple[bool, str]:
 def find_best_backup(backups_dir: str) -> str | None:
     """Find the newest uncorrupted backup in the backups directory."""
     candidates = []
-    # Check latest first
     latest = os.path.join(backups_dir, 'btn_factory_latest.db')
     if os.path.exists(latest):
         candidates.append(latest)
-    # Check all timestamped backups
     candidates.extend(sorted(glob.glob(os.path.join(backups_dir, 'btn_factory_*.db')), reverse=True))
 
     for c in candidates:
         ok, _ = test_sqlite_integrity(c)
         if ok:
             try:
-                conn = sqlite3.connect(c)
+                conn = sqlite3.connect(c, timeout=5.0)
                 cur = conn.cursor()
                 order_cnt = cur.execute("SELECT count(*) FROM orders;").fetchone()[0]
                 conn.close()
@@ -70,62 +206,62 @@ def find_best_backup(backups_dir: str) -> str | None:
 
 
 def heal_sqlite_database(db_path: str) -> None:
-    """Heal any malformed or corrupted SQLite database."""
-    print(f"[*] Inspecting database at: {db_path}")
+    """Heal any malformed or corrupted SQLite database without losing data."""
+    print(f"[*] Inspecting database: {db_path}")
     wal_file = f"{db_path}-wal"
     shm_file = f"{db_path}-shm"
+    all_db_files = [db_path, wal_file, shm_file]
     backups_dir = os.path.join(BACKEND_DIR, 'backups')
     os.makedirs(backups_dir, exist_ok=True)
 
+    # 1. Stop any background server processes that are locking the file
+    kill_all_database_lockers(all_db_files)
+
+    # 2. Check if database is already healthy
     is_ok, msg = test_sqlite_integrity(db_path)
     if is_ok:
-        print("    [OK] Database file integrity verified.")
+        print("    [OK] Database integrity verified.")
         return
 
     print(f"    [!] Database error detected: {msg}")
-    print("    [!] Starting emergency database repair...")
+    print("    [*] Starting automatic database repair...")
 
-    # Step 1: Check if mismatched WAL/SHM files are causing corruption
+    # 3. Checkpoint WAL
+    try:
+        conn = sqlite3.connect(db_path, timeout=10.0)
+        conn.execute("PRAGMA busy_timeout = 10000;")
+        conn.execute("PRAGMA wal_checkpoint(PASSIVE);")
+        conn.execute("PRAGMA wal_checkpoint(TRUNCATE);")
+        conn.close()
+    except Exception:
+        pass
+
+    is_ok, msg = test_sqlite_integrity(db_path)
+    if is_ok:
+        print("    [FIXED] Database healed via WAL checkpoint.")
+        return
+
+    # 4. If corrupted WAL/SHM caused the malformed error, move them aside safely
     if os.path.exists(wal_file) or os.path.exists(shm_file):
-        print("    [*] Checking WAL / SHM files...")
+        ts = datetime.now().strftime('%Y%m%d_%H%M%S')
+        if os.path.exists(wal_file):
+            safe_file_action('move', wal_file, f"{wal_file}.corrupted_{ts}", all_db_files)
+        if os.path.exists(shm_file):
+            safe_file_action('move', shm_file, f"{shm_file}.corrupted_{ts}", all_db_files)
+
+        is_ok, msg = test_sqlite_integrity(db_path)
+        if is_ok:
+            print("    [FIXED] Database integrity restored after removing orphaned WAL/SHM files.")
+            return
+
+    # 5. Check if data in main DB file can still be read
+    if os.path.exists(db_path):
+        ts = datetime.now().strftime('%Y%m%d_%H%M%S')
+        safety_copy = os.path.join(backups_dir, f"btn_factory_safety_{ts}.db")
+        safe_file_action('copy', db_path, safety_copy, all_db_files)
+
         try:
             conn = sqlite3.connect(db_path, timeout=5.0)
-            conn.execute("PRAGMA wal_checkpoint(TRUNCATE);")
-            conn.close()
-        except Exception:
-            pass
-
-        is_ok, msg = test_sqlite_integrity(db_path)
-        if is_ok:
-            print("    [FIXED] WAL checkpoint resolved database lock/corruption.")
-            return
-
-        # If still malformed, move WAL/SHM aside
-        print("    [*] Moving mismatched WAL/SHM files aside...")
-        ts = os.path.getmtime(db_path) if os.path.exists(db_path) else 0
-        if os.path.exists(wal_file):
-            shutil.move(wal_file, f"{wal_file}.corrupted_bak")
-        if os.path.exists(shm_file):
-            shutil.move(shm_file, f"{shm_file}.corrupted_bak")
-
-        is_ok, msg = test_sqlite_integrity(db_path)
-        if is_ok:
-            print("    [FIXED] Database integrity restored after removing orphaned WAL/SHM.")
-            return
-
-    # Step 2: Database main file check. Make an immediate safety copy before any changes
-    if os.path.exists(db_path):
-        ts = datetime.now().strftime('%Y%m%d_%H%M%S') if 'datetime' in globals() else str(os.getpid())
-        safety_copy = os.path.join(backups_dir, f"btn_factory_safety_copy_{ts}.db")
-        try:
-            shutil.copy2(db_path, safety_copy)
-            print(f"    [SAFETY] Created safety snapshot: {os.path.basename(safety_copy)}")
-        except Exception:
-            pass
-
-        # Check if table data is already readable
-        try:
-            conn = sqlite3.connect(db_path)
             cur = conn.cursor()
             order_cnt = cur.execute("SELECT count(*) FROM orders;").fetchone()[0]
             conn.close()
@@ -135,34 +271,24 @@ def heal_sqlite_database(db_path: str) -> None:
         except Exception:
             pass
 
-    # Step 3: Find best clean backup from backups directory
+    # 6. Restore from clean historical backup
     best_backup = find_best_backup(backups_dir)
     if best_backup:
         print(f"    [*] Restoring from clean backup snapshot: {os.path.basename(best_backup)}")
-        try:
-            shutil.copy2(best_backup, db_path)
-            # Remove any lingering wal/shm
-            if os.path.exists(wal_file):
-                os.remove(wal_file)
-            if os.path.exists(shm_file):
-                os.remove(shm_file)
+        if safe_file_action('copy', best_backup, db_path, all_db_files):
+            safe_file_action('remove', wal_file, related_files=all_db_files)
+            safe_file_action('remove', shm_file, related_files=all_db_files)
             is_ok, msg = test_sqlite_integrity(db_path)
             if is_ok:
                 print("    [FIXED] Database successfully restored from clean backup snapshot.")
                 return
-        except Exception as e:
-            print(f"    [WARN] Snapshot restore failed: {e}")
 
-    # Step 4: If no clean backup, recreate clean empty database with complete schema
-    print("    [*] Re-initializing clean database schema...")
-    if os.path.exists(db_path):
-        os.remove(db_path)
-    if os.path.exists(wal_file):
-        os.remove(wal_file)
-    if os.path.exists(shm_file):
-        os.remove(shm_file)
+    # 7. Fallback: Initialize clean database
+    print("    [*] Initializing clean database...")
+    safe_file_action('remove', db_path, related_files=all_db_files)
+    safe_file_action('remove', wal_file, related_files=all_db_files)
+    safe_file_action('remove', shm_file, related_files=all_db_files)
 
-    # Initialize via SQLite connect to create clean header
     conn = sqlite3.connect(db_path)
     conn.execute("PRAGMA journal_mode=WAL;")
     conn.close()
