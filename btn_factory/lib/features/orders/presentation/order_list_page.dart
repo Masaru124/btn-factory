@@ -710,6 +710,21 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
                                             ),
                                             const SizedBox(width: 4),
                                           ],
+                                          IconButton(
+                                            onPressed: () async {
+                                              final result = await context.push('/orders/${order.token}/edit');
+                                              if (result == true) {
+                                                _fetchOrders();
+                                              }
+                                            },
+                                            icon: const Icon(Icons.edit_outlined),
+                                            tooltip: 'Edit order',
+                                            color: const Color(0xFF38BDF8),
+                                            visualDensity: VisualDensity.compact,
+                                            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                                            padding: EdgeInsets.zero,
+                                          ),
+                                          const SizedBox(width: 4),
                                           _deletingToken == order.token
                                               ? const SizedBox(
                                                   width: 20,

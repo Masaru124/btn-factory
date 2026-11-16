@@ -119,3 +119,50 @@ def test_token_and_order_type_editable():
     assert updated is not None
     assert updated.token == 'ORD-102'
     assert updated.order_type == 'Stock'
+
+
+def test_order_edit_access_super_admin_only():
+    from fastapi.testclient import TestClient
+    from sqlalchemy.pool import StaticPool
+    from app.main import app
+    from app.core.database import Base, get_db
+    from app.core.deps import get_current_user
+    from app.models.user import User
+
+    engine = create_engine('sqlite:///:memory:', connect_args={'check_same_thread': False}, poolclass=StaticPool)
+    Base.metadata.create_all(bind=engine)
+    TestingSession = sessionmaker(bind=engine)
+
+    def override_get_db():
+        db = TestingSession()
+        try:
+            yield db
+        finally:
+            db.close()
+
+    app.dependency_overrides[get_db] = override_get_db
+    client = TestClient(app)
+
+    # 1. Seed an order in test DB
+    with TestingSession() as session:
+        service = OrderService(session)
+        service.create_order(OrderCreate(token='BTN-555', company_name='RBAC Co', po_date=date.today()))
+
+    # 2. Test operator (e.g. casting role) attempting to edit order -> HTTP 403 Forbidden
+    operator_user = User(id=2, email='operator@test.com', name='Operator', password_hash='hash', role='casting', is_active=True)
+    app.dependency_overrides[get_current_user] = lambda: operator_user
+    res_operator = client.put('/api/orders/update/BTN-555', json={'company_name': 'Hacked Co'})
+    assert res_operator.status_code == 403
+    assert 'permission' in res_operator.json()['detail'].lower()
+
+    # 3. Test super_admin editing order -> HTTP 200 OK
+    admin_user = User(id=1, email='admin@test.com', name='Admin', password_hash='hash', role='super_admin', is_active=True)
+    app.dependency_overrides[get_current_user] = lambda: admin_user
+    res_admin = client.put('/api/orders/update/BTN-555', json={'company_name': 'Authorized Admin Edit'})
+    assert res_admin.status_code == 200
+    assert res_admin.json()['company_name'] == 'Authorized Admin Edit'
+
+    # Cleanup overrides
+    app.dependency_overrides.pop(get_current_user, None)
+    app.dependency_overrides.pop(get_db, None)
+
