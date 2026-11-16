@@ -9,6 +9,9 @@ if not exist "%BACKEND_DIR%" (
     set "BACKEND_DIR=%CD%"
 )
 
+:: Ensure cloudflared directories and project root are in PATH
+set "PATH=%PROJECT_ROOT%;C:\Program Files (x86)\cloudflared;C:\Program Files\cloudflared;%PATH%"
+
 :: Read PUBLIC_DOMAIN from backend\.env or .env if present
 set "PUBLIC_DOMAIN=testtt234e.duckdns.org"
 if exist "%BACKEND_DIR%\.env" (
@@ -17,7 +20,7 @@ if exist "%BACKEND_DIR%\.env" (
     )
 ) else if exist "%PROJECT_ROOT%\.env" (
     for /f "usebackq tokens=1,2 delims==" %%A in ("%PROJECT_ROOT%\.env") do (
-        if /i "%%A"=="PUBLIC_DOMAIN" set "DOMAIN=%%B"
+        if /i "%%A"=="PUBLIC_DOMAIN" set "PUBLIC_DOMAIN=%%B"
     )
 )
 
@@ -63,34 +66,20 @@ start "Button Factory - Auto Backup" /min cmd /c "cd /d "%BACKEND_DIR%" && "%PYT
 echo [2/3] Starting FastAPI Backend on http://127.0.0.1:8000...
 start "Button Factory - Backend Server (:8000)" cmd /k "title Backend Server [FastAPI :8000] && color 0B && cd /d "%BACKEND_DIR%" && "%PYTHON_EXE%" -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload"
 
-:: 3. Locate or provision cloudflared.exe
+:: 3. Locate or download cloudflared.exe
 echo [3/3] Checking for Cloudflare Tunnel binary...
-set "CLOUDFLARED_EXE="
+where cloudflared >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [INFO] cloudflared.exe not found in PATH. Downloading official Cloudflare binary...
+    powershell -NoProfile -Command "Invoke-WebRequest -Uri 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe' -OutFile '%PROJECT_ROOT%cloudflared.exe'"
+)
+
 where cloudflared >nul 2>&1
 if %errorlevel% equ 0 (
-    set "CLOUDFLARED_EXE=cloudflared"
-) else if exist "C:\Program Files (x86)\cloudflared\cloudflared.exe" (
-    set "CLOUDFLARED_EXE=C:\Program Files (x86)\cloudflared\cloudflared.exe"
-) else if exist "C:\Program Files\cloudflared\cloudflared.exe" (
-    set "CLOUDFLARED_EXE=C:\Program Files\cloudflared\cloudflared.exe"
-) else if exist "%PROJECT_ROOT%cloudflared.exe" (
-    set "CLOUDFLARED_EXE=%PROJECT_ROOT%cloudflared.exe"
-)
-
-if not defined CLOUDFLARED_EXE (
-    echo [INFO] cloudflared.exe not found. Downloading official Cloudflare binary...
-    powershell -NoProfile -Command "Invoke-WebRequest -Uri 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe' -OutFile '%PROJECT_ROOT%cloudflared.exe'"
-    if exist "%PROJECT_ROOT%cloudflared.exe" (
-        set "CLOUDFLARED_EXE=%PROJECT_ROOT%cloudflared.exe"
-        echo [PASS] Cloudflare Tunnel binary downloaded successfully.
-    )
-)
-
-if defined CLOUDFLARED_EXE (
     echo [PASS] Starting Cloudflare Public Tunnel with Host Header '%PUBLIC_DOMAIN%'...
-    start "Button Factory - Cloudflare Tunnel (:8000)" cmd /k "title Cloudflare Tunnel [%PUBLIC_DOMAIN%] && color 0E && \"%CLOUDFLARED_EXE%\" tunnel --url http://127.0.0.1:8000 --http-host-header %PUBLIC_DOMAIN%"
+    start "Button Factory - Cloudflare Tunnel (:8000)" cmd /k "title Cloudflare Tunnel [%PUBLIC_DOMAIN%] && color 0E && cloudflared tunnel --url http://127.0.0.1:8000 --http-host-header %PUBLIC_DOMAIN%"
 ) else (
-    echo [ERROR] Could not start Cloudflare Tunnel.
+    echo [ERROR] cloudflared command could not be located.
 )
 
 echo.
