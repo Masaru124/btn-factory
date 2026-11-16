@@ -361,7 +361,11 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
             const SizedBox(height: 18),
             SectionCard(
               title: 'Order Material Consumption',
-              child: materials.isEmpty
+              child: materials.where((m) {
+                final name = (m['name'] as String? ?? '').toLowerCase();
+                final unit = (m['unit'] as String? ?? '').toLowerCase();
+                return !name.contains('@') && !['admin', 'turning', 'packing', 'casting', 'polish', 'blanking'].contains(unit);
+              }).isEmpty
                   ? const Padding(
                       padding: EdgeInsets.symmetric(vertical: 12),
                       child: Text('No material consumption recorded yet.', style: TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF64748B))),
@@ -369,7 +373,11 @@ class _ReportsPageState extends ConsumerState<ReportsPage> {
                   : Wrap(
                       spacing: 12,
                       runSpacing: 12,
-                      children: materials.map((item) {
+                      children: materials.where((m) {
+                        final name = (m['name'] as String? ?? '').toLowerCase();
+                        final unit = (m['unit'] as String? ?? '').toLowerCase();
+                        return !name.contains('@') && !['admin', 'turning', 'packing', 'casting', 'polish', 'blanking'].contains(unit);
+                      }).map((item) {
                         final name = item['name'] as String? ?? 'N/A';
                         final qty = item['quantity'] ?? 0;
                         final unit = item['unit'] as String? ?? '';

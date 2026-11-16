@@ -15,6 +15,17 @@ echo.
 echo Diagnosing database, releasing file locks, and restoring super admin...
 echo.
 
+:: Stop background servers holding database file locks
+echo [*] Terminating locking server processes...
+taskkill /F /FI "WINDOWTITLE eq Backend Server*" >nul 2>&1
+taskkill /F /FI "WINDOWTITLE eq *FastAPI*" >nul 2>&1
+taskkill /F /FI "WINDOWTITLE eq *Auto Backup*" >nul 2>&1
+taskkill /F /IM uvicorn.exe >nul 2>&1
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":8000 .*LISTENING"') do (
+    taskkill /F /PID %%a >nul 2>&1
+)
+timeout /t 1 /nobreak >nul
+
 :: Detect Python executable
 set "PYTHON_EXE="
 if exist "%BACKEND_DIR%\venv\Scripts\python.exe" (

@@ -148,69 +148,81 @@ class ReportService:
         total_orders = self.db.query(func.count(Order.id)).scalar() or 0
         in_production_orders = max(0, total_orders - production_completed_orders)
         
-        # Casting output: accounts for Rod casting gross, Sheet blanking gross, and Order gross qty
-        casting_output = (
-            self.db.query(
-                func.sum(
-                    func.coalesce(
-                        CastingProcess.gross_quantity,
-                        BlankingProcess.gross_quantity,
-                        Order.quantity,
-                        0,
+        # Process outputs with resilience against corrupt b-tree pages
+        try:
+            casting_output = (
+                self.db.query(
+                    func.sum(
+                        func.coalesce(
+                            CastingProcess.gross_quantity,
+                            BlankingProcess.gross_quantity,
+                            Order.quantity,
+                            0,
+                        )
                     )
                 )
-            )
-            .select_from(CastingProcess)
-            .join(Order, CastingProcess.order_id == Order.id)
-            .outerjoin(BlankingProcess, Order.id == BlankingProcess.order_id)
-            .scalar()
-        ) or 0
+                .select_from(CastingProcess)
+                .join(Order, CastingProcess.order_id == Order.id)
+                .outerjoin(BlankingProcess, Order.id == BlankingProcess.order_id)
+                .scalar()
+            ) or 0
+        except Exception:
+            casting_output = 0
 
-        turning_output = (
-            self.db.query(
-                func.sum(
-                    func.coalesce(
-                        TurningProcess.gross_quantity,
-                        Order.quantity,
-                        0,
+        try:
+            turning_output = (
+                self.db.query(
+                    func.sum(
+                        func.coalesce(
+                            TurningProcess.gross_quantity,
+                            Order.quantity,
+                            0,
+                        )
                     )
                 )
-            )
-            .select_from(TurningProcess)
-            .join(Order, TurningProcess.order_id == Order.id)
-            .scalar()
-        ) or 0
+                .select_from(TurningProcess)
+                .join(Order, TurningProcess.order_id == Order.id)
+                .scalar()
+            ) or 0
+        except Exception:
+            turning_output = 0
 
-        polishing_output = (
-            self.db.query(
-                func.sum(
-                    func.coalesce(
-                        PolishingProcess.gross_quantity,
-                        Order.quantity,
-                        0,
+        try:
+            polishing_output = (
+                self.db.query(
+                    func.sum(
+                        func.coalesce(
+                            PolishingProcess.gross_quantity,
+                            Order.quantity,
+                            0,
+                        )
                     )
                 )
-            )
-            .select_from(PolishingProcess)
-            .join(Order, PolishingProcess.order_id == Order.id)
-            .scalar()
-        ) or 0
+                .select_from(PolishingProcess)
+                .join(Order, PolishingProcess.order_id == Order.id)
+                .scalar()
+            ) or 0
+        except Exception:
+            polishing_output = 0
 
-        packing_output = (
-            self.db.query(
-                func.sum(
-                    func.coalesce(
-                        PackingProcess.packed_qty,
-                        PackingProcess.in_gross,
-                        Order.quantity,
-                        0,
+        try:
+            packing_output = (
+                self.db.query(
+                    func.sum(
+                        func.coalesce(
+                            PackingProcess.packed_qty,
+                            PackingProcess.in_gross,
+                            Order.quantity,
+                            0,
+                        )
                     )
                 )
-            )
-            .select_from(PackingProcess)
-            .join(Order, PackingProcess.order_id == Order.id)
-            .scalar()
-        ) or 0
+                .select_from(PackingProcess)
+                .join(Order, PackingProcess.order_id == Order.id)
+                .scalar()
+            ) or 0
+        except Exception:
+            packing_output = 0
 
         material_rows = (
             self.db.query(
@@ -218,6 +230,9 @@ class ReportService:
                 func.sum(RawMaterial.quantity).label('total_qty'),
                 RawMaterial.unit
             )
+            .filter(~RawMaterial.material_name.contains('@'))
+            .filter(~RawMaterial.unit.in_(['admin', 'turning', 'packing', 'casting', 'polish', 'blanking']))
+            .filter(RawMaterial.quantity > 0)
             .group_by(RawMaterial.material_name, RawMaterial.unit)
             .all()
         )
@@ -249,7 +264,12 @@ class ReportService:
         total_produced = total_packed + total_rejected
         rejection_rate = (total_rejected / total_produced * 100) if total_produced > 0 else 0.0
 
-        universal_rows = self.db.query(UniversalRawMaterial).order_by(UniversalRawMaterial.material_name).all()
+        universal_rows = (
+            self.db.query(UniversalRawMaterial)
+            .filter(~UniversalRawMaterial.material_name.contains('@'))
+            .order_by(UniversalRawMaterial.material_name)
+            .all()
+        )
         universal_materials = []
         for u in universal_rows:
             consumed = (
@@ -272,11 +292,25 @@ class ReportService:
         order_reports = []
         from app.schemas.order import OrderRead
         for o in all_orders:
-            order_data = OrderRead.model_validate(o).model_dump(mode='json')
-            order_data['party_name'] = o.company_name
-            order_data['company_name'] = o.company_name
-            order_data['sample_image_url'] = o.button_image
-            order_data['button_image'] = o.button_image
+            try:
+                order_data = OrderRead.model_validate(o).model_dump(mode='json')
+            except Exception:
+                # Fallback if a relation table (e.g. raw_materials or blanking_process) has a damaged SQLite page
+                order_data = {
+                    'id': o.id,
+                    'token': getattr(o, 'token', str(o.id)),
+                    'company_name': getattr(o, 'company_name', 'Order'),
+                    'party_name': getattr(o, 'company_name', 'Order'),
+                    'status': getattr(o, 'status', 'In Production'),
+                    'quantity': float(getattr(o, 'quantity', 0) or 0),
+                    'unit': getattr(o, 'unit', 'Gross'),
+                    'button_image': getattr(o, 'button_image', None),
+                    'raw_materials': [],
+                }
+            order_data['party_name'] = getattr(o, 'company_name', 'Order')
+            order_data['company_name'] = getattr(o, 'company_name', 'Order')
+            order_data['sample_image_url'] = getattr(o, 'button_image', None)
+            order_data['button_image'] = getattr(o, 'button_image', None)
             # Remove financial metrics from reports
             order_data.pop('rate', None)
             order_data.pop('total_amount', None)

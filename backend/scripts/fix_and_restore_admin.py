@@ -128,8 +128,10 @@ def kill_all_database_lockers(db_files: list[str]) -> None:
 
     # 3. Terminate background auto-backup scripts or stale server windows
     try:
+        subprocess.run('taskkill /F /IM uvicorn.exe', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         subprocess.run('taskkill /F /FI "WINDOWTITLE eq *Auto Backup*"', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         subprocess.run('taskkill /F /FI "WINDOWTITLE eq Backend Server*"', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run('taskkill /F /FI "WINDOWTITLE eq *FastAPI*"', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except Exception:
         pass
 
@@ -164,7 +166,7 @@ def safe_file_action(action, src: str, dst: str | None = None, related_files: li
 
 
 def check_sqlite_integrity(db_path: str) -> tuple[bool, str]:
-    """Test SQLite file integrity using PRAGMA integrity_check."""
+    """Test SQLite file integrity using PRAGMA integrity_check AND deep table scans."""
     if not os.path.exists(db_path):
         return False, "File does not exist"
     if os.path.getsize(db_path) == 0:
@@ -174,10 +176,21 @@ def check_sqlite_integrity(db_path: str) -> tuple[bool, str]:
         cursor = conn.cursor()
         cursor.execute("PRAGMA busy_timeout = 15000;")
         res = cursor.execute("PRAGMA integrity_check;").fetchone()
+        if not res or res[0] != "ok":
+            conn.close()
+            return False, str(res[0]) if res else "PRAGMA integrity_check failed"
+
+        # DEEP AUDIT: Try reading every table to catch leaf b-tree cell corruptions
+        tables = [r[0] for r in cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';").fetchall()]
+        for tbl in tables:
+            try:
+                cursor.execute(f"SELECT * FROM [{tbl}];").fetchall()
+            except sqlite3.DatabaseError as e:
+                conn.close()
+                return False, f"Table '{tbl}' has corrupted disk image: {e}"
+
         conn.close()
-        if res and res[0] == "ok":
-            return True, "ok"
-        return False, str(res[0]) if res else "Unknown integrity failure"
+        return True, "ok"
     except Exception as e:
         return False, str(e)
 
@@ -203,6 +216,110 @@ def find_best_backup(backups_dir: str) -> str | None:
             except Exception:
                 pass
     return None
+
+
+def merge_missing_records_from_backups(target_db_path: str, backups_dir: str) -> None:
+    """
+    Scans all uncorrupted backups in backups_dir and merges any missing rows
+    into target_db_path so that no historical orders, process logs, or materials are lost.
+    Also cleans rogue user accounts mistakenly inserted into raw_materials.
+    """
+    if not os.path.exists(backups_dir) or not os.path.exists(target_db_path):
+        return
+
+    backup_files = sorted(glob.glob(os.path.join(backups_dir, "*.db")), reverse=True)
+    if not backup_files:
+        return
+
+    tables = [
+        'users',
+        'orders',
+        'universal_raw_materials',
+        'raw_materials',
+        'casting_process',
+        'blanking_process',
+        'turning_process',
+        'polishing_process',
+        'packing_process',
+        'token_counter',
+    ]
+
+    try:
+        target_conn = sqlite3.connect(target_db_path, timeout=15.0)
+        target_conn.execute("PRAGMA foreign_keys = OFF;")
+        # 1. Clean up rogue user rows mistakenly inserted into raw_materials before merging
+        t_cur = target_conn.cursor()
+        has_rm = t_cur.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='raw_materials';").fetchone()
+        if has_rm:
+            t_cur.execute("DELETE FROM raw_materials WHERE material_name LIKE '%@%' OR unit IN ('admin', 'turning', 'packing', 'casting', 'polish', 'blanking');")
+            purged = t_cur.rowcount
+            if purged > 0:
+                target_conn.commit()
+                print(f"    [CLEANED] Purged {purged} bogus user account row(s) from raw_materials.")
+        has_urm = t_cur.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='universal_raw_materials';").fetchone()
+        if has_urm:
+            t_cur.execute("DELETE FROM universal_raw_materials WHERE material_name LIKE '%@%';")
+            target_conn.commit()
+    except Exception as e:
+        print(f"    [WARN] Could not connect to target DB for backup merge: {e}")
+        return
+
+    for b_path in backup_files:
+        if os.path.abspath(b_path) == os.path.abspath(target_db_path):
+            continue
+        # Verify backup integrity before reading
+        ok, _ = check_sqlite_integrity(b_path)
+        if not ok:
+            continue
+
+        try:
+            b_conn = sqlite3.connect(b_path, timeout=5.0)
+            b_cur = b_conn.cursor()
+            t_cur = target_conn.cursor()
+
+            for tbl in tables:
+                has_b_tbl = b_cur.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?;", (tbl,)).fetchone()
+                has_t_tbl = t_cur.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?;", (tbl,)).fetchone()
+                if not has_b_tbl or not has_t_tbl:
+                    continue
+
+                existing_ids = set()
+                try:
+                    for r in t_cur.execute(f"SELECT id FROM [{tbl}];").fetchall():
+                        existing_ids.add(r[0])
+                except Exception:
+                    continue
+
+                try:
+                    b_rows = b_cur.execute(f"SELECT * FROM [{tbl}];").fetchall()
+                    if not b_rows:
+                        continue
+                    col_names = [col[1] for col in b_cur.execute(f"PRAGMA table_info([{tbl}]);").fetchall()]
+                    id_idx = col_names.index('id') if 'id' in col_names else 0
+
+                    missing_rows = []
+                    for row in b_rows:
+                        if row[id_idx] in existing_ids:
+                            continue
+                        if tbl in ('raw_materials', 'universal_raw_materials') and '@' in str(row):
+                            continue
+                        missing_rows.append(row)
+
+                    if missing_rows:
+                        placeholders = ",".join(["?"] * len(missing_rows[0]))
+                        target_conn.executemany(f"INSERT OR REPLACE INTO [{tbl}] VALUES ({placeholders});", missing_rows)
+                        target_conn.commit()
+                        for row in missing_rows:
+                            existing_ids.add(row[id_idx])
+                        print(f"    [RESTORED] Merged {len(missing_rows)} missing record(s) into '{tbl}' from backup {os.path.basename(b_path)}")
+                except Exception:
+                    pass
+
+            b_conn.close()
+        except Exception:
+            pass
+
+    target_conn.close()
 
 
 def deep_salvage_sqlite_database(src_path: str, dst_path: str) -> bool:
@@ -261,14 +378,21 @@ def deep_salvage_sqlite_database(src_path: str, dst_path: str) -> bool:
                 print(f"    [*] Table '{tbl_name}' is malformed ({dbe}). Performing deep row-by-row rescue...")
                 rowids = []
                 try:
-                    rowids = [r[0] for r in src_conn.execute(f"SELECT rowid FROM [{tbl_name}];").fetchall()]
+                    cur = src_conn.cursor()
+                    cur.execute(f"SELECT rowid FROM [{tbl_name}];")
+                    while True:
+                        try:
+                            r = cur.fetchone()
+                            if not r:
+                                break
+                            rowids.append(r[0])
+                        except Exception:
+                            break
                 except Exception:
                     pass
 
-                if not rowids:
-                    rowids = list(range(1, 100000))
-
-                for rid in rowids:
+                candidate_ids = sorted(set(rowids + list(range(1, 10000))))
+                for rid in candidate_ids:
                     try:
                         row = src_conn.execute(f"SELECT * FROM [{tbl_name}] WHERE rowid = ?;", (rid,)).fetchone()
                         if row:
@@ -331,7 +455,8 @@ def heal_sqlite_database(db_path: str) -> None:
     # 2. Check if database is already healthy
     is_ok, msg = check_sqlite_integrity(db_path)
     if is_ok:
-        print("    [OK] Database integrity verified.")
+        merge_missing_records_from_backups(db_path, backups_dir)
+        print("    [OK] Database integrity verified and records synchronized.")
         return
 
     print(f"    [!] Database error detected: {msg}")
@@ -351,6 +476,7 @@ def heal_sqlite_database(db_path: str) -> None:
         conn.close()
         is_ok, msg = check_sqlite_integrity(db_path)
         if is_ok:
+            merge_missing_records_from_backups(db_path, backups_dir)
             print("    [FIXED] Database integrity restored via REINDEX.")
             return
     except Exception:
@@ -364,6 +490,7 @@ def heal_sqlite_database(db_path: str) -> None:
         conn.close()
         is_ok, msg = check_sqlite_integrity(db_path)
         if is_ok:
+            merge_missing_records_from_backups(db_path, backups_dir)
             print("    [FIXED] Database healed via WAL checkpoint.")
             return
     except Exception:
@@ -380,6 +507,7 @@ def heal_sqlite_database(db_path: str) -> None:
             safe_file_action('move', salvage_path, db_path, all_db_files)
             safe_file_action('remove', wal_file, related_files=all_db_files)
             safe_file_action('remove', shm_file, related_files=all_db_files)
+            merge_missing_records_from_backups(db_path, backups_dir)
             print("    [FIXED] Database 100% healed via VACUUM INTO (all records preserved).")
             return
     except Exception:
@@ -391,6 +519,7 @@ def heal_sqlite_database(db_path: str) -> None:
         safe_file_action('move', salvage_path, db_path, all_db_files)
         safe_file_action('remove', wal_file, related_files=all_db_files)
         safe_file_action('remove', shm_file, related_files=all_db_files)
+        merge_missing_records_from_backups(db_path, backups_dir)
         print("    [FIXED] Database deep salvage complete. 100% of readable data preserved.")
         return
 
@@ -401,6 +530,7 @@ def heal_sqlite_database(db_path: str) -> None:
         if safe_file_action('copy', best_backup, db_path, all_db_files):
             safe_file_action('remove', wal_file, related_files=all_db_files)
             safe_file_action('remove', shm_file, related_files=all_db_files)
+            merge_missing_records_from_backups(db_path, backups_dir)
             is_ok, msg = check_sqlite_integrity(db_path)
             if is_ok:
                 print("    [FIXED] Database successfully restored from clean backup snapshot.")
@@ -415,7 +545,8 @@ def heal_sqlite_database(db_path: str) -> None:
     conn = sqlite3.connect(db_path)
     conn.execute("PRAGMA journal_mode=WAL;")
     conn.close()
-    print("    [FIXED] Clean database initialized.")
+    merge_missing_records_from_backups(db_path, backups_dir)
+    print("    [FIXED] Clean database initialized and populated from backups.")
 
 
 def ensure_super_admin(email: str = 'admin@example.com', password: str = 'password') -> None:

@@ -133,11 +133,20 @@ class PdfExportService {
           // Material Consumption Section
           _buildSectionHeader('Order Material Consumption'),
           pw.SizedBox(height: 6),
-          materials.isEmpty
+          materials.where((item) {
+            final name = (item['name'] as String? ?? '').toLowerCase();
+            final unit = (item['unit'] as String? ?? '').toLowerCase();
+            return !name.contains('@') && !['admin', 'turning', 'packing', 'casting', 'polish', 'blanking'].contains(unit);
+          }).isEmpty
               ? pw.Text('No material consumption recorded.', style: const pw.TextStyle(color: PdfColors.grey700))
               : pw.TableHelper.fromTextArray(
                   headers: ['Material Name', 'Quantity Consumed'],
                   data: materials
+                      .where((item) {
+                        final name = (item['name'] as String? ?? '').toLowerCase();
+                        final unit = (item['unit'] as String? ?? '').toLowerCase();
+                        return !name.contains('@') && !['admin', 'turning', 'packing', 'casting', 'polish', 'blanking'].contains(unit);
+                      })
                       .map((item) => [
                             item['name'] as String? ?? 'N/A',
                             '${item['quantity'] ?? 0} ${item['unit'] as String? ?? ''}',
