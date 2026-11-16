@@ -261,7 +261,7 @@ class _StaffPageState extends ConsumerState<StaffPage> {
                                               IconButton(
                                                 icon: const Icon(Icons.edit_outlined, color: Color(0xFF14B8A6)),
                                                 tooltip: 'Edit Staff',
-                                                onPressed: () => _showStaffDialog(user as Map<String, dynamic>),
+                                                onPressed: () => _showStaffDialog(Map<String, dynamic>.from(user as Map)),
                                               ),
                                               IconButton(
                                                 icon: Icon(
@@ -269,7 +269,7 @@ class _StaffPageState extends ConsumerState<StaffPage> {
                                                   color: isActive ? const Color(0xFFEF4444) : const Color(0xFF10B981),
                                                 ),
                                                 tooltip: isActive ? 'Deactivate Staff' : 'Activate Staff',
-                                                onPressed: () => _toggleStaffStatus(user['id'] as int, isActive),
+                                                onPressed: () => _toggleStaffStatus((user['id'] as num).toInt(), isActive),
                                               ),
                                             ],
                                           ),
@@ -352,7 +352,7 @@ class _StaffPageState extends ConsumerState<StaffPage> {
                                             icon: const Icon(Icons.edit_outlined, color: Color(0xFF14B8A6), size: 20),
                                             constraints: const BoxConstraints(),
                                             padding: EdgeInsets.zero,
-                                            onPressed: () => _showStaffDialog(user as Map<String, dynamic>),
+                                            onPressed: () => _showStaffDialog(Map<String, dynamic>.from(user as Map)),
                                           ),
                                           const SizedBox(width: 16),
                                           IconButton(
@@ -363,7 +363,7 @@ class _StaffPageState extends ConsumerState<StaffPage> {
                                             ),
                                             constraints: const BoxConstraints(),
                                             padding: EdgeInsets.zero,
-                                            onPressed: () => _toggleStaffStatus(user['id'] as int, isActive),
+                                            onPressed: () => _toggleStaffStatus((user['id'] as num).toInt(), isActive),
                                           ),
                                         ],
                                       ),
@@ -456,6 +456,7 @@ class _StaffFormDialogState extends ConsumerState<_StaffFormDialog> {
     'super_admin',
     'raw_material',
     'casting',
+    'blanking',
     'turning',
     'polish',
     'packing',
@@ -465,6 +466,7 @@ class _StaffFormDialogState extends ConsumerState<_StaffFormDialog> {
     'admin',
     'raw_material',
     'casting',
+    'blanking',
     'turning',
     'polish',
     'packing',
@@ -477,8 +479,13 @@ class _StaffFormDialogState extends ConsumerState<_StaffFormDialog> {
     _nameController = TextEditingController(text: s?['name'] as String? ?? '');
     _emailController = TextEditingController(text: s?['email'] as String? ?? '');
     _passwordController = TextEditingController();
-    _role = s?['role'] as String? ?? 'super_admin';
-    _department = s?['department'] as String? ?? 'admin';
+
+    final rawRole = s?['role'] as String? ?? 'super_admin';
+    _role = _roles.contains(rawRole) ? rawRole : 'super_admin';
+
+    final rawDept = s?['department'] as String? ?? (_role == 'super_admin' ? 'admin' : _role);
+    _department = _departments.contains(rawDept) ? rawDept : (_role == 'super_admin' ? 'admin' : _role);
+
     _isActive = s?['is_active'] as bool? ?? true;
   }
 
@@ -502,24 +509,25 @@ class _StaffFormDialogState extends ConsumerState<_StaffFormDialog> {
 
     try {
       if (isEdit) {
+        final userId = widget.staff!['id'];
         final payload = <String, dynamic>{
           'name': _nameController.text.trim(),
-          'email': _emailController.text.trim(),
+          'email': _emailController.text.trim().toLowerCase(),
           'role': _role,
           'department': _department,
           'is_active': _isActive,
         };
 
-        if (_passwordController.text.isNotEmpty) {
-          payload['password'] = _passwordController.text;
+        if (_passwordController.text.trim().isNotEmpty) {
+          payload['password'] = _passwordController.text.trim();
         }
 
-        await dio.put('/auth/users/${widget.staff!['id']}', data: payload);
+        await dio.put('/auth/users/$userId', data: payload);
       } else {
         final payload = <String, dynamic>{
           'name': _nameController.text.trim(),
-          'email': _emailController.text.trim(),
-          'password': _passwordController.text,
+          'email': _emailController.text.trim().toLowerCase(),
+          'password': _passwordController.text.trim(),
           'role': _role,
           'department': _department,
         };
@@ -528,6 +536,12 @@ class _StaffFormDialogState extends ConsumerState<_StaffFormDialog> {
       }
 
       if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFF10B981),
+            content: Text(isEdit ? 'Staff account updated successfully' : 'New account created successfully'),
+          ),
+        );
         widget.onSave();
       }
     } catch (e) {
@@ -541,7 +555,10 @@ class _StaffFormDialogState extends ConsumerState<_StaffFormDialog> {
           }
         }
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save staff details: $details')),
+          SnackBar(
+            backgroundColor: const Color(0xFFEF4444),
+            content: Text('Failed to save staff details: $details'),
+          ),
         );
       }
     }

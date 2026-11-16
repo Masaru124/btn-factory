@@ -47,3 +47,8 @@ class UserUpdate(BaseModel):
     is_active: bool | None = None
 
 
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
+
+

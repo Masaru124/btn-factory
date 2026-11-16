@@ -1,3 +1,4 @@
+import bcrypt
 from datetime import datetime, timedelta, timezone
 
 from fastapi import HTTPException, status
@@ -13,11 +14,22 @@ settings = get_settings()
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    if not plain_password or not hashed_password:
+        return False
+    try:
+        # Native bcrypt check (fast, no passlib version bugs)
+        return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+    except Exception:
+        try:
+            return pwd_context.verify(plain_password, hashed_password)
+        except Exception:
+            return False
 
 
 def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
+    # Use native bcrypt to avoid passlib __about__ incompatibility on Python 3.12+
+    salt = bcrypt.gensalt(rounds=12)
+    return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
 
 
 def create_access_token(subject: str, expires_delta: timedelta | None = None) -> str:
