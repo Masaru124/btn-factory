@@ -2,6 +2,14 @@
 title Button Factory MES - Remove from Windows Startup
 color 0C
 
+:: Auto-elevate to Administrator to remove protected scheduled tasks
+net session >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [INFO] Requesting Administrator privileges to delete startup tasks...
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process -FilePath '%~f0' -Verb RunAs"
+    exit /b
+)
+
 :: Detect project root and backend directory
 set "PROJECT_ROOT=%~dp0"
 set "BACKEND_DIR=%~dp0backend"

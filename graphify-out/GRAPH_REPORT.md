@@ -1,7 +1,7 @@
-# Graph Report - btn-factory  (2026-11-16)
+# Graph Report - btn-factory  (2026-11-17)
 
 ## Corpus Check
-- 147 files · ~97,917 words
+- 147 files · ~98,251 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0a71c635`
+- Built from commit: `d3dbe322`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -264,7 +264,7 @@ Nodes (6): Incrementally sync/copy all files from media_dir to backup_media_dir.
 
 ### Community 66 - "manage_startup.py"
 Cohesion: 0.31
-Nodes (8): add_to_startup(), create_vbs_shortcut(), get_startup_dir(), Button Factory MES - Windows Startup Manager. Configures automatic background…, Remove Button Factory MES from Windows Startup., Create Windows .lnk shortcut via temporary VBScript., Add Button Factory MES to Windows Startup., remove_from_startup()
+Nodes (8): add_to_startup(), create_vbs_shortcut(), get_startup_dir(), Button Factory MES - Windows Startup Manager. Configures automatic background…, Remove Button Factory MES from Windows Startup cleanly and comprehensively., Create Windows .lnk shortcut via temporary VBScript., Add Button Factory MES to Windows Startup., remove_from_startup()
 
 ### Community 67 - "analytics_page.dart"
 Cohesion: 0.12

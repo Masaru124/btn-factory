@@ -127,48 +127,139 @@ def add_to_startup(server_type: str = 'nginx') -> bool:
 
 
 def remove_from_startup() -> bool:
-    """Remove Button Factory MES from Windows Startup."""
+    """Remove Button Factory MES from Windows Startup cleanly and comprehensively."""
     print("=" * 70)
     print("  BUTTON FACTORY MES - REMOVE FROM WINDOWS STARTUP")
     print("=" * 70)
 
-    # 1. Delete scheduled task
-    cmd = ['schtasks', '/delete', '/tn', TASK_NAME, '/f']
-    try:
-        res = subprocess.run(cmd, capture_output=True, text=True)
-        if res.returncode == 0:
-            print(f" [PASS] Windows Task Scheduler task '{TASK_NAME}' deleted.")
-        else:
-            print(f" [INFO] Scheduled task '{TASK_NAME}' was not registered or already removed.")
-    except Exception as e:
-        print(f" [WARN] Could not run schtasks: {e}")
+    removed_items = 0
 
-    # 2. Remove shortcut from user startup folder
-    startup_dir = get_startup_dir()
-    shortcut_path = os.path.join(startup_dir, LNK_NAME)
-    if os.path.exists(shortcut_path):
+    # 1. Delete scheduled tasks
+    known_tasks = [
+        TASK_NAME,
+        'ButtonFactoryMES',
+        'ButtonFactory_AutoStart',
+        'ButtonFactory',
+        'Button_Factory_MES',
+        'Button_Factory_AutoStart',
+        'Launch_Button_Factory',
+    ]
+
+    for tn in known_tasks:
         try:
-            os.remove(shortcut_path)
-            print(f" [PASS] Removed shortcut from User Startup folder: {shortcut_path}")
-        except Exception as e:
-            print(f" [WARN] Could not delete startup shortcut: {e}")
-    else:
-        print(f" [INFO] No shortcut found in User Startup folder.")
+            res = subprocess.run(['schtasks', '/delete', '/tn', tn, '/f'], capture_output=True, text=True)
+            if res.returncode == 0:
+                print(f" [PASS] Windows Task Scheduler task '{tn}' deleted.")
+                removed_items += 1
+            elif "Access is denied" in (res.stderr or ''):
+                print(f" [WARN] Task '{tn}' requires Administrator privileges to delete!")
+        except Exception:
+            pass
 
-    # 3. Check All Users Startup folder
+    # Query all scheduled tasks to catch any tasks containing our project paths or names
+    try:
+        res = subprocess.run(['schtasks', '/query', '/fo', 'CSV', '/v'], capture_output=True, text=True, errors='ignore')
+        if res.returncode == 0:
+            for line in res.stdout.splitlines():
+                line_lower = line.lower()
+                if any(kw in line_lower for kw in ('buttonfactory', 'btn-factory', 'btn_factory', 'launch_button_factory', 'launch_with_nginx', 'launch_with_iis', 'launch_with_cloudflare')):
+                    parts = [p.strip('"') for p in line.split('","')]
+                    if parts and parts[0] != 'TaskName':
+                        task_name = parts[0].lstrip('\\')
+                        del_res = subprocess.run(['schtasks', '/delete', '/tn', task_name, '/f'], capture_output=True, text=True)
+                        if del_res.returncode == 0:
+                            print(f" [PASS] Removed discovered scheduled task: '{task_name}'")
+                            removed_items += 1
+    except Exception:
+        pass
+
+    # 2. Clean User and System Startup folders
+    startup_dirs = [get_startup_dir()]
     progdata = os.environ.get('ProgramData')
     if progdata:
-        common_lnk = os.path.join(progdata, r'Microsoft\Windows\Start Menu\Programs\Startup', LNK_NAME)
-        if os.path.exists(common_lnk):
+        startup_dirs.append(os.path.join(progdata, r'Microsoft\Windows\Start Menu\Programs\Startup'))
+
+    for s_dir in startup_dirs:
+        if not os.path.exists(s_dir):
+            continue
+        try:
+            for fname in os.listdir(s_dir):
+                fpath = os.path.join(s_dir, fname)
+                fname_lower = fname.lower()
+                should_remove = False
+
+                # Direct filename match
+                if any(kw in fname_lower for kw in ('buttonfactory', 'btn_factory', 'btn-factory', 'launch_button_factory', 'launch_with_', 'start_factory_server')):
+                    should_remove = True
+                elif fname_lower.endswith('.lnk'):
+                    # Check target path of shortcut
+                    try:
+                        ps_cmd = f"(New-Object -ComObject WScript.Shell).CreateShortcut('{fpath}').TargetPath"
+                        target = subprocess.check_output(['powershell', '-NoProfile', '-Command', ps_cmd], text=True, errors='ignore').strip()
+                        if target and os.path.normpath(PROJECT_ROOT).lower() in os.path.normpath(target).lower():
+                            should_remove = True
+                    except Exception:
+                        pass
+
+                if should_remove and os.path.exists(fpath):
+                    try:
+                        os.remove(fpath)
+                        print(f" [PASS] Removed startup shortcut: {fpath}")
+                        removed_items += 1
+                    except Exception as e:
+                        print(f" [WARN] Could not delete '{fname}': {e}")
+        except Exception as e:
+            print(f" [WARN] Could not inspect startup directory '{s_dir}': {e}")
+
+    # 3. Clean Windows Registry Run keys
+    try:
+        import winreg
+        hives = [
+            (winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Run", "HKCU"),
+            (winreg.HKEY_LOCAL_MACHINE, r"Software\Microsoft\Windows\CurrentVersion\Run", "HKLM"),
+        ]
+        for hive, subkey, hive_name in hives:
             try:
-                os.remove(common_lnk)
-                print(f" [PASS] Removed shortcut from System Startup folder.")
+                key = winreg.OpenKey(hive, subkey, 0, winreg.KEY_ALL_ACCESS)
+                to_delete = []
+                i = 0
+                while True:
+                    try:
+                        val_name, val_data, _ = winreg.EnumValue(key, i)
+                        val_str = f"{val_name} {val_data}".lower()
+                        if any(kw in val_str for kw in ('buttonfactory', 'btn-factory', 'btn_factory', 'launch_button_factory')):
+                            to_delete.append(val_name)
+                        i += 1
+                    except OSError:
+                        break
+                for val_name in to_delete:
+                    winreg.DeleteValue(key, val_name)
+                    print(f" [PASS] Removed registry startup entry: {hive_name}\\{val_name}")
+                    removed_items += 1
+                winreg.CloseKey(key)
             except Exception:
                 pass
+    except Exception:
+        pass
+
+    # 4. Stop any currently active server processes
+    print("-" * 70)
+    print(" Stopping any running background server processes...")
+    try:
+        subprocess.run('taskkill /F /FI "WINDOWTITLE eq Backend Server*"', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run('taskkill /F /FI "WINDOWTITLE eq *Auto Backup*"', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run('taskkill /F /FI "WINDOWTITLE eq *FastAPI*"', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run('taskkill /F /IM uvicorn.exe', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run('taskkill /F /IM caddy.exe', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception:
+        pass
 
     print("=" * 70)
-    print(" SUCCESS: Button Factory MES has been removed from Windows Startup.")
-    print(" The server will no longer launch automatically on boot.")
+    if removed_items > 0:
+        print(f" SUCCESS: Removed {removed_items} startup task(s)/shortcut(s).")
+    else:
+        print(" SUCCESS: No remaining Button Factory MES startup entries found.")
+    print(" The server will no longer launch automatically on Windows boot or restart.")
     print("=" * 70)
     return True
 

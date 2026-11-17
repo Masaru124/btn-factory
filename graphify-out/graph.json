@@ -11995,12 +11995,12 @@
     },
     {
       "id": "backend_scripts_manage_startup_rationale_130",
-      "label": "Remove Button Factory MES from Windows Startup.",
+      "label": "Remove Button Factory MES from Windows Startup cleanly and comprehensively.",
       "_origin": "ast",
       "community": 66,
       "community_name": "manage_startup.py",
       "file_type": "rationale",
-      "norm_label": "remove button factory mes from windows startup.",
+      "norm_label": "remove button factory mes from windows startup cleanly and comprehensively.",
       "source_file": "backend/scripts/manage_startup.py",
       "source_location": "L130"
     },
@@ -15524,7 +15524,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "backend/scripts/manage_startup.py",
-      "source_location": "L147",
+      "source_location": "L177",
       "weight": 1.0
     },
     {
@@ -41985,5 +41985,5 @@
       "source_file": "DEPLOYMENT_GUIDE.md"
     }
   ],
-  "built_at_commit": "0a71c6351ccea9036fbc89588b3af664e553c11a"
+  "built_at_commit": "d3dbe3220a0ca4dcc073cbc4460a490ce976a3f2"
 }
